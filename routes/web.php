@@ -23,7 +23,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('HomeView');
@@ -34,3 +34,14 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/tables', function () {
 })->name('/tables');
 
 require __DIR__.'/auth.php';
+
+// Route::group([
+//     'namespace' => 'App\Http\Controllers\Admin',
+//     'prefix' => 'admin',
+//     'middleware' => ['auth'],
+// ], function () {
+//     Route::resource('user', 'UserController');
+//     Route::resource('role', 'RoleController');
+//     Route::resource('permission', 'PermissionController');
+//     Route::resource('post', 'PostController');
+// });

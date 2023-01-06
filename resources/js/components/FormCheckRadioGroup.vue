@@ -1,40 +1,37 @@
 <script setup>
-import { computed } from "vue";
-import FormCheckRadio from "@/components/FormCheckRadio.vue";
-
+import { computed } from 'vue'
+import FormCheckRadio from '@/components/FormCheckRadio.vue'
 const props = defineProps({
   options: {
     type: Object,
-    default: () => {},
+    default: () => {}
   },
   name: {
     type: String,
-    required: true,
+    required: true
   },
   type: {
     type: String,
-    default: "checkbox",
-    validator: (value) => ["checkbox", "radio", "switch"].includes(value),
+    default: 'checkbox',
+    validator: value => ['checkbox', 'radio', 'switch'].includes(value)
   },
   componentClass: {
     type: String,
-    default: null,
+    default: null
   },
   isColumn: Boolean,
   modelValue: {
     type: [Array, String, Number, Boolean],
-    default: null,
-  },
-});
-
-const emit = defineEmits(["update:modelValue"]);
-
+    default: null
+  }
+})
+const emit = defineEmits(['update:modelValue'])
 const computedValue = computed({
   get: () => props.modelValue,
-  set: (value) => {
-    emit("update:modelValue", value);
-  },
-});
+  set: value => {
+    emit('update:modelValue', value)
+  }
+})
 </script>
 
 <template>
@@ -51,7 +48,6 @@ const computedValue = computed({
       :input-value="key"
       :label="value"
       :class="componentClass"
-      class="mr-6 mb-3 last:mr-0"
     />
   </div>
 </template>

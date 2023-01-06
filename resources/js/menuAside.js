@@ -1,16 +1,9 @@
 import {
-  mdiAccountCircle,
   mdiMonitor,
-  mdiGithub,
-  mdiLock,
-  mdiAlertCircle,
-  mdiSquareEditOutline,
-  mdiTable,
-  mdiViewList,
-  mdiTelevisionGuide,
-  mdiResponsive,
-  mdiPalette,
-  mdiReact,
+  mdiAccountKey,
+  mdiAccountEye,
+  mdiAccountGroup,
+  mdiCog,
 } from "@mdi/js";
 
 export default [
@@ -20,9 +13,25 @@ export default [
     label: "Dashboard",
   },
   {
-    route: "/tables",
-    label: "Tables",
-    icon: mdiTable,
+    label: "User Settings",
+    icon: mdiCog,
+    menu: [
+      {
+        route: 'permission.index',
+        icon: mdiAccountKey,
+        label: 'Permissions'
+      },
+      {
+        route: 'role.index',
+        icon: mdiAccountEye,
+        label: 'Roles'
+      },
+      {
+        route: 'user.index',
+        icon: mdiAccountGroup,
+        label: 'Users'
+      },
+    ],
   },
   {
     href: 'https://example.com/',

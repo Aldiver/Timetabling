@@ -12,14 +12,14 @@ const year = new Date().getFullYear();
       <div class="text-center md:text-left">
         <b
           >&copy;{{ year }},
-          <a href="https://justboil.me/" target="_blank">JustBoil.me</a>.</b
+          Ano name ilagay?</b
         >
         <slot />
       </div>
       <div class="md:py-2">
-        <a href="https://justboil.me">
+        <!-- <a href="https://justboil.me">
           <JustboilLogo class="w-auto h-8 md:h-6" />
-        </a>
+        </a> -->
       </div>
     </BaseLevel>
   </footer>

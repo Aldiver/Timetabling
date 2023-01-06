@@ -55,6 +55,7 @@ const menuClick = (event) => {
         isDropdownActive.value = !isDropdownActive.value;
     }
 };
+
 </script>
 
 <template>
