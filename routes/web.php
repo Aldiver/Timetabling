@@ -29,19 +29,11 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('HomeView');
 })->name('/dashboard');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/tables', function () {
-    return Inertia::render('TableView');
-})->name('/tables');
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 require __DIR__.'/auth.php';
 
-// Route::group([
-//     'namespace' => 'App\Http\Controllers\Admin',
-//     'prefix' => 'admin',
-//     'middleware' => ['auth'],
-// ], function () {
-//     Route::resource('user', 'UserController');
-//     Route::resource('role', 'RoleController');
-//     Route::resource('permission', 'PermissionController');
-//     Route::resource('post', 'PostController');
-// });

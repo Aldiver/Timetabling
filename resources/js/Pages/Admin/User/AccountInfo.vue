@@ -14,10 +14,12 @@ import SectionMain from "@/components/SectionMain.vue"
 import CardBox from "@/components/CardBox.vue"
 import BaseDivider from "@/components/BaseDivider.vue"
 import FormField from "@/components/FormField.vue"
+import FormFilePicker from "@/components/FormFilePicker.vue";
 import FormControl from "@/components/FormControl.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import BaseButtons from "@/components/BaseButtons.vue"
 import NotificationBar from "@/components/NotificationBar.vue"
+import UserCard from "@/components/UserCard.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue"
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue"
 
@@ -44,7 +46,7 @@ const passwordForm = useForm({
     <SectionMain>
       <SectionTitleLineWithButton :icon="mdiAccount" title="Profile" main>
         <BaseButton
-          :route-name="route('dashboard')"
+          :route-name="'dashboard'"
           :icon="mdiArrowLeftBoldOutline"
           label="Back"
           color="white"
@@ -59,13 +61,21 @@ const passwordForm = useForm({
       >
         {{ $page.props.flash.message }}
       </NotificationBar>
+      <UserCard 
+        v-model="profileForm.name"
+        class="mb-6" />
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CardBox
           title="Edit Profile"
           :icon="mdiAccountCircle"
-          form
+          is-form
           @submit.prevent="profileForm.post(route('admin.account.info.store'))"
         >
+          <FormField label="Avatar" help="Max 500kb">
+            <FormFilePicker label="Upload" />
+          </FormField>
+
           <FormField
             label="Name"
             help="Required. Your name"
@@ -112,7 +122,7 @@ const passwordForm = useForm({
         <CardBox
           title="Change Password"
           :icon="mdiLock"
-          form
+          is-form
           @submit.prevent="
             passwordForm.post(route('admin.account.password.store'), {
               preserveScroll: true,

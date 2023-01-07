@@ -58,8 +58,8 @@ const form = useForm({
           small
         />
       </SectionTitleLineWithButton>
-      <CardBox is-form="true"
-        form
+      <CardBox
+        if-form
         @submit.prevent="form.post(route('user.update', props.user.id))"
       >
         <FormField

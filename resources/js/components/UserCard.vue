@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useMainStore } from '@/Stores/main'
+import { useMainStore } from '@/stores/main'
 import { mdiCheckDecagram } from '@mdi/js'
 import BaseLevel from '@/components/BaseLevel.vue'
 import UserAvatarCurrentUser from '@/components/UserAvatarCurrentUser.vue'
@@ -11,6 +11,13 @@ import PillTag from '@/components/PillTag.vue'
 const mainStore = useMainStore()
 
 const userName = computed(() => mainStore.userName)
+
+const props = defineProps({
+  user: {
+    type: Object,
+    default: () => ({}),
+  },
+})
 
 const userSwitchVal = ref([])
 </script>
@@ -29,7 +36,7 @@ const userSwitchVal = ref([])
           />
         </div>
         <h1 class="text-2xl">
-          Howdy, <b>{{ userName }}</b>!
+          Howdy, <b>{{ props.user.name }}</b>!
         </h1>
         <p>Last login <b>12 mins ago</b> from <b>127.0.0.1</b></p>
         <div class="flex justify-center md:block">

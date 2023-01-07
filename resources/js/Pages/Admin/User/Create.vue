@@ -49,8 +49,8 @@ const form = useForm({
           small
         />
       </SectionTitleLineWithButton>
-      <CardBox is-form="true"
-        form
+      <CardBox
+        is-form
         @submit.prevent="form.post(route('user.store'))"
       >
         <FormField
