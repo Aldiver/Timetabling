@@ -7,6 +7,7 @@ import UserAvatarCurrentUser from '@/components/UserAvatarCurrentUser.vue'
 import CardBox from '@/components/CardBox.vue'
 import FormCheckRadioGroup from '@/components/FormCheckRadioGroup.vue'
 import PillTag from '@/components/PillTag.vue'
+import moment from 'moment'
 
 const props = defineProps({
   user: {
@@ -14,6 +15,7 @@ const props = defineProps({
     default: () => ({}),
   },
 })
+
 
 const userSwitchVal = ref([])
 </script>
@@ -34,7 +36,7 @@ const userSwitchVal = ref([])
         <h1 class="text-2xl">
           Howdy, <b>{{ props.user.name }}</b>!
         </h1>
-        <p>Last login: {{ props.user.last_login_at }} <br />from {{ props.user.last_login_ip }}</p>
+        <p>Last login: {{  moment(props.user.last_login_at).fromNow() }}<br />from {{ props.user.last_login_ip }}</p>
         <div class="flex justify-center md:block">
           <PillTag
             text="Verified"

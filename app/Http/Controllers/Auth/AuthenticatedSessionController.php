@@ -37,10 +37,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-        $date = Carbon::now();
+        // $date = Carbon::now()->timezone('Asia/Manila');
 
         $request->user()->update([
-            'last_login_at' => Carbon::now()->toDateTimeString(),
+            'last_login_at' => Carbon::now()->timezone('Asia/Manila'),
             'last_login_ip' => $request->getClientIp()
         ]);
 
