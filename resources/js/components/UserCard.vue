@@ -8,10 +8,6 @@ import CardBox from '@/components/CardBox.vue'
 import FormCheckRadioGroup from '@/components/FormCheckRadioGroup.vue'
 import PillTag from '@/components/PillTag.vue'
 
-const mainStore = useMainStore()
-
-const userName = computed(() => mainStore.userName)
-
 const props = defineProps({
   user: {
     type: Object,
@@ -38,12 +34,13 @@ const userSwitchVal = ref([])
         <h1 class="text-2xl">
           Howdy, <b>{{ props.user.name }}</b>!
         </h1>
-        <p>Last login <b>12 mins ago</b> from <b>127.0.0.1</b></p>
+        <p>Last login: {{ props.user.last_login_at }} <br />from {{ props.user.last_login_ip }}</p>
         <div class="flex justify-center md:block">
           <PillTag
             text="Verified"
             type="info"
             :icon="mdiCheckDecagram"
+            label="Verified"
           />
         </div>
       </div>

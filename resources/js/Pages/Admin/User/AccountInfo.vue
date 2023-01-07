@@ -42,6 +42,7 @@ const passwordForm = useForm({
 </script>
 
 <template>
+  <Head title="Account Profile" />
   <LayoutAuthenticated>
     <SectionMain>
       <SectionTitleLineWithButton :icon="mdiAccount" title="Profile" main>
@@ -62,7 +63,7 @@ const passwordForm = useForm({
         {{ $page.props.flash.message }}
       </NotificationBar>
       <UserCard 
-        v-model="profileForm.name"
+        :user="props.user"
         class="mb-6" />
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

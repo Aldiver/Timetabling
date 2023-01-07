@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -36,6 +37,12 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        $date = Carbon::now();
+
+        $request->user()->update([
+            'last_login_at' => Carbon::now()->toDateTimeString(),
+            'last_login_ip' => $request->getClientIp()
+        ]);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }
