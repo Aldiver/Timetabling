@@ -11,6 +11,13 @@ use Inertia\Inertia;
 
 class InstructorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:user list', ['only' => ['index', 'show']]);
+        $this->middleware('can:user create', ['only' => ['create', 'store']]);
+        $this->middleware('can:user edit', ['only' => ['edit', 'update']]);
+        $this->middleware('can:user delete', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -56,7 +63,11 @@ class InstructorController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::all()->pluck("name","id");
+
+        return Inertia::render('Data/Instructor/Create', [
+            'roles' => $roles,
+        ]);
     }
 
     /**
