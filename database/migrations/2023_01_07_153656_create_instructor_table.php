@@ -11,9 +11,10 @@ return new class extends Migration
      *
      * @return void
      */
+    //php artisan migrate:refresh --seed --seeder=BasicAdminPermissionSeeder
     public function up()
     {
-        Schema::create('instructor', function (Blueprint $table) {
+        Schema::create('instructors', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('teacher_id');
             $table->string('last_name');
@@ -34,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('instructor');
+        Schema::dropIfExists('instructors');
     }
 };

@@ -29,6 +29,20 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('HomeView');
 })->name('/dashboard');
 
+Route::get('/add', function() {
+    \App\Models\Instructor::create([
+        'teacher_id' => '112012',
+        'last_name' => 'Cambria',
+        'first_name' => 'Angela',
+        'middle_name' => 'Faustino',
+        'grade_level_assigned' => 'GRADE8',
+        'special_task' => 'None',
+        'email' => 'angelacambria@school.com',
+        'image' => 'sdfasfasdf'
+
+    ]);
+});
+
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

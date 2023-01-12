@@ -8,31 +8,31 @@ import CardBox from "@/components/CardBox.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 const props = defineProps({
-    user: {
+    instructor: {
         type: Object,
         default: () => ({}),
     },
-    roles: {
-        type: Object,
-        default: () => ({}),
-    },
-    userHasRoles: {
-        type: Object,
-        default: () => ({}),
-    },
+    // roles: {
+    //     type: Object,
+    //     default: () => ({}),
+    // },
+    // userHasRoles: {
+    //     type: Object,
+    //     default: () => ({}),
+    // },
 });
 </script>
 
 <template>
-    <Head title="View user" />
+    <Head title="View Instructor" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View user"
+            title="View instructor"
             main
         >
             <BaseButton
-                :route-name="route('user.index')"
+                :route-name="route('instructor.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -47,35 +47,32 @@ const props = defineProps({
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Name
+                            Full Name
                         </td>
-                        <td data-label="Name">
-                            {{ user.name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
-                        >
-                            Email
-                        </td>
-                        <td data-label="Email">
-                            {{ user.email }}
+                        <td data-label="Full Name">
+                            {{ instructor.last_name }},
+                            {{ instructor.first_name }}
+                            {{ instructor.middle_name }}
                         </td>
                     </tr>
                     <tr>
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Roles
+                            ID Number
                         </td>
-                        <td data-label="Roles">
-                            <span v-if="userHasRoles == 0">
-                                No Roles Assigned
-                            </span>
-                            <span v-else v-for="role in userHasRoles">
-                                {{ roles[role] }} <br />
-                            </span>
+                        <td data-label="ID Number">
+                            {{ instructor.teacher_id }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
+                        >
+                            Email Address
+                        </td>
+                        <td data-label="Email Address">
+                            {{ instructor.email }}
                         </td>
                     </tr>
                     <tr>
@@ -85,7 +82,9 @@ const props = defineProps({
                             Created
                         </td>
                         <td data-label="Created">
-                            {{ new Date(user.created_at).toLocaleString() }}
+                            {{
+                                new Date(instructor.created_at).toLocaleString()
+                            }}
                         </td>
                     </tr>
                 </tbody>
