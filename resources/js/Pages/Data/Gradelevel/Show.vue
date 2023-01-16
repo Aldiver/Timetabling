@@ -8,11 +8,11 @@ import CardBox from "@/components/CardBox.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 const props = defineProps({
-    instructor: {
+    gradelevel: {
         type: Object,
         default: () => ({}),
     },
-    // roles: {
+    // teaches: {
     //     type: Object,
     //     default: () => ({}),
     // },
@@ -24,15 +24,15 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="View Instructor" />
+    <Head title="View Grade Level" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View instructor"
+            title="View gradelevel"
             main
         >
             <BaseButton
-                :route-name="route('instructor.index')"
+                :route-name="route('gradelevel.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -47,32 +47,10 @@ const props = defineProps({
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Full Name
+                            Grade Level
                         </td>
                         <td data-label="Full Name">
-                            {{ instructor.last_name }},
-                            {{ instructor.first_name }}
-                            {{ instructor.middle_name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
-                        >
-                            ID Number
-                        </td>
-                        <td data-label="ID Number">
-                            {{ instructor.teacher_id }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
-                        >
-                            Email Address
-                        </td>
-                        <td data-label="Email Address">
-                            {{ instructor.email }}
+                            Grade {{ gradelevel.level }}
                         </td>
                     </tr>
                     <tr>
@@ -83,7 +61,7 @@ const props = defineProps({
                         </td>
                         <td data-label="Created">
                             {{
-                                new Date(instructor.created_at).toLocaleString()
+                                new Date(gradelevel.created_at).toLocaleString()
                             }}
                         </td>
                     </tr>

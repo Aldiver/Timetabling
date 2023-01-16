@@ -7,6 +7,8 @@ import {
     mdiTrashCan,
     mdiAlertBoxOutline,
 } from "@mdi/js";
+import FormField from "@/components/FormField.vue";
+import FormControl from "@/components/FormControl.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
@@ -16,11 +18,9 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
 import Sort from "@/components/Admin/Sort.vue";
-import FormField from "@/components/FormField.vue";
-import FormControl from "@/components/FormControl.vue";
 
 const props = defineProps({
-    users: {
+    sections: {
         type: Object,
         default: () => ({}),
     },
@@ -42,18 +42,18 @@ const formDelete = useForm({});
 
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
-        formDelete.delete(route("user.destroy", id));
+        formDelete.delete(route("section.destroy", id));
     }
 }
 </script>
 
 <template>
-    <Head title="Users" />
+    <Head title="Section" />
     <SectionMain>
-        <SectionTitleLineWithButton :icon="mdiAccountKey" title="Users" main>
+        <SectionTitleLineWithButton :icon="mdiAccountKey" title="Section" main>
             <BaseButton
                 v-if="can.delete"
-                :route-name="route('user.create')"
+                :route-name="route('section.create')"
                 :icon="mdiPlus"
                 label="Add"
                 color="info"
@@ -72,7 +72,7 @@ function destroy(id) {
             class="mb-6"
             has-table
             is-form
-            @submit.prevent="form.get(route('user.index'))"
+            @submit.prevent="form.get(route('section.index'))"
         >
             <FormField>
                 <div class="py-2 flex">
@@ -98,27 +98,36 @@ function destroy(id) {
                 <thead>
                     <tr>
                         <th>
-                            <Sort label="Name" attribute="name" />
+                            <Sort label="Section" attribute="name" />
                         </th>
                         <th>
-                            <Sort label="Email" attribute="email" />
+                            <Sort
+                                label="Building Letter"
+                                attribute="bldg_letter"
+                            />
+                        </th>
+                        <th>
+                            <Sort label="Room number" attribute="room_number" />
                         </th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr v-for="user in users.data" :key="user.id">
-                        <td data-label="Name">
+                    <tr v-for="section in sections.data" :key="section.id">
+                        <td data-label="Section">
                             <Link
-                                :href="route('user.show', user.id)"
+                                :href="route('section.show', section.id)"
                                 class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
                             >
-                                {{ user.name }}
+                                {{ section.name }}
                             </Link>
                         </td>
-                        <td data-label="Email">
-                            {{ user.email }}
+                        <td data-label="Building Letter">
+                            {{ section.bldg_letter }}
+                        </td>
+                        <td data-label="Room number">
+                            {{ section.room_number }}
                         </td>
                         <td
                             v-if="can.edit || can.delete"
@@ -130,7 +139,9 @@ function destroy(id) {
                             >
                                 <BaseButton
                                     v-if="can.edit"
-                                    :route-name="route('user.edit', user.id)"
+                                    :route-name="
+                                        route('section.edit', section.id)
+                                    "
                                     color="info"
                                     :icon="mdiSquareEditOutline"
                                     small
@@ -140,7 +151,7 @@ function destroy(id) {
                                     color="danger"
                                     :icon="mdiTrashCan"
                                     small
-                                    @click="destroy(user.id)"
+                                    @click="destroy(section.id)"
                                 />
                             </BaseButtons>
                         </td>
@@ -148,7 +159,7 @@ function destroy(id) {
                 </tbody>
             </table>
             <div class="py-4">
-                <Pagination :data="users" />
+                <!-- <Pagination :data="section" /> -->
             </div>
         </CardBox>
     </SectionMain>

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Admin\CreateInstructor;
-use App\Actions\Admin\UpdateInstructor;
-use App\Http\Requests\Admin\StoreInstructorRequest;
-use App\Http\Requests\Admin\UpdateInstructorRequest;
-use App\Models\Instructor;
+use App\Actions\Admin\CreateTeacher;
+use App\Actions\Admin\UpdateTeacher;
+use App\Http\Requests\Admin\StoreTeacherRequest;
+use App\Http\Requests\Admin\UpdateTeacherRequest;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 
-class InstructorController extends Controller
+class TeacherController extends Controller
 {
     public function __construct()
     {
@@ -30,10 +30,10 @@ class InstructorController extends Controller
      */
     public function index()
     {
-        $instructors = (new Instructor)->newQuery();
+        $teachers = (new Teacher)->newQuery();
 
         if (request()->has('search')) {
-            $instructors->where('name', 'Like', '%'.request()->input('search').'%');
+            $teachers->where('last_name', 'Like', '%'.request()->input('search').'%');
         }
 
         if (request()->query('sort')) {
@@ -43,15 +43,15 @@ class InstructorController extends Controller
                 $sort_order = 'DESC';
                 $attribute = substr($attribute, 1);
             }
-            $instructors->orderBy($attribute, $sort_order);
+            $teachers->orderBy($attribute, $sort_order);
         } else {
-            $instructors->latest();
+            $teachers->latest();
         }
 
-        $instructors = $instructors->paginate(5)->onEachSide(2)->appends(request()->query());
+        $teachers = $teachers->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        return Inertia::render('Data/Instructor/Index', [
-            'instructors' => $instructors,
+        return Inertia::render('Data/Teacher/Index', [
+            'teachers' => $teachers,
             'filters' => request()->all('search'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),
@@ -70,41 +70,41 @@ class InstructorController extends Controller
     {
         //$roles = Role::all()->pluck("name","id"); grade level
 
-        // return Inertia::render('Data/Instructor/Create', [
+        // return Inertia::render('Data/Teacher/Create', [
         //     'roles' => $roles,
         // ]);
 
-        return Inertia::render('Data/Instructor/Create');
+        return Inertia::render('Data/Teacher/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Admin\StoreInstructorRequest  $request
-     * @param  \App\Actions\Admin\CreateInstructor  $createUser
+     * @param  \App\Http\Requests\Admin\StoreTeacherRequest  $request
+     * @param  \App\Actions\Admin\CreateTeacher  $createUser
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreInstructorRequest $request, CreateInstructor $createInstructor)
+    public function store(StoreTeacherRequest $request, CreateTeacher $createTeacher)
     {
-        $createInstructor->handle($request);
+        $createTeacher->handle($request);
 
-        return redirect()->route('instructor.index')
-                        ->with('message', __('Instructor added successfully.'));
+        return redirect()->route('teacher.index')
+                        ->with('message', __('Teacher added successfully.'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Instructor  $instructor
+     * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function show(Instructor $instructor)
+    public function show(Teacher $teacher)
     {
         // $roles = Role::all()->pluck("name","id");
         // $userHasRoles = array_column(json_decode($user->roles, true), 'id');
 
-        return Inertia::render('Data/Instructor/Show', [
-            'instructor' => $instructor
+        return Inertia::render('Data/Teacher/Show', [
+            'teacher' => $teacher
             // 'roles' => $roles,
             // 'userHasRoles' => $userHasRoles,
         ]);
@@ -113,16 +113,16 @@ class InstructorController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Instructor  $instructor
+     * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function edit(Instructor $instructor)
+    public function edit(Teacher $teacher)
     {
         // $roles = Role::all()->pluck("name","id");
         // $userHasRoles = array_column(json_decode($user->roles, true), 'id');
 
-        return Inertia::render('Data/Instructor/Edit', [
-            'instructor' => $instructor,
+        return Inertia::render('Data/Teacher/Edit', [
+            'teacher' => $teacher,
             // 'roles' => $roles,
             // 'userHasRoles' => $userHasRoles,
         ]);
@@ -131,30 +131,30 @@ class InstructorController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\Admin\UpdateInstructorRequest  $request
-     * @param  \App\Models\Instructor  $user
-     * @param  \App\Actions\Admin\User\UpdateInstructor  $updateInstructor
+     * @param  \App\Http\Requests\Admin\UpdateTeacherRequest  $request
+     * @param  \App\Models\Teacher  $user
+     * @param  \App\Actions\Admin\User\UpdateTeacher  $updateTeacher
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateInstructorRequest $request, Instructor $instructor, UpdateInstructor $updateInstructor)
+    public function update(UpdateTeacherRequest $request, Teacher $teacher, UpdateTeacher $updateTeacher)
     {
-        $updateInstructor->handle($request, $instructor);
+        $updateTeacher->handle($request, $teacher);
 
-        return redirect()->route('instructor.index')
-                        ->with('message', __('Instructor updated successfully.'));
+        return redirect()->route('teacher.index')
+                        ->with('message', __('Teacher updated successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Instructor  $instructor
+     * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Instructor $instructor)
+    public function destroy(Teacher $teacher)
     {
-        $instructor->delete();
+        $teacher->delete();
 
-        return redirect()->route('instructor.index')
-                        ->with('message', __('Instructor deleted successfully'));
+        return redirect()->route('teacher.index')
+                        ->with('message', __('Teacher deleted successfully'));
     }
 }

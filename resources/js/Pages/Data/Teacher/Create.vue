@@ -13,7 +13,6 @@ import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 
 const form = useForm({
-    teacher_id: "",
     last_name: "",
     first_name: "",
     middle_name: "",
@@ -25,15 +24,15 @@ const form = useForm({
 </script>
 
 <template>
-    <Head title="Add instructor" />
+    <Head title="Add teacher" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="Add instructor"
+            title="Add teacher"
             main
         >
             <BaseButton
-                :routeName="route('instructor.index')"
+                :routeName="route('teacher.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -41,26 +40,7 @@ const form = useForm({
                 small
             />
         </SectionTitleLineWithButton>
-        <CardBox is-form @submit.prevent="form.post(route('instructor.store'))">
-            <FormField
-                label="ID Number"
-                :class="{ 'text-red-400': form.errors.teacher_id }"
-            >
-                <FormControl
-                    v-model="form.teacher_id"
-                    type="text"
-                    placeholder="Enter ID Number"
-                    :error="form.errors.teacher_id"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.teacher_id"
-                    >
-                        {{ form.errors.teacher_id }}
-                    </div>
-                </FormControl>
-            </FormField>
-
+        <CardBox is-form @submit.prevent="form.post(route('teacher.store'))">
             <FormField
                 label="Last Name"
                 :class="{ 'text-red-400': form.errors.last_name }"

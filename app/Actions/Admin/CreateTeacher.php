@@ -2,19 +2,19 @@
 
 namespace App\Actions\Admin;
 
-use App\Models\Instructor;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class CreateInstructor
+class CreateTeacher
 {
-    public function handle(Request $request): Instructor
+    public function handle(Request $request): Teacher
     {
-        $instructor = Instructor::create([
+        $teacher = Teacher::create([
             'teacher_id' => $request->teacher_id,
-            'last_name' => $request->last_name,
-            'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
+            'last_name' => Str::title($request->last_name),
+            'first_name' => Str::title($request->first_name),
+            'middle_name' => Str::title($request->middle_name),
             'grade_level_assigned' => $request->grade_level_assigned,
             'special_task' => $request->special_task,
             'image' => $request->image,
@@ -24,6 +24,6 @@ class CreateInstructor
         // $roles = $request->roles ?? [];
         // $user->assignRole($roles);
 
-        return $instructor;
+        return $teacher;
     }
 }

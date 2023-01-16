@@ -16,9 +16,11 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
 import Sort from "@/components/Admin/Sort.vue";
+import FormField from "@/components/FormField.vue";
+import FormControl from "@/components/FormControl.vue";
 
 const props = defineProps({
-    instructors: {
+    teachers: {
         type: Object,
         default: () => ({}),
     },
@@ -40,22 +42,18 @@ const formDelete = useForm({});
 
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
-        formDelete.delete(route("instructor.destroy", id));
+        formDelete.delete(route("teacher.destroy", id));
     }
 }
 </script>
 
 <template>
-    <Head title="Instructor" />
+    <Head title="Teacher" />
     <SectionMain>
-        <SectionTitleLineWithButton
-            :icon="mdiAccountKey"
-            title="Instructors"
-            main
-        >
+        <SectionTitleLineWithButton :icon="mdiAccountKey" title="Teacher" main>
             <BaseButton
                 v-if="can.delete"
-                :route-name="route('instructor.create')"
+                :route-name="route('teacher.create')"
                 :icon="mdiPlus"
                 label="Add"
                 color="info"
@@ -70,15 +68,20 @@ function destroy(id) {
         >
             {{ $page.props.flash.message }}
         </NotificationBar>
-        <CardBox class="mb-6" has-table>
-            <form @submit.prevent="form.get(route('instructor.index'))">
+        <CardBox
+            class="mb-6"
+            has-table
+            is-form
+            @submit.prevent="form.get(route('teacher.index'))"
+        >
+            <FormField>
                 <div class="py-2 flex">
                     <div class="flex pl-4">
-                        <input
-                            type="search"
+                        <FormControl
                             v-model="form.search"
-                            class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            type="text"
                             placeholder="Search"
+                            :error="form.errors.name"
                         />
                         <BaseButton
                             label="Search"
@@ -88,14 +91,14 @@ function destroy(id) {
                         />
                     </div>
                 </div>
-            </form>
+            </FormField>
         </CardBox>
         <CardBox class="mb-6" has-table>
             <table>
                 <thead>
                     <tr>
                         <th>
-                            <Sort label="Full Name" attribute="name" />
+                            <Sort label="Full Name" attribute="last_name" />
                         </th>
                         <th>
                             <Sort label="ID Number" attribute="idNumber" />
@@ -105,22 +108,19 @@ function destroy(id) {
                 </thead>
 
                 <tbody>
-                    <tr
-                        v-for="instructor in instructors.data"
-                        :key="instructor.id"
-                    >
+                    <tr v-for="teacher in teachers.data" :key="teacher.id">
                         <td data-label="Full Name">
                             <Link
-                                :href="route('instructor.show', instructor.id)"
+                                :href="route('teacher.show', teacher.id)"
                                 class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
                             >
-                                {{ instructor.last_name }},
-                                {{ instructor.first_name }}
-                                {{ instructor.middle_name }}
+                                {{ teacher.last_name }},
+                                {{ teacher.first_name }}
+                                {{ teacher.middle_name }}
                             </Link>
                         </td>
                         <td data-label="ID Number">
-                            {{ instructor.teacher_id }}
+                            {{ teacher.teacher_id }}
                         </td>
                         <td
                             v-if="can.edit || can.delete"
@@ -133,7 +133,7 @@ function destroy(id) {
                                 <BaseButton
                                     v-if="can.edit"
                                     :route-name="
-                                        route('instructor.edit', instructor.id)
+                                        route('teacher.edit', teacher.id)
                                     "
                                     color="info"
                                     :icon="mdiSquareEditOutline"
@@ -144,7 +144,7 @@ function destroy(id) {
                                     color="danger"
                                     :icon="mdiTrashCan"
                                     small
-                                    @click="destroy(instructor.id)"
+                                    @click="destroy(teacher.id)"
                                 />
                             </BaseButtons>
                         </td>
@@ -152,7 +152,7 @@ function destroy(id) {
                 </tbody>
             </table>
             <div class="py-4">
-                <!-- <Pagination :data="instructors" /> -->
+                <Pagination :data="teachers" />
             </div>
         </CardBox>
     </SectionMain>

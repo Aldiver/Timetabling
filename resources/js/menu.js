@@ -21,28 +21,38 @@ export default [
     label: "Dashboard",
   },
   {
-    label: "Grade Level",
+    label: "School program",
     icon: mdiSchool,
     menu: [
       {
-        route: 'permission.index',
+        route: 'gradelevel.index',
         icon: mdiNumeric7Box,
-        label: 'Grade 7'
+        label: 'Grade Levels'
       },
       {
-        route: 'role.index',
+        route: 'section.index',
         icon: mdiNumeric8Box,
-        label: 'Grade 8'
+        label: 'Sections'
       },
       {
         route: 'user.index',
         icon: mdiNumeric9Box,
-        label: 'Grade 9'
+        label: 'Subjects'
       },
       {
         route: 'user.index',
         icon: mdiNumeric10Box,
-        label: 'Grade 10'
+        label: 'Class Days'
+      },
+      {
+        route: 'user.index',
+        icon: mdiNumeric10Box,
+        label: 'Periods'
+      },
+      {
+        route: 'user.index',
+        icon: mdiNumeric10Box,
+        label: 'Timeslots'
       },
     ],
   },
@@ -52,9 +62,9 @@ export default [
     label: "Department",
   },
   {
-    route: "instructor.index",
+    route: "teacher.index",
     icon: mdiAccountTie,
-    label: "Instructor",
+    label: "teacher",
   },
   {
     route: "/dashboard",

@@ -13,7 +13,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 
 const props = defineProps({
-    instructor: {
+    teacher: {
         type: Object,
         default: () => ({}),
     },
@@ -29,27 +29,27 @@ const props = defineProps({
 
 const form = useForm({
     _method: "put",
-    teacher_id: props.instructor.teacher_id,
-    last_name: props.instructor.last_name,
-    first_name: props.instructor.first_name,
-    middle_name: props.instructor.middle_name,
-    grade_level_assigned: props.instructor.grade_level_assigned,
-    special_task: props.instructor.special_task,
-    image: props.instructor.image,
-    email: props.instructor.email,
+    teacher_id: props.teacher.teacher_id,
+    last_name: props.teacher.last_name,
+    first_name: props.teacher.first_name,
+    middle_name: props.teacher.middle_name,
+    grade_level_assigned: props.teacher.grade_level_assigned,
+    special_task: props.teacher.special_task,
+    image: props.teacher.image,
+    email: props.teacher.email,
 });
 </script>
 
 <template>
-    <Head title="Update instructor" />
+    <Head title="Update teacher" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="Update instructor"
+            title="Update teacher"
             main
         >
             <BaseButton
-                :route-name="route('instructor.index')"
+                :route-name="route('teacher.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -60,7 +60,7 @@ const form = useForm({
         <CardBox
             is-form
             @submit.prevent="
-                form.post(route('instructor.update', props.instructor.id))
+                form.post(route('teacher.update', props.teacher.id))
             "
         >
             <FormField
