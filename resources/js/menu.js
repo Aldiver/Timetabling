@@ -50,7 +50,7 @@ export default [
         label: 'Periods'
       },
       {
-        route: 'user.index',
+        route: 'timeslot.index',
         icon: mdiNumeric10Box,
         label: 'Timeslots'
       },

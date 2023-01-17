@@ -1,0 +1,98 @@
+<script setup>
+import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
+import { mdiAccountKey, mdiArrowLeftBoldOutline } from "@mdi/js";
+import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+import SectionMain from "@/components/SectionMain.vue";
+import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
+import CardBox from "@/components/CardBox.vue";
+import FormField from "@/components/FormField.vue";
+import FormControl from "@/components/FormControl.vue";
+import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
+import BaseDivider from "@/components/BaseDivider.vue";
+import BaseButton from "@/components/BaseButton.vue";
+import BaseButtons from "@/components/BaseButtons.vue";
+
+const props = defineProps({
+    timeslot: {
+        type: Object,
+        default: () => ({}),
+    },
+    // roles: {
+    //     type: Object,
+    //     default: () => ({}),
+    // },
+    // userHasRoles: {
+    //     type: Object,
+    //     default: () => ({}),
+    // },
+});
+
+const form = useForm({
+    _method: "put",
+    time_slot: props.timeslot.time_slot,
+});
+</script>
+
+<template>
+    <Head title="Update Timeslot" />
+    <SectionMain>
+        <SectionTitleLineWithButton
+            :icon="mdiAccountKey"
+            title="Update Timeslot"
+            main
+        >
+            <BaseButton
+                :route-time_slot="route('timeslot.index')"
+                :icon="mdiArrowLeftBoldOutline"
+                label="Back"
+                color="white"
+                rounded-full
+                small
+            />
+        </SectionTitleLineWithButton>
+        <CardBox
+            is-form
+            @submit.prevent="
+                form.post(route('timeslot.update', props.timeslot.id))
+            "
+        >
+            <FormField
+                label="Timeslot"
+                :class="{ 'text-red-400': form.errors.time_slot }"
+            >
+                <FormControl
+                    v-model="form.time_slot"
+                    type="text"
+                    placeholder="Enter class day"
+                    :error="form.errors.time_slot"
+                >
+                    <div
+                        class="text-red-400 text-sm"
+                        v-if="form.errors.time_slot"
+                    >
+                        {{ form.errors.time_slot }}
+                    </div>
+                </FormControl>
+            </FormField>
+
+            <BaseDivider />
+
+            <template #footer>
+                <BaseButtons>
+                    <BaseButton
+                        type="submit"
+                        color="info"
+                        label="Submit"
+                        :class="{ 'opacity-25': form.processing }"
+                        :disabled="form.processing"
+                    />
+                </BaseButtons>
+            </template>
+        </CardBox>
+    </SectionMain>
+</template>
+<script>
+export default {
+    layout: LayoutAuthenticated,
+};
+</script>
