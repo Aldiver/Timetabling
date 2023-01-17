@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\Subject;
 use Illuminate\Http\Request;
-use App\Models\Gradelevel;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class GradelevelController extends Controller
+class SubjectController extends Controller
 {
     public function __construct()
     {
@@ -17,7 +17,6 @@ class GradelevelController extends Controller
         $this->middleware('can:permission edit', ['only' => ['edit', 'update']]);
         $this->middleware('can:permission delete', ['only' => ['destroy']]);
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -25,10 +24,10 @@ class GradelevelController extends Controller
      */
     public function index()
     {
-        $gradelevels = (new Gradelevel)->newQuery();
+        $subjects = (new Subject)->newQuery();
 
         if (request()->has('search')) {
-            $gradelevels->where('level', 'Like', '%'.request()->input('search').'%');
+            $subjects->where('name', 'Like', '%'.request()->input('search').'%');
         }
 
         if (request()->query('sort')) {
@@ -38,15 +37,15 @@ class GradelevelController extends Controller
                 $sort_order = 'DESC';
                 $attribute = substr($attribute, 1);
             }
-            $gradelevels->orderBy($attribute, $sort_order);
+            $subjects->orderBy($attribute, $sort_order);
         } else {
-            $gradelevels->latest();
+            $subjects->latest();
         }
 
-        $gradelevels = $gradelevels->paginate(5)->onEachSide(2)->appends(request()->query());
+        $subjects = $subjects->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        return Inertia::render('Data/Gradelevel/Index', [
-            'gradelevels' => $gradelevels,
+        return Inertia::render('Data/Subject/Index', [
+            'subjects' => $subjects,
             'filters' => request()->all('search'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),
@@ -63,84 +62,85 @@ class GradelevelController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Gradelevel/Create');
+        return Inertia::render('Data/Subject/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Admin\StorePermissionRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-
         $request->validate([
-            'level' => 'required',
+            'name' => 'required',
+            'hours_per_week' => 'required',
         ]);
 
-        Gradelevel::create($request->all());
+        Subject::create($request->all());
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Grade level added.'));
+        return redirect()->route('subject.index')
+                        ->with('message', __('subject added.'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function show(Gradelevel $gradelevel)
+    public function show(Subject $subject)
     {
-        return Inertia::render('Data/Gradelevel/Show', [
-            'gradelevel' => $gradelevel,
+        return Inertia::render('Data/Subject/Show', [
+            'subject' => $subject,
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function edit(Gradelevel $gradelevel)
+    public function edit(Subject $subject)
     {
-        return Inertia::render('Data/Gradelevel/Edit', [
-            'gradelevel' => $gradelevel,
+        return Inertia::render('Data/Subject/Edit', [
+            'subject' => $subject,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\Admin\UpdatePermissionRequest  $request
-     * @param  \App\Models\Permission  $permission
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Gradelevel $gradelevel)
+    public function update(Request $request, Subject $subject)
     {
         $request->validate([
-            'level' => 'required',
+            'name' => 'required',
+            'hours_per_week' => 'required',
         ]);
 
-        $gradelevel->update($request->all());
+        $subject->update($request->all());
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Grade level updated successfully.'));
+        return redirect()->route('subject.index')
+                        ->with('message', __('subject added.'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\Subject  $subject
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gradelevel $gradelevel)
+    public function destroy(Subject $subject)
     {
-        $gradelevel->delete();
+        $subject->delete();
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Geradelevel deleted successfully'));
+        return redirect()->route('subject.index')
+                        ->with('message', __('Subject deleted successfully'));
     }
 }

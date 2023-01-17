@@ -35,17 +35,17 @@ export default [
         label: 'Sections'
       },
       {
-        route: 'user.index',
+        route: 'subject.index',
         icon: mdiNumeric9Box,
         label: 'Subjects'
       },
       {
-        route: 'user.index',
+        route: 'classday.index',
         icon: mdiNumeric10Box,
         label: 'Class Days'
       },
       {
-        route: 'user.index',
+        route: 'period.index',
         icon: mdiNumeric10Box,
         label: 'Periods'
       },

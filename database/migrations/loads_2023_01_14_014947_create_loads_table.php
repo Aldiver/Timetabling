@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('loads', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('load_id');
             $table->string('load_type');
             $table->string('load_equivalent');
-            $table->string('hours_per_week');
             $table->timestamps();
+
+            //
+            $table->bigInteger('teacher_loading');
         });
     }
 
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('loads');
     }
 };

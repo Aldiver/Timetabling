@@ -11,6 +11,9 @@ Route::group([
     Route::resource('teacher', 'TeacherController');
     Route::resource('gradelevel', 'GradelevelController');
     Route::resource('section', 'SectionController');
+    Route::resource('subject', 'SubjectController');
+    Route::resource('classday', 'ClassdayController');
+    Route::resource('period', 'PeriodController');
     Route::get('edit-account-info', 'UserController@accountInfo')->name('admin.account.info');
     Route::post('edit-account-info', 'UserController@accountInfoStore')->name('admin.account.info.store');
     Route::post('change-password', 'UserController@changePasswordStore')->name('admin.account.password.store');

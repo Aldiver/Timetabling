@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('teachings', function (Blueprint $table) {
+        Schema::create('ohsps', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('load_id');
             $table->string('load_type');
             $table->string('load_equivalent');
-            //subject belongs to teachings
+            $table->string('spfl_type');
+            $table->string('hours_per_week');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('teachings');
+        Schema::dropIfExists('spfls');
     }
 };

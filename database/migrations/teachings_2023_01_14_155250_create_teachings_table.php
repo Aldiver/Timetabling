@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('class_days', function (Blueprint $table) {
+        Schema::create('teachings', function (Blueprint $table) {
             $table->id();
-            $table->string('class_day_name');
+            $table->bigInteger('load_id');
+            //subject belongs to teachings
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('class_days');
+        Schema::dropIfExists('teachings');
     }
 };

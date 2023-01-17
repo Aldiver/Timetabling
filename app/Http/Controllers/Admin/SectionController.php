@@ -93,7 +93,9 @@ class SectionController extends Controller
      */
     public function show(Section $section)
     {
-        //
+        return Inertia::render('Data/Section/Show', [
+            'section' => $section,
+        ]);
     }
 
     /**
@@ -104,7 +106,9 @@ class SectionController extends Controller
      */
     public function edit(Section $section)
     {
-        //
+        return Inertia::render('Data/Section/Edit', [
+            'section' => $section,
+        ]);
     }
 
     /**
@@ -116,7 +120,16 @@ class SectionController extends Controller
      */
     public function update(Request $request, Section $section)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'bldg_letter' => 'required',
+            'room_number' => 'required'
+        ]);
+
+        $section->update($request->all());
+
+        return redirect()->route('section.index')
+                        ->with('message', __('section added.'));
     }
 
     /**

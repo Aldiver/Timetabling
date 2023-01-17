@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class Classday extends Model
 {
     use HasFactory;
 
@@ -14,5 +14,5 @@ class Subject extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'hours_per_week'];
+    protected $fillable = ['name'];
 }

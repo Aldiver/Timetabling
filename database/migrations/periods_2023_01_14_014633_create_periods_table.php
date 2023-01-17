@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('spfls', function (Blueprint $table) {
+        Schema::create('periods', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('load_id');
-            $table->string('load_type');
-            $table->string('load_equivalent');
-            $table->string('spfl_type');
-            $table->string('hours_per_week');
+            $table->string('name');
+            $table->string('number_of_timeslots');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('spfls');
+        Schema::dropIfExists('periods');
     }
 };

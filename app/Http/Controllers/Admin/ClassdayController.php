@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Gradelevel;
+use App\Models\Classday;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class GradelevelController extends Controller
+class ClassdayController extends Controller
 {
     public function __construct()
     {
@@ -25,10 +25,10 @@ class GradelevelController extends Controller
      */
     public function index()
     {
-        $gradelevels = (new Gradelevel)->newQuery();
+        $classdays = (new Classday)->newQuery();
 
         if (request()->has('search')) {
-            $gradelevels->where('level', 'Like', '%'.request()->input('search').'%');
+            $classdays->where('name', 'Like', '%'.request()->input('search').'%');
         }
 
         if (request()->query('sort')) {
@@ -38,15 +38,15 @@ class GradelevelController extends Controller
                 $sort_order = 'DESC';
                 $attribute = substr($attribute, 1);
             }
-            $gradelevels->orderBy($attribute, $sort_order);
+            $classdays->orderBy($attribute, $sort_order);
         } else {
-            $gradelevels->latest();
+            $classdays->latest();
         }
 
-        $gradelevels = $gradelevels->paginate(5)->onEachSide(2)->appends(request()->query());
+        $classdays = $classdays->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        return Inertia::render('Data/Gradelevel/Index', [
-            'gradelevels' => $gradelevels,
+        return Inertia::render('Data/Classday/Index', [
+            'classdays' => $classdays,
             'filters' => request()->all('search'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),
@@ -63,7 +63,7 @@ class GradelevelController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Gradelevel/Create');
+        return Inertia::render('Data/Classday/Create');
     }
 
     /**
@@ -76,13 +76,13 @@ class GradelevelController extends Controller
     {
 
         $request->validate([
-            'level' => 'required',
+            'name' => 'required',
         ]);
 
-        Gradelevel::create($request->all());
+        Classday::create($request->all());
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Grade level added.'));
+        return redirect()->route('classday.index')
+                        ->with('message', __('Class day added.'));
     }
 
     /**
@@ -91,10 +91,10 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function show(Gradelevel $gradelevel)
+    public function show(Classday $classday)
     {
-        return Inertia::render('Data/Gradelevel/Show', [
-            'gradelevel' => $gradelevel,
+        return Inertia::render('Data/Classday/Show', [
+            'classday' => $classday,
         ]);
     }
 
@@ -104,10 +104,10 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function edit(Gradelevel $gradelevel)
+    public function edit(Classday $classday)
     {
-        return Inertia::render('Data/Gradelevel/Edit', [
-            'gradelevel' => $gradelevel,
+        return Inertia::render('Data/Classday/Edit', [
+            'classday' => $classday,
         ]);
     }
 
@@ -118,16 +118,16 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Gradelevel $gradelevel)
+    public function update(Request $request, Classday $classday)
     {
         $request->validate([
-            'level' => 'required',
+            'name' => 'required',
         ]);
 
-        $gradelevel->update($request->all());
+        $classday->update($request->all());
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Grade level updated successfully.'));
+        return redirect()->route('classday.index')
+                        ->with('message', __('Class day updated successfully.'));
     }
 
     /**
@@ -136,11 +136,11 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gradelevel $gradelevel)
+    public function destroy(Classday $classday)
     {
-        $gradelevel->delete();
+        $classday->delete();
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Geradelevel deleted successfully'));
+        return redirect()->route('classday.index')
+                        ->with('message', __('Class day deleted successfully'));
     }
 }

@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Gradelevel;
+use App\Models\Period;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class GradelevelController extends Controller
+class PeriodController extends Controller
 {
     public function __construct()
     {
@@ -25,10 +25,10 @@ class GradelevelController extends Controller
      */
     public function index()
     {
-        $gradelevels = (new Gradelevel)->newQuery();
+        $periods = (new Period)->newQuery();
 
         if (request()->has('search')) {
-            $gradelevels->where('level', 'Like', '%'.request()->input('search').'%');
+            $periods->where('name', 'Like', '%'.request()->input('search').'%');
         }
 
         if (request()->query('sort')) {
@@ -38,15 +38,15 @@ class GradelevelController extends Controller
                 $sort_order = 'DESC';
                 $attribute = substr($attribute, 1);
             }
-            $gradelevels->orderBy($attribute, $sort_order);
+            $periods->orderBy($attribute, $sort_order);
         } else {
-            $gradelevels->latest();
+            $periods->latest();
         }
 
-        $gradelevels = $gradelevels->paginate(5)->onEachSide(2)->appends(request()->query());
+        $periods = $periods->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        return Inertia::render('Data/Gradelevel/Index', [
-            'gradelevels' => $gradelevels,
+        return Inertia::render('Data/Period/Index', [
+            'periods' => $periods,
             'filters' => request()->all('search'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),
@@ -63,7 +63,7 @@ class GradelevelController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Gradelevel/Create');
+        return Inertia::render('Data/Period/Create');
     }
 
     /**
@@ -76,13 +76,14 @@ class GradelevelController extends Controller
     {
 
         $request->validate([
-            'level' => 'required',
+            'name' => 'required',
+            'number_of_timeslots' => 'required'
         ]);
 
-        Gradelevel::create($request->all());
+        Period::create($request->all());
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Grade level added.'));
+        return redirect()->route('period.index')
+                        ->with('message', __('Period added.'));
     }
 
     /**
@@ -91,10 +92,10 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function show(Gradelevel $gradelevel)
+    public function show(Period $period)
     {
-        return Inertia::render('Data/Gradelevel/Show', [
-            'gradelevel' => $gradelevel,
+        return Inertia::render('Data/Period/Show', [
+            'period' => $period,
         ]);
     }
 
@@ -104,10 +105,10 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function edit(Gradelevel $gradelevel)
+    public function edit(Period $period)
     {
-        return Inertia::render('Data/Gradelevel/Edit', [
-            'gradelevel' => $gradelevel,
+        return Inertia::render('Data/Period/Edit', [
+            'period' => $period,
         ]);
     }
 
@@ -118,16 +119,17 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Gradelevel $gradelevel)
+    public function update(Request $request, Period $period)
     {
         $request->validate([
-            'level' => 'required',
+            'name' => 'required',
+            'number_of_timeslots' => 'required'
         ]);
 
-        $gradelevel->update($request->all());
+        $period->update($request->all());
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Grade level updated successfully.'));
+        return redirect()->route('period.index')
+                        ->with('message', __('Period updated successfully.'));
     }
 
     /**
@@ -136,11 +138,11 @@ class GradelevelController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Gradelevel $gradelevel)
+    public function destroy(Period $period)
     {
-        $gradelevel->delete();
+        $period->delete();
 
-        return redirect()->route('gradelevel.index')
-                        ->with('message', __('Geradelevel deleted successfully'));
+        return redirect()->route('period.index')
+                        ->with('message', __('Period deleted successfully'));
     }
 }

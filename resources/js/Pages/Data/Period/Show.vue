@@ -8,7 +8,7 @@ import CardBox from "@/components/CardBox.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 const props = defineProps({
-    section: {
+    period: {
         type: Object,
         default: () => ({}),
     },
@@ -24,15 +24,15 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="View Section" />
+    <Head title="View Period" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View Section"
+            title="View Period"
             main
         >
             <BaseButton
-                :route-name="route('section.index')"
+                :route-name="route('period.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -47,30 +47,18 @@ const props = defineProps({
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Section
+                            Class Day
                         </td>
-                        <td data-label="Section">
-                            {{ section.name }}
-                        </td>
+                        <td data-label="Class day">{{ period.name }}</td>
                     </tr>
                     <tr>
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Building letter
+                            Number of Timeslots
                         </td>
-                        <td data-label="Building letter">
-                            {{ section.building_letter }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
-                        >
-                            Room Number
-                        </td>
-                        <td data-label="Room number">
-                            {{ section.room_number }}
+                        <td data-label="Number of Timeslots">
+                            Number of Timeslots {{ period.number_of_timeslots }}
                         </td>
                     </tr>
                     <tr>
@@ -80,9 +68,7 @@ const props = defineProps({
                             Created
                         </td>
                         <td data-label="Created">
-                            {{
-                                new Date(gradelevel.created_at).toLocaleString()
-                            }}
+                            {{ new Date(period.created_at).toLocaleString() }}
                         </td>
                     </tr>
                 </tbody>

@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('subjects', function (Blueprint $table) {
+        Schema::create('classdays', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('teaching_id');
-            $table->string('subject_name');
-            $table->string('hours_per_week');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subjects');
+        Schema::dropIfExists('classdays');
     }
 };

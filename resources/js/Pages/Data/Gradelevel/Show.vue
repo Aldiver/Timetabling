@@ -28,7 +28,7 @@ const props = defineProps({
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View gradelevel"
+            title="View Grade level"
             main
         >
             <BaseButton
