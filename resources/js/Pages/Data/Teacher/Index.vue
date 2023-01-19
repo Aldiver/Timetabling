@@ -100,9 +100,8 @@ function destroy(id) {
                         <th>
                             <Sort label="Full Name" attribute="last_name" />
                         </th>
-                        <th>
-                            <Sort label="ID Number" attribute="idNumber" />
-                        </th>
+                        <th>Specialization</th>
+                        <th>Gender</th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
@@ -119,8 +118,11 @@ function destroy(id) {
                                 {{ teacher.middle_name }}
                             </Link>
                         </td>
-                        <td data-label="ID Number">
-                            {{ teacher.teacher_id }}
+                        <td data-label="Specialization">
+                            {{ teacher.specialization }}
+                        </td>
+                        <td data-label="Gender">
+                            {{ teacher.gender }}
                         </td>
                         <td
                             v-if="can.edit || can.delete"

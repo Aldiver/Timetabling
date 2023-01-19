@@ -25,14 +25,11 @@ class StoreTeacherRequest extends FormRequest
     public function rules()
     {
         return [
-            'teacher_id' => ['required', 'string', 'max:255', 'unique:instructors'],
             'last_name' => ['required', 'string', 'max:255'],
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['required', 'string', 'max:255'],
-            'grade_level_assigned' => ['required', 'string', 'max:255'],
-            'special_task' => ['required', 'string', 'max:255'],
-            'image' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string','email', 'max:255'],
+            'specialization' => ['required', 'string', 'max:255'],
+            'gender' => ['required', 'string', 'max:255'],
         ];
     }
 }

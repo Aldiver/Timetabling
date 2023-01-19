@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('timeslots', function (Blueprint $table) {
             $table->id();
-            $table->string('time_slot');
+            $table->integer('rank')->unsigned()->nullable;
+            $table->string('time');
             $table->timestamps();
         });
     }

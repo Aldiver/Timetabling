@@ -16,10 +16,8 @@ const form = useForm({
     last_name: "",
     first_name: "",
     middle_name: "",
-    grade_level_assigned: "",
-    special_task: "",
-    image: "",
-    email: "",
+    specialization: "",
+    gender: "Male",
 });
 </script>
 
@@ -99,123 +97,38 @@ const form = useForm({
             </FormField>
 
             <FormField
-                label="Grade Level"
-                :class="{ 'text-red-400': form.errors.grade_level_assigned }"
+                label="Specialization"
+                :class="{ 'text-red-400': form.errors.specialization }"
             >
                 <FormControl
-                    v-model="form.grade_level_assigned"
+                    v-model="form.specialization"
                     type="text"
-                    placeholder="Enter Grade Level"
-                    :error="form.errors.grade_level_assigned"
+                    placeholder="Enter Specialization"
+                    :error="form.errors.specialization"
                 >
                     <div
                         class="text-red-400 text-sm"
-                        v-if="form.errors.grade_level_assigned"
+                        v-if="form.errors.specialization"
                     >
-                        {{ form.errors.grade_level_assigned }}
+                        {{ form.errors.specialization }}
                     </div>
                 </FormControl>
             </FormField>
 
             <FormField
-                label="Special Task"
-                :class="{ 'text-red-400': form.errors.special_task }"
+                label="Gender"
+                :class="{ 'text-red-400': form.errors.gender }"
             >
-                <FormControl
-                    v-model="form.special_task"
-                    type="text"
-                    placeholder="Enter Special Task"
-                    :error="form.errors.special_task"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.special_task"
-                    >
-                        {{ form.errors.special_task }}
-                    </div>
-                </FormControl>
+                <FormCheckRadioGroup
+                    name="gender-radio"
+                    v-model="form.gender"
+                    type="radio"
+                    :error="form.errors.gender"
+                    :options="{ Male: 'Male', Female: 'Female' }"
+                />
             </FormField>
-
-            <FormField
-                label="Insert Image"
-                :class="{ 'text-red-400': form.errors.image }"
-            >
-                <FormControl
-                    v-model="form.image"
-                    type="text"
-                    placeholder="Enter Last Name"
-                    :error="form.errors.image"
-                >
-                    <div class="text-red-400 text-sm" v-if="form.errors.image">
-                        {{ form.errors.image }}
-                    </div>
-                </FormControl>
-            </FormField>
-
-            <FormField
-                label="Email"
-                :class="{ 'text-red-400': form.errors.email }"
-            >
-                <FormControl
-                    v-model="form.email"
-                    type="text"
-                    placeholder="Enter Email"
-                    :error="form.errors.email"
-                >
-                    <div class="text-red-400 text-sm" v-if="form.errors.email">
-                        {{ form.errors.email }}
-                    </div>
-                </FormControl>
-            </FormField>
-
-            <!-- <FormField
-                label="Password"
-                :class="{ 'text-red-400': form.errors.password }"
-            >
-                <FormControl
-                    v-model="form.password"
-                    type="password"
-                    placeholder="Enter Password"
-                    :error="form.errors.password"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.password"
-                    >
-                        {{ form.errors.password }}
-                    </div>
-                </FormControl>
-            </FormField> -->
-
-            <!-- <FormField
-                label="Password Confirmation"
-                :class="{ 'text-red-400': form.errors.password }"
-            >
-                <FormControl
-                    v-model="form.password_confirmation"
-                    type="password"
-                    placeholder="Enter Password Confirmation"
-                    :error="form.errors.password"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.password"
-                    >
-                        {{ form.errors.password }}
-                    </div>
-                </FormControl>
-            </FormField> -->
 
             <BaseDivider />
-
-            <!-- <FormField label="Roles" wrap-body>
-                <FormCheckRadioGroup
-                    v-model="form.roles"
-                    name="roles"
-                    is-column
-                    :options="props.roles"
-                />
-            </FormField> -->
 
             <template #footer>
                 <BaseButtons>

@@ -27,23 +27,8 @@ class TimeslotController extends Controller
     {
         $timeslots = (new Timeslot)->newQuery();
 
-        if (request()->has('search')) {
-            $timeslots->where('time_slot', 'Like', '%'.request()->input('search').'%');
-        }
 
-        if (request()->query('sort')) {
-            $attribute = request()->query('sort');
-            $sort_order = 'ASC';
-            if (strncmp($attribute, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $attribute = substr($attribute, 1);
-            }
-            $timeslots->orderBy($attribute, $sort_order);
-        } else {
-            $timeslots->latest();
-        }
-
-        $timeslots = $timeslots->paginate(5)->onEachSide(2)->appends(request()->query());
+        $timeslots = $timeslots->orderBy('rank', 'ASC')->paginate(5)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Timeslot/Index', [
             'timeslots' => $timeslots,
@@ -74,12 +59,16 @@ class TimeslotController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
-            'time_slot' => 'required',
+            'time_to' => ['required', 'string', 'max:255',],
+            'time_from' => ['required', 'string', 'max:255',],
+            'rank' => 'integer'
         ]);
 
-        Timeslot::create($request->all());
+        Timeslot::create([
+            'time' => $request->time_from.' - '.$request->time_to,
+            'rank' => $request->rank
+        ]);
 
         return redirect()->route('timeslot.index')
                         ->with('message', __('Timeslot added.'));
@@ -121,10 +110,16 @@ class TimeslotController extends Controller
     public function update(Request $request, Timeslot $timeslot)
     {
         $request->validate([
-            'time_slot' => 'required',
+            'time_to' => ['required', 'string', 'max:255',],
+            'time_from' => ['required', 'string', 'max:255',],
+            'rank' => 'integer'
         ]);
 
-        $timeslot->update($request->all());
+        $timeslot->update([
+                'time' => $request->time_from.' - '.$request->time_to,
+                'rank' => $request->rank
+            ]
+            );
 
         return redirect()->route('timeslot.index')
                         ->with('message', __('Timeslot updated successfully.'));

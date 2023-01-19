@@ -8,7 +8,7 @@ import CardBox from "@/components/CardBox.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 const props = defineProps({
-    period: {
+    timeslot: {
         type: Object,
         default: () => ({}),
     },
@@ -24,15 +24,15 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="View Period" />
+    <Head title="View Timeslot" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View Period"
+            title="View Timeslot"
             main
         >
             <BaseButton
-                :route-name="route('period.index')"
+                :route-name="route('timeslot.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -47,18 +47,18 @@ const props = defineProps({
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Class Day
+                            Timeslot Id
                         </td>
-                        <td data-label="Class day">{{ period.name }}</td>
+                        <td data-label="Class day">{{ timeslot.id }}</td>
                     </tr>
                     <tr>
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Number of Timeslots
+                            Time
                         </td>
-                        <td data-label="Number of Timeslots">
-                            Number of Timeslots {{ period.number_of_timeslots }}
+                        <td data-label="Time">
+                            {{ timeslot.time }}
                         </td>
                     </tr>
                     <tr>
@@ -68,7 +68,7 @@ const props = defineProps({
                             Created
                         </td>
                         <td data-label="Created">
-                            {{ new Date(period.created_at).toLocaleString() }}
+                            {{ new Date(timeslot.created_at).toLocaleString() }}
                         </td>
                     </tr>
                 </tbody>

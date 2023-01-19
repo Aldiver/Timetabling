@@ -28,10 +28,10 @@ class UpdateTeacherRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['string', 'max:255'],
-            'grade_level_assigned' => ['string', 'max:255'],
-            'special_task' => ['string', 'max:255'],
-            'image' => ['string', 'max:255'],
-            'email' => ['required', 'string','email', 'max:255'],
+            'specialization' => ['string', 'max:255'],
+            'gender' => ['string', 'max:255'],
+            'designation_name' => ['string', 'max:255'],
+            'designation_period' => ['required', 'string','email', 'max:255'],
         ];
     }
 }

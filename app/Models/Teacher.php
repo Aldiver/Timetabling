@@ -16,13 +16,12 @@ class Teacher extends Model
      */
 
     protected $fillable = [
+        'full_name',
         'last_name',
         'first_name',
         'middle_name',
-        'grade_level_assigned',
-        'special_task',
-        'image',
-        'email',
+        'specialization',
+        'gender'
     ];
 
     /**

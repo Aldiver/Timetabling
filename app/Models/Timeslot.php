@@ -14,5 +14,5 @@ class Timeslot extends Model
      *
      * @var array
      */
-    protected $fillable = ['time_slot'];
+    protected $fillable = ['time', 'rank'];
 }

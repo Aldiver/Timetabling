@@ -16,10 +16,8 @@ class UpdateTeacher
             'last_name' => Str::title($request->last_name),
             'first_name' => Str::title($request->first_name),
             'middle_name' => Str::title($request->middle_name),
-            'grade_level_assigned' => $request->grade_level_assigned,
-            'special_task' => $request->special_task,
-            'image' => $request->image,
-            'email' => $request->email
+            'specialization' => $request->specialization,
+            'gender' => $request->gender,
         ]);
 
         return $teacher;
