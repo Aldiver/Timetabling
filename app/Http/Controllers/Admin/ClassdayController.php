@@ -43,7 +43,7 @@ class ClassdayController extends Controller
             $classdays->latest();
         }
 
-        $classdays = $classdays->paginate(5)->onEachSide(2)->appends(request()->query());
+        $classdays = $classdays->paginate(8)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Classday/Index', [
             'classdays' => $classdays,

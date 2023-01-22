@@ -6,18 +6,17 @@ import { gradientBgPinkRed } from "@/colors";
 </script>
 
 <template>
-  <SectionBanner :class="gradientBgPinkRed">
-    <h1 class="text-3xl text-white mb-6">
-      Like the project? Please star on <b>GitHub</b> ;-)
-    </h1>
-    <div>
-      <BaseButton
-        href="https://github.com/justboil/admin-one-vue-tailwind"
-        :icon="mdiGithub"
-        label="GitHub"
-        target="_blank"
-        rounded-full
-      />
-    </div>
-  </SectionBanner>
+    <SectionBanner :class="gradientBgPinkRed">
+        <h1 class="text-3xl text-white mb-6">
+            <b>Generate New Timetable</b>
+        </h1>
+        <div>
+            <BaseButton
+                :icon="mdiGithub"
+                label="Generate"
+                target="_blank"
+                rounded-full
+            />
+        </div>
+    </SectionBanner>
 </template>

@@ -18,6 +18,10 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
 import Sort from "@/components/Admin/Sort.vue";
+import CardBoxModal from "@/components/CardBoxModal.vue";
+import { ref } from "vue";
+import Create from "./Create.vue";
+import Edit from "./Edit.vue";
 
 const props = defineProps({
     sections: {
@@ -40,6 +44,16 @@ const form = useForm({
 
 const formDelete = useForm({});
 
+const modalEdit = ref(false);
+const modalCreate = ref(false);
+
+var data;
+
+function editClick(id) {
+    data = id;
+    modalEdit.value = !modalEdit.value;
+}
+
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
         formDelete.delete(route("section.destroy", id));
@@ -48,12 +62,20 @@ function destroy(id) {
 </script>
 
 <template>
+    <CardBoxModal v-model="modalEdit" title="">
+        <Edit :section="data" v-model="modalEdit" />
+    </CardBoxModal>
+
+    <CardBoxModal v-model="modalCreate" class="mb-6" title="">
+        <Create v-model="modalCreate" />
+    </CardBoxModal>
+
     <Head title="Section" />
     <SectionMain>
         <SectionTitleLineWithButton :icon="mdiAccountKey" title="Section" main>
             <BaseButton
                 v-if="can.delete"
-                :route-name="route('section.create')"
+                @click="modalCreate = true"
                 :icon="mdiPlus"
                 label="Add"
                 color="info"
@@ -68,31 +90,7 @@ function destroy(id) {
         >
             {{ $page.props.flash.message }}
         </NotificationBar>
-        <CardBox
-            class="mb-6"
-            has-table
-            is-form
-            @submit.prevent="form.get(route('section.index'))"
-        >
-            <FormField>
-                <div class="py-2 flex">
-                    <div class="flex pl-4">
-                        <FormControl
-                            v-model="form.search"
-                            type="text"
-                            placeholder="Search"
-                            :error="form.errors.name"
-                        />
-                        <BaseButton
-                            label="Search"
-                            type="submit"
-                            color="info"
-                            class="ml-4 inline-flex items-center px-4 py-2"
-                        />
-                    </div>
-                </div>
-            </FormField>
-        </CardBox>
+
         <CardBox class="mb-6" has-table>
             <table>
                 <thead>
@@ -100,15 +98,8 @@ function destroy(id) {
                         <th>
                             <Sort label="Section" attribute="name" />
                         </th>
-                        <th>
-                            <Sort
-                                label="Building Letter"
-                                attribute="bldg_letter"
-                            />
-                        </th>
-                        <th>
-                            <Sort label="Room number" attribute="room_number" />
-                        </th>
+                        <th>Building letter</th>
+                        <th>Room number</th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
@@ -139,9 +130,7 @@ function destroy(id) {
                             >
                                 <BaseButton
                                     v-if="can.edit"
-                                    :route-name="
-                                        route('section.edit', section.id)
-                                    "
+                                    @click="editClick(section)"
                                     color="info"
                                     :icon="mdiSquareEditOutline"
                                     small
@@ -159,7 +148,7 @@ function destroy(id) {
                 </tbody>
             </table>
             <div class="py-4">
-                <!-- <Pagination :data="section" /> -->
+                <Pagination :data="sections" />
             </div>
         </CardBox>
     </SectionMain>

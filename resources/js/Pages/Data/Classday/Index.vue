@@ -148,7 +148,7 @@ function destroy(id) {
                 </tbody>
             </table>
             <div class="py-4">
-                <!-- <Pagination :data="classdays" /> -->
+                <Pagination :data="classdays" />
             </div>
         </CardBox>
     </SectionMain>

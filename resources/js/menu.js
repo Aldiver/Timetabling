@@ -16,7 +16,7 @@ import {
 
 export default [
   {
-    route: "/dashboard",
+    route: "dashboard.index",
     icon: mdiMonitor,
     label: "Dashboard",
   },
@@ -57,7 +57,7 @@ export default [
     ],
   },
   {
-    route: "/dashboard",
+    route: "dashboard.index",
     icon: mdiBookOpenPageVariant,
     label: "Department",
   },
@@ -67,7 +67,7 @@ export default [
     label: "teacher",
   },
   {
-    route: "/dashboard",
+    route: "dashboard.index",
     icon: mdiCalendarClock,
     label: "Schedule",
   },

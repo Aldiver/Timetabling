@@ -11,6 +11,27 @@ import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
+import { computed } from "vue";
+const props = defineProps({
+    modelValue: {
+        type: [String, Number, Boolean],
+        default: null,
+    },
+});
+
+const emit = defineEmits(["update:modelValue", "update"]);
+
+const value = computed({
+    get: () => props.modelValue,
+    set: (value) => emit("update:modelValue", value),
+});
+
+const confirmCancel = (mode) => {
+    value.value = false;
+    emit(mode);
+};
+
+const save = () => confirmCancel("update");
 
 const form = useForm({
     name: "",
@@ -20,93 +41,75 @@ const form = useForm({
 </script>
 
 <template>
-    <Head title="Add Section" />
-    <SectionMain>
-        <SectionTitleLineWithButton
-            :icon="mdiAccountKey"
-            title="Add section"
-            main
+    <SectionTitleLineWithButton :icon="mdiAccountKey" title="Add section" main>
+        <slot />
+    </SectionTitleLineWithButton>
+    <CardBox is-form @submit.prevent="form.post(route('section.store'))">
+        <FormField
+            label="Section name"
+            :class="{ 'text-red-400': form.errors.name }"
         >
-            <BaseButton
-                :routeName="route('section.index')"
-                :icon="mdiArrowLeftBoldOutline"
-                label="Back"
-                color="white"
-                rounded-full
-                small
-            />
-        </SectionTitleLineWithButton>
-        <CardBox is-form @submit.prevent="form.post(route('section.store'))">
-            <FormField
-                label="Section name"
-                :class="{ 'text-red-400': form.errors.name }"
+            <FormControl
+                v-model="form.name"
+                type="text"
+                placeholder="Enter section name"
+                :error="form.errors.name"
             >
-                <FormControl
-                    v-model="form.name"
-                    type="text"
-                    placeholder="Enter section name"
-                    :error="form.errors.name"
-                >
-                    <div class="text-red-400 text-sm" v-if="form.errors.name">
-                        {{ form.errors.name }}
-                    </div>
-                </FormControl>
-            </FormField>
-            <FormField
-                label="Building Letter"
-                :class="{ 'text-red-400': form.errors.bldg_letter }"
+                <div class="text-red-400 text-sm" v-if="form.errors.name">
+                    {{ form.errors.name }}
+                </div>
+            </FormControl>
+        </FormField>
+        <FormField
+            label="Building Letter"
+            :class="{ 'text-red-400': form.errors.bldg_letter }"
+        >
+            <FormControl
+                v-model="form.bldg_letter"
+                type="text"
+                placeholder="Enter building letter"
+                :error="form.errors.bldg_letter"
             >
-                <FormControl
-                    v-model="form.bldg_letter"
-                    type="text"
-                    placeholder="Enter building letter"
-                    :error="form.errors.bldg_letter"
+                <div
+                    class="text-red-400 text-sm"
+                    v-if="form.errors.bldg_letter"
                 >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.bldg_letter"
-                    >
-                        {{ form.errors.bldg_letter }}
-                    </div>
-                </FormControl>
-            </FormField>
-            <FormField
-                label="Room Number"
-                :class="{ 'text-red-400': form.errors.room_number }"
+                    {{ form.errors.bldg_letter }}
+                </div>
+            </FormControl>
+        </FormField>
+        <FormField
+            label="Room Number"
+            :class="{ 'text-red-400': form.errors.room_number }"
+        >
+            <FormControl
+                v-model="form.room_number"
+                type="text"
+                placeholder="Enter room number"
+                :error="form.errors.room_number"
             >
-                <FormControl
-                    v-model="form.room_number"
-                    type="text"
-                    placeholder="Enter room number"
-                    :error="form.errors.room_number"
+                <div
+                    class="text-red-400 text-sm"
+                    v-if="form.errors.room_number"
                 >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.room_number"
-                    >
-                        {{ form.errors.room_number }}
-                    </div>
-                </FormControl>
-            </FormField>
+                    {{ form.errors.room_number }}
+                </div>
+            </FormControl>
+        </FormField>
 
-            <BaseDivider />
+        <BaseDivider />
 
-            <template #footer>
-                <BaseButtons>
-                    <BaseButton
-                        type="submit"
-                        color="info"
-                        label="Submit"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                    />
-                </BaseButtons>
-            </template>
-        </CardBox>
-    </SectionMain>
+        <template #footer>
+            <BaseButtons>
+                <BaseButton
+                    type="submit"
+                    color="info"
+                    label="Submit"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                    @click="save"
+                />
+            </BaseButtons>
+        </template>
+    </CardBox>
 </template>
-<script>
-export default {
-    layout: LayoutAuthenticated,
-};
-</script>

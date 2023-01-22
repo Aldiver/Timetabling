@@ -5,6 +5,7 @@ Route::group([
     'prefix' => config('admin.prefix'),
     'middleware' => ['auth'],
 ], function () {
+    Route::resource('dashboard', 'DashboardController');
     Route::resource('user', 'UserController');
     Route::resource('role', 'RoleController');
     Route::resource('permission', 'PermissionController');

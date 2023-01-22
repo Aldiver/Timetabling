@@ -128,8 +128,8 @@ class SectionController extends Controller
 
         $section->update($request->all());
 
-        return redirect()->route('section.index')
-                        ->with('message', __('section added.'));
+        return redirect()->back()
+                        ->with('message', __('section updated.'));
     }
 
     /**
