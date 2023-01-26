@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('teacher_id');
-            $table->string('department_name');
+            $table->bigInteger('teacher_id')->nullable();
+            $table->string('name');
             $table->timestamps();
         });
     }

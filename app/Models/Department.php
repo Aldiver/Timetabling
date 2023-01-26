@@ -14,7 +14,7 @@ class Department extends Model
      *
      * @var array
      */
-    protected $fillable = ['department_name'];
+    protected $fillable = ['name'];
 
     /**
      * The roles that belong to the Department
