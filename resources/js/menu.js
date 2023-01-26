@@ -57,14 +57,14 @@ export default [
     ],
   },
   {
-    route: "dashboard.index",
+    route: "department.index",
     icon: mdiBookOpenPageVariant,
     label: "Department",
   },
   {
     route: "teacher.index",
     icon: mdiAccountTie,
-    label: "teacher",
+    label: "Teacher",
   },
   {
     route: "dashboard.index",

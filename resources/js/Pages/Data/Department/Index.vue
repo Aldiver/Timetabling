@@ -1,14 +1,12 @@
 <script setup>
-import { ref } from "vue";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import {
-    mdiTimetable,
+    mdiAccountKey,
     mdiPlus,
     mdiSquareEditOutline,
     mdiTrashCan,
     mdiAlertBoxOutline,
 } from "@mdi/js";
-import TableSampleClients from "@/components/TableSampleClients.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
@@ -16,14 +14,14 @@ import BaseButton from "@/components/BaseButton.vue";
 import CardBox from "@/components/CardBox.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
-import CardBoxModal from "@/components/CardBoxModal.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
-import Edit from "./Edit.vue";
+import Sort from "@/components/Admin/Sort.vue";
+import CardBoxModal from "@/components/CardBoxModal.vue";
 import Create from "./Create.vue";
-import { isIntegerKey } from "@vue/shared";
-
+import Edit from "./Edit.vue";
+import { ref } from "vue";
 const props = defineProps({
-    timeslots: {
+    departments: {
         type: Object,
         default: () => ({}),
     },
@@ -37,8 +35,6 @@ const props = defineProps({
     },
 });
 
-const formDelete = useForm({});
-
 const modalEdit = ref(false);
 const modalCreate = ref(false);
 
@@ -49,25 +45,30 @@ function editClick(id) {
     modalEdit.value = !modalEdit.value;
 }
 
+const formDelete = useForm({});
+
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
-        formDelete.delete(route("timeslot.destroy", id));
+        formDelete.delete(route("department.destroy", id));
     }
 }
 </script>
 
 <template>
     <CardBoxModal v-model="modalEdit" class="mb-6" title="">
-        <Edit :timeslot="data" v-model="modalEdit" />
+        <Edit :department="data" v-model="modalEdit" />
     </CardBoxModal>
 
     <CardBoxModal v-model="modalCreate" class="mb-6" title="">
         <Create v-model="modalCreate" />
     </CardBoxModal>
-
-    <Head title="Timeslot" />
+    <Head title="Department" />
     <SectionMain>
-        <SectionTitleLineWithButton :icon="mdiTimetable" title="Timeslot" main>
+        <SectionTitleLineWithButton
+            :icon="mdiAccountKey"
+            title="Department"
+            main
+        >
             <BaseButton
                 v-if="can.delete"
                 @click="modalCreate = true"
@@ -77,7 +78,6 @@ function destroy(id) {
                 rounded-full
                 small
             />
-            <!-- :route-name="route('timeslot.create')" -->
         </SectionTitleLineWithButton>
         <NotificationBar
             v-if="$page.props.flash.message"
@@ -86,24 +86,28 @@ function destroy(id) {
         >
             {{ $page.props.flash.message }}
         </NotificationBar>
-
         <CardBox class="mb-6" has-table>
             <table>
                 <thead>
                     <tr>
-                        <th>Timeslot</th>
+                        <th>
+                            <Sort label="Department" attribute="name" />
+                        </th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr v-for="timeslot in timeslots.data" :key="timeslot.id">
-                        <td data-label="Timeslot">
+                    <tr
+                        v-for="department in departments.data"
+                        :key="department.id"
+                    >
+                        <td data-label="Department">
                             <Link
-                                :href="route('timeslot.show', timeslot.id)"
+                                :href="route('department.show', department.id)"
                                 class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
                             >
-                                {{ timeslot.time }}
+                                {{ department.name }}
                             </Link>
                         </td>
                         <td
@@ -114,12 +118,9 @@ function destroy(id) {
                                 type="justify-start lg:justify-end"
                                 no-wrap
                             >
-                                <!-- :route-name="
-                                        route('timeslot.edit', timeslot.id)
-                                    " -->
                                 <BaseButton
                                     v-if="can.edit"
-                                    @click="editClick(timeslot)"
+                                    @click="editClick(department)"
                                     color="info"
                                     :icon="mdiSquareEditOutline"
                                     small
@@ -129,7 +130,7 @@ function destroy(id) {
                                     color="danger"
                                     :icon="mdiTrashCan"
                                     small
-                                    @click="destroy(timeslot.id)"
+                                    @click="destroy(department.id)"
                                 />
                             </BaseButtons>
                         </td>
@@ -137,7 +138,7 @@ function destroy(id) {
                 </tbody>
             </table>
             <div class="py-4">
-                <Pagination :data="timeslots" />
+                <Pagination :data="departments" />
             </div>
         </CardBox>
     </SectionMain>

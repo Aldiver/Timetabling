@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Teacher;
+use App\Models\Section;
+use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 class DashboardController extends Controller
@@ -23,10 +25,12 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $teachers = Teacher::all();;
+        $teachers = Teacher::count();
+        $sections = Section::count();
+        $departments = Department::count();
 
         return Inertia::render('Data/Dashboard/Index', [
-            'teachers' => $teachers,
+            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments
         ]);
     }
 }

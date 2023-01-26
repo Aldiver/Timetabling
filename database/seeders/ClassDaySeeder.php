@@ -18,31 +18,38 @@ class ClassDaySeeder extends Seeder
         $days = [
             [
                 'name' => 'Monday',
-                'short_name' => 'Mon'
+                'short_name' => 'Mon',
+                'rank' => 1
             ],
             [
                 'name' => 'Tuesday',
-                'short_name' => 'Tue'
+                'short_name' => 'Tue',
+                'rank' => 2
             ],
             [
                 'name' => 'Wednesday',
-                'short_name' => 'Wed'
+                'short_name' => 'Wed',
+                'rank' => 3
             ],
             [
                 'name' => 'Thursday',
-                'short_name' => 'Thur'
+                'short_name' => 'Thur',
+                'rank' => 4
             ],
             [
                 'name' => 'Friday',
-                'short_name' => 'Fri'
+                'short_name' => 'Fri',
+                'rank' => 5
             ],
             [
                 'name' => 'Saturday',
-                'short_name' => 'Sat'
+                'short_name' => 'Sat',
+                'rank' => 6
             ],
             [
                 'name' => 'Sunday',
-                'short_name' => 'Sun'
+                'short_name' => 'Sun',
+                'rank' => 7
             ]
         ];
 

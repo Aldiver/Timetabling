@@ -27,8 +27,16 @@ import SectionBannerStarOnGitHub from "@/components/SectionBannerStarOnGitHub.vu
 
 const props = defineProps({
     teachers: {
-        type: Object,
-        default: () => ({}),
+        type: Number,
+        default: 0,
+    },
+    sections: {
+        type: Number,
+        default: 0,
+    },
+    departments: {
+        type: Number,
+        default: 0,
     },
 });
 
@@ -65,26 +73,25 @@ const transactionBarItems = computed(() => mainStore.history);
                 trend="Teacher Data"
                 color="text-emerald-500"
                 :icon="mdiAccountMultiple"
-                :number="teachers.length"
-                label="Clients"
+                :number="teachers"
+                label="Teacher"
+                to="teacher.index"
             />
             <CardBoxWidget
-                trend="12%"
-                trend-type="down"
+                trend="Setion Data"
                 color="text-blue-500"
                 :icon="mdiCartOutline"
-                :number="7770"
-                prefix="$"
-                label="Sales"
+                :number="sections"
+                label="Sections"
+                to="section.index"
             />
             <CardBoxWidget
-                trend="Overflow"
-                trend-type="alert"
+                trend="Department Data"
                 color="text-red-500"
                 :icon="mdiChartTimelineVariant"
-                :number="256"
-                suffix="%"
-                label="Performance"
+                :number="departments"
+                label="Department"
+                to="department.index"
             />
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -123,22 +130,7 @@ const transactionBarItems = computed(() => mainStore.history);
         </SectionTitleLineWithButton>
 
         <CardBox class="mb-6">
-            <div v-if="chartData">
-                <line-chart :data="chartData" class="h-96" />
-            </div>
-        </CardBox>
-
-        <SectionTitleLineWithButton
-            :icon="mdiAccountMultiple"
-            title="Clients"
-        />
-
-        <NotificationBar color="info" :icon="mdiMonitorCellphone">
-            <b>Responsive table.</b> Collapses on mobile
-        </NotificationBar>
-
-        <CardBox has-table>
-            <TableSampleClients />
+            <div>Display none if no current timetable for school year</div>
         </CardBox>
     </SectionMain>
 </template>
