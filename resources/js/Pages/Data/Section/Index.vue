@@ -36,6 +36,10 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    gradelevels: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const form = useForm({
@@ -67,7 +71,7 @@ function destroy(id) {
     </CardBoxModal>
 
     <CardBoxModal v-model="modalCreate" class="mb-6" title="">
-        <Create v-model="modalCreate" />
+        <Create v-model="modalCreate" :gradelevels="gradelevels" />
     </CardBoxModal>
 
     <Head title="Section" />
@@ -100,6 +104,7 @@ function destroy(id) {
                         </th>
                         <th>Building letter</th>
                         <th>Room number</th>
+                        <th>Grade Level</th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
@@ -119,6 +124,10 @@ function destroy(id) {
                         </td>
                         <td data-label="Room number">
                             {{ section.room_number }}
+                        </td>
+
+                        <td data-label="Department">
+                            {{ gradelevels[section.gradelevel_id] }}
                         </td>
                         <td
                             v-if="can.edit || can.delete"

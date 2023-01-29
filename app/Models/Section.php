@@ -15,4 +15,9 @@ class Section extends Model
      * @var array
      */
     protected $fillable = ['name', 'bldg_letter', 'room_number'];
+
+    public function gradelevel()
+    {
+        return $this->belongsTo(Gradelevel::class);
+    }
 }

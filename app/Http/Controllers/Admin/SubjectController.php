@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Subject;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -24,8 +25,9 @@ class SubjectController extends Controller
      */
     public function index()
     {
+        $departments = Department::all()->pluck("name","id");
         $subjects = (new Subject)->newQuery();
-
+        // $departments = Department::all()->pluck("name","id");
         if (request()->has('search')) {
             $subjects->where('name', 'Like', '%'.request()->input('search').'%');
         }
@@ -47,6 +49,7 @@ class SubjectController extends Controller
         return Inertia::render('Data/Subject/Index', [
             'subjects' => $subjects,
             'filters' => request()->all('search'),
+            'departments' => $departments,
             'can' => [
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
@@ -62,7 +65,15 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Subject/Create');
+        $departments = Department::all()->pluck("name","id");
+
+        if($departments->count() == 0){
+            return redirect()->route('subject.index')
+                        ->with('error', __('No departments found'));
+        }
+        return Inertia::render('Data/Subject/Create', [
+            'departments' => $departments,
+        ]);
     }
 
     /**
@@ -73,12 +84,19 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'name' => 'required',
             'hours_per_week' => 'required',
+            'departments' => ['required' , 'string'],
         ]);
 
-        Subject::create($request->all());
+        $department = Department::where('name', $request->departments)->first();
+        $subject = Subject::create([
+            'name' => $request->name,
+            'hours_per_week' => $request->hours_per_week,
+        ]);
+        $department->subjects()->save($subject);
 
         return redirect()->route('subject.index')
                         ->with('message', __('subject added.'));

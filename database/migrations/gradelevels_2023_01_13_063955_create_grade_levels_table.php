@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('gradelevels', function (Blueprint $table) {
             $table->id();
-            $table->integer('level');
+            $table->string('level');
             $table->timestamps();
         });
     }

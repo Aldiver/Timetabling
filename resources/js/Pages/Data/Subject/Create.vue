@@ -12,10 +12,23 @@ import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 
+const props = defineProps({
+    departments: {
+        type: Object,
+        default: () => ({}),
+    },
+});
+
 const form = useForm({
     name: "",
     hours_per_week: "",
+    departments: "",
 });
+
+const deptDropdown = Object.keys(props.departments).map((key) => ({
+    id: key,
+    label: props.departments[key],
+}));
 </script>
 
 <template>
@@ -71,6 +84,25 @@ const form = useForm({
             </FormField>
 
             <BaseDivider />
+
+            <FormField
+                label="Department"
+                :class="{ 'text-red-400': form.errors.departments }"
+            >
+                <FormControl
+                    v-model="form.departments"
+                    placeholder="Departments"
+                    :error="form.errors.departments"
+                    class="xl:w-1/2"
+                    :options="deptDropdown"
+                />
+                <div
+                    class="text-red-400 text-sm"
+                    v-if="form.errors.departments"
+                >
+                    {{ form.errors.departments }}
+                </div>
+            </FormField>
 
             <template #footer>
                 <BaseButtons>

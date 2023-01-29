@@ -21,10 +21,9 @@ class Department extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function teachers(): BelongsToMany
+    public function subjects()
     {
-        return $this->belongsToMany(Teacher::class)
-        ->withPivot(['string_id']);
+        return $this->hasMany(Subject::class);
 
         // $department->teachers()->attach($teacher)
     }

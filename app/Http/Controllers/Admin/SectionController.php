@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Section;
+use App\Models\Gradelevel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,7 @@ class SectionController extends Controller
      */
     public function index()
     {
+        $gradelevels = Gradelevel::all()->pluck("level","id");
         $sections = (new Section)->newQuery();
 
         if (request()->has('search')) {
@@ -47,6 +49,7 @@ class SectionController extends Controller
         return Inertia::render('Data/Section/Index', [
             'sections' => $sections,
             'filters' => request()->all('search'),
+            'gradelevels' => $gradelevels,
             'can' => [
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
@@ -62,7 +65,15 @@ class SectionController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Section/Create');
+        $gradelevels = Gradelevel::all()->pluck("level","id");
+
+        if($gradelevels->count() == 0){
+            return redirect()->route('section.index')
+                        ->with('error', __('No Gradelevel found'));
+        }
+        return Inertia::render('Data/Section/Create', [
+            'gradelevels' => $gradelevels,
+        ]);
     }
 
     /**
@@ -76,10 +87,18 @@ class SectionController extends Controller
         $request->validate([
             'name' => 'required',
             'bldg_letter' => 'required',
-            'room_number' => 'required'
+            'room_number' => 'required',
+            'gradelevels' => 'required'
         ]);
 
-        Section::create($request->all());
+        $gradelevel = Gradelevel::where('level', $request->gradelevels)->first();
+        $section = Section::create([
+            'name' => $request->name,
+            'bldg_letter' =>$request->bldg_letter,
+            'room_number' => $request->room_number,
+        ]);
+        $gradelevel->sections()->save($section);
+
 
         return redirect()->route('section.index')
                         ->with('message', __('section added.'));

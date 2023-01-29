@@ -12,10 +12,15 @@ import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import { computed } from "vue";
+
 const props = defineProps({
     modelValue: {
         type: [String, Number, Boolean],
         default: null,
+    },
+    gradelevels: {
+        type: Object,
+        default: () => ({}),
     },
 });
 
@@ -37,7 +42,13 @@ const form = useForm({
     name: "",
     bldg_letter: "",
     room_number: "",
+    gradelevels: "",
 });
+
+const gradelevelsDropdown = Object.keys(props.gradelevels).map((key) => ({
+    id: key,
+    label: props.gradelevels[key],
+}));
 </script>
 
 <template>
@@ -98,6 +109,22 @@ const form = useForm({
         </FormField>
 
         <BaseDivider />
+
+        <FormField
+            label="Grade level"
+            :class="{ 'text-red-400': form.errors.gradelevels }"
+        >
+            <FormControl
+                v-model="form.gradelevels"
+                placeholder="Grade levels"
+                :error="form.errors.gradelevels"
+                class="xl:w-1/2"
+                :options="gradelevelsDropdown"
+            />
+            <div class="text-red-400 text-sm" v-if="form.errors.gradelevels">
+                {{ form.errors.gradelevels }}
+            </div>
+        </FormField>
 
         <template #footer>
             <BaseButtons>

@@ -18,10 +18,9 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
 import Sort from "@/components/Admin/Sort.vue";
-import { ref, onMounted } from "vue";
 
 const props = defineProps({
-    subjects: {
+    gradelevels: {
         type: Object,
         default: () => ({}),
     },
@@ -30,10 +29,6 @@ const props = defineProps({
         default: () => ({}),
     },
     can: {
-        type: Object,
-        default: () => ({}),
-    },
-    departments: {
         type: Object,
         default: () => ({}),
     },
@@ -47,25 +42,22 @@ const formDelete = useForm({});
 
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
-        formDelete.delete(route("subject.destroy", id));
+        formDelete.delete(route("gradelevel.destroy", id));
     }
 }
-
-let isMounted = ref(true);
-onMounted(() => {
-    setTimeout(() => {
-        isMounted.value = false;
-    }, 3000);
-});
 </script>
 
 <template>
-    <Head title="Subject" />
+    <Head title="School Program" />
     <SectionMain>
-        <SectionTitleLineWithButton :icon="mdiAccountKey" title="Subject" main>
+        <SectionTitleLineWithButton
+            :icon="mdiAccountKey"
+            title="School Program"
+            main
+        >
             <BaseButton
                 v-if="can.delete"
-                :route-name="route('subject.create')"
+                :route-name="route('schoolprogram.create')"
                 :icon="mdiPlus"
                 label="Add"
                 color="info"
@@ -74,26 +66,17 @@ onMounted(() => {
             />
         </SectionTitleLineWithButton>
         <NotificationBar
-            v-if="$page.props.flash.message && isMounted"
+            v-if="$page.props.flash.message"
             color="success"
             :icon="mdiAlertBoxOutline"
         >
             {{ $page.props.flash.message }}
         </NotificationBar>
-
-        <NotificationBar
-            v-if="$page.props.flash.error"
-            color="danger"
-            :icon="mdiAlertBoxOutline"
-        >
-            {{ $page.props.flash.error }}
-        </NotificationBar>
-
         <CardBox
             class="mb-6"
             has-table
             is-form
-            @submit.prevent="form.get(route('subject.index'))"
+            @submit.prevent="form.get(route('gradelevel.index'))"
         >
             <FormField>
                 <div class="py-2 flex">
@@ -119,34 +102,24 @@ onMounted(() => {
                 <thead>
                     <tr>
                         <th>
-                            <Sort label="Subject" attribute="name" />
+                            <Sort label="Grade Level" attribute="level" />
                         </th>
-                        <th>
-                            <Sort
-                                label="Hours per Week"
-                                attribute="hours_per_week"
-                            />
-                        </th>
-                        <th>Department</th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr v-for="subject in subjects.data" :key="subject.id">
-                        <td data-label="Subject">
+                    <tr
+                        v-for="gradelevel in gradelevels.data"
+                        :key="gradelevel.id"
+                    >
+                        <td data-label="Grade Level">
                             <Link
-                                :href="route('subject.show', subject.id)"
+                                :href="route('gradelevel.show', gradelevel.id)"
                                 class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
                             >
-                                {{ subject.name }}
+                                {{ gradelevel.level }}
                             </Link>
-                        </td>
-                        <td data-label="Hours per week">
-                            {{ subject.hours_per_week }}
-                        </td>
-                        <td data-label="Department">
-                            {{ departments[subject.department_id] }}
                         </td>
                         <td
                             v-if="can.edit || can.delete"
@@ -159,7 +132,7 @@ onMounted(() => {
                                 <BaseButton
                                     v-if="can.edit"
                                     :route-name="
-                                        route('subject.edit', subject.id)
+                                        route('gradelevel.edit', gradelevel.id)
                                     "
                                     color="info"
                                     :icon="mdiSquareEditOutline"
@@ -170,7 +143,7 @@ onMounted(() => {
                                     color="danger"
                                     :icon="mdiTrashCan"
                                     small
-                                    @click="destroy(subject.id)"
+                                    @click="destroy(gradelevel.id)"
                                 />
                             </BaseButtons>
                         </td>
@@ -178,7 +151,7 @@ onMounted(() => {
                 </tbody>
             </table>
             <div class="py-4">
-                <Pagination :data="subjects" />
+                <!-- <Pagination :data="gradelevels" /> -->
             </div>
         </CardBox>
     </SectionMain>

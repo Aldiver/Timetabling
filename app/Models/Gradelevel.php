@@ -19,6 +19,6 @@ class Gradelevel extends Model
 
     public function sections()
     {
-        return $this->hasMany(Section::class, [Teacher::class, TeacherLoading::class]);
+        return $this->hasMany(Section::class);
     }
 }

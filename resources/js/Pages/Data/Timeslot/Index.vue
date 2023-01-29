@@ -8,7 +8,6 @@ import {
     mdiTrashCan,
     mdiAlertBoxOutline,
 } from "@mdi/js";
-import TableSampleClients from "@/components/TableSampleClients.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";

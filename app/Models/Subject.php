@@ -15,4 +15,14 @@ class Subject extends Model
      * @var array
      */
     protected $fillable = ['name', 'hours_per_week'];
+
+    /**
+     * Get the department that owns the Subject
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
 }

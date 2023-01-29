@@ -11,6 +11,7 @@ Route::group([
     Route::resource('role', 'RoleController');
     Route::resource('permission', 'PermissionController');
     Route::resource('teacher', 'TeacherController');
+    Route::resource('schoolprogram', 'SchoolprogramController');
     Route::resource('gradelevel', 'GradelevelController');
     Route::resource('section', 'SectionController');
     Route::resource('subject', 'SubjectController');

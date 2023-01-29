@@ -25,6 +25,11 @@ export default [
     icon: mdiSchool,
     menu: [
       {
+            route: 'schoolprogram.index',
+            icon: mdiNumeric7Box,
+            label: 'School Program'
+      },
+      {
         route: 'gradelevel.index',
         icon: mdiNumeric7Box,
         label: 'Grade Levels'
