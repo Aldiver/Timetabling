@@ -31,7 +31,7 @@ class UpdateTeacherRequest extends FormRequest
             'specialization' => ['string', 'max:255'],
             'gender' => ['string', 'max:255'],
             'designation_name' => ['string', 'max:255'],
-            'designation_period' => ['required', 'string','email', 'max:255'],
+            'designation_period' => ['string','email', 'max:255'],
         ];
     }
 }

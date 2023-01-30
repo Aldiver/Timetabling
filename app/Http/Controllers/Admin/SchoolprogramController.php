@@ -55,6 +55,47 @@ class SchoolprogramController extends Controller
     }
 
     /**
+     * checkForm a checks the form inputs.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function checkForm(Request $request)
+    {
+        $stepvalue = $request->input('stepValue');
+
+
+        switch ($stepvalue) {
+            case "SCHOOLYEAR":
+                $request->validate([
+                    'schoolyear' => ['required'],
+                ]);
+                break;
+            case "GRADELEVEL":
+                $request->validate([
+                    'levels' => 'required|array',
+                ]);
+                break;
+            case 'SECTION':
+                $request->validate([
+                    'sections' => 'required|array',
+                ]);
+                break;
+            case 'SCHEDULE':
+                $request->validate([
+                    'timeslots' => 'required|array',
+                    'classdays' => 'required|array',
+                ]);
+                break;
+            default:
+                // code to be executed if $expression is different from all cases;
+                break;
+        }
+
+        return to_route('schoolprogram.create');
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -62,7 +103,13 @@ class SchoolprogramController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'schoolyear' => ['required'],
+
+        ]);
+
+        return redirect()->route('schoolprogram.index')
+                        ->with('message', __('school program added.'));
     }
 
     /**

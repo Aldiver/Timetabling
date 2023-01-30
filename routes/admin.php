@@ -21,4 +21,5 @@ Route::group([
     Route::get('edit-account-info', 'UserController@accountInfo')->name('admin.account.info');
     Route::post('edit-account-info', 'UserController@accountInfoStore')->name('admin.account.info.store');
     Route::post('change-password', 'UserController@changePasswordStore')->name('admin.account.password.store');
+    Route::post('check-form', 'SchoolprogramController@checkForm')->name('schoolprogram.check.form');
 });
