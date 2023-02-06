@@ -29,8 +29,13 @@ class Teacher extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function departments(): HasMany
+    public function department()
     {
-        return $this->hasMany(Department::class);
+    return $this->belongsToMany(Department::class, 'teacher_gl_dep');
+    }
+
+    public function gradelevel()
+    {
+    return $this->belongsToMany(Gradelevel::class, 'teacher_gl_dep')->withPivot('department_id');
     }
 }

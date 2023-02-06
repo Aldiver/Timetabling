@@ -108,8 +108,6 @@ const gradelevelsDropdown = Object.keys(props.gradelevels).map((key) => ({
             </FormControl>
         </FormField>
 
-        <BaseDivider />
-
         <FormField
             label="Grade level"
             :class="{ 'text-red-400': form.errors.gradelevels }"
@@ -125,6 +123,8 @@ const gradelevelsDropdown = Object.keys(props.gradelevels).map((key) => ({
                 {{ form.errors.gradelevels }}
             </div>
         </FormField>
+
+        <BaseDivider />
 
         <template #footer>
             <BaseButtons>

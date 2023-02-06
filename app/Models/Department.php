@@ -27,4 +27,9 @@ class Department extends Model
 
         // $department->teachers()->attach($teacher)
     }
+
+    public function teachers()
+    {
+    return $this->belongsToMany(Teacher::class, 'teacher_gl_dep')->withPivot('gradelevel_id');
+    }
 }

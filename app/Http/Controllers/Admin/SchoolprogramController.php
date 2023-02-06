@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Schoolprogram;
+use App\Models\SchoolProgram;
 use App\Models\Gradelevel;
 use App\Models\Section;
 use App\Models\Timeslot;
@@ -29,7 +29,11 @@ class SchoolprogramController extends Controller
      */
     public function index()
     {
+        $schoolprogram = SchoolProgram::with('gradelevels','sections')->get();
+
+
         return Inertia::render('Data/Schoolprogram/Index', [
+            'schoolprogram' => $schoolprogram,
             'can' => [
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
@@ -48,7 +52,7 @@ class SchoolprogramController extends Controller
         return Inertia::render('Data/Schoolprogram/Create', [
             'gradelevels' => Gradelevel::all()->pluck("level","id"),
             'sections' => Section::all()->map->only('name', 'id', 'gradelevel_id'),
-            'timeslots' => Timeslot::orderBy('rank', 'asc')->get(),
+            'timeslots' => Timeslot::all(),
             'classdays' => Classday::orderBy('rank', 'asc')->get(),
             'teachers' => Teacher::all()->map->only('first_name', 'last_name', 'middle_name', 'id'),
         ]);
@@ -68,7 +72,7 @@ class SchoolprogramController extends Controller
         switch ($stepvalue) {
             case "SCHOOLYEAR":
                 $request->validate([
-                    'schoolyear' => ['required'],
+                    'school_year' => ['required'],
                 ]);
                 break;
             case "GRADELEVEL":
@@ -104,9 +108,24 @@ class SchoolprogramController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'schoolyear' => ['required'],
-
+            'teachers' => ['required'],
         ]);
+
+        // dd($request->all());
+
+        $schoolProgram = SchoolProgram::create([
+            'school_year' => $request->school_year,
+        ]);
+
+        $schoolProgram->gradelevels()->attach($request->levels);
+
+        foreach ($request->sections as $section) {
+        $section = Section::find($section['id']);
+        $schoolProgram->sections()->attach($section);
+        };
+
+        // dd($schoolProgram);
+
 
         return redirect()->route('schoolprogram.index')
                         ->with('message', __('school program added.'));
@@ -115,10 +134,10 @@ class SchoolprogramController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Schoolprogram  $schoolprogram
+     * @param  \App\Models\SchoolProgram  $schoolprogram
      * @return \Illuminate\Http\Response
      */
-    public function show(Schoolprogram $schoolprogram)
+    public function show(SchoolProgram $schoolprogram)
     {
         //
     }
@@ -126,10 +145,10 @@ class SchoolprogramController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Schoolprogram  $schoolprogram
+     * @param  \App\Models\SchoolProgram  $schoolprogram
      * @return \Illuminate\Http\Response
      */
-    public function edit(Schoolprogram $schoolprogram)
+    public function edit(SchoolProgram $schoolprogram)
     {
         //
     }
@@ -138,10 +157,10 @@ class SchoolprogramController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Schoolprogram  $schoolprogram
+     * @param  \App\Models\SchoolProgram  $schoolprogram
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Schoolprogram $schoolprogram)
+    public function update(Request $request, SchoolProgram $schoolprogram)
     {
         //
     }
@@ -149,10 +168,10 @@ class SchoolprogramController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Schoolprogram  $schoolprogram
+     * @param  \App\Models\SchoolProgram  $schoolprogram
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Schoolprogram $schoolprogram)
+    public function destroy(SchoolProgram $schoolprogram)
     {
         //
     }

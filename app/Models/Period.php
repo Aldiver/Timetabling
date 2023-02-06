@@ -14,5 +14,10 @@ class Period extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'number_of_timeslots'];
+    protected $fillable = ['rank',];
+
+    public function timeslot()
+    {
+        return $this->belongsTo(Timeslot::class);
+    }
 }

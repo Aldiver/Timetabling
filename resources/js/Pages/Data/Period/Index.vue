@@ -6,6 +6,9 @@ import {
     mdiSquareEditOutline,
     mdiTrashCan,
     mdiAlertBoxOutline,
+    mdiPlusCircleOutline,
+    mdiMinusCircleOutline,
+    mdiPlusMinusVariant,
 } from "@mdi/js";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
@@ -17,14 +20,26 @@ import CardBox from "@/components/CardBox.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
+import IconRounded from "@/components/IconRounded.vue";
+import BaseIcon from "@/components/BaseIcon.vue";
 import Sort from "@/components/Admin/Sort.vue";
+import Create from "./Create.vue";
+import { ref } from "vue";
 
 const props = defineProps({
     periods: {
         type: Object,
         default: () => ({}),
     },
-    filters: {
+    timeslots: {
+        type: Object,
+        default: () => ({}),
+    },
+    classdays: {
+        type: Object,
+        default: () => ({}),
+    },
+    unassignedTimeslots: {
         type: Object,
         default: () => ({}),
     },
@@ -34,11 +49,38 @@ const props = defineProps({
     },
 });
 
-const form = useForm({
-    search: props.filters.search,
-});
-
 const formDelete = useForm({});
+
+const classdayCount = ref(5);
+const showEditButton = ref(false);
+const addRow = ref(false);
+
+const addCol = () => {
+    if (classdayCount.value >= 7) {
+        return;
+    }
+    classdayCount.value += 1;
+    showEditButton.value = false;
+};
+
+const removeCol = () => {
+    classdayCount.value -= 1;
+    showEditButton.value = false;
+};
+
+function showEdit() {
+    showEditButton.value = true;
+}
+
+function addNewRow() {
+    addRow.value = true;
+}
+
+const emit = defineEmits(["submit-clicked"]);
+
+const submitClicked = () => {
+    addRow.value = false;
+};
 
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
@@ -53,7 +95,7 @@ function destroy(id) {
         <SectionTitleLineWithButton :icon="mdiAccountKey" title="Period" main>
             <BaseButton
                 v-if="can.delete"
-                :route-name="route('period.create')"
+                @click="addNewRow"
                 :icon="mdiPlus"
                 label="Add"
                 color="info"
@@ -68,65 +110,65 @@ function destroy(id) {
         >
             {{ $page.props.flash.message }}
         </NotificationBar>
-        <CardBox
-            class="mb-6"
-            has-table
-            is-form
-            @submit.prevent="form.get(route('period.index'))"
-        >
-            <FormField>
-                <div class="py-2 flex">
-                    <div class="flex pl-4">
-                        <FormControl
-                            v-model="form.search"
-                            type="text"
-                            placeholder="Search"
-                            :error="form.errors.name"
-                        />
-                        <BaseButton
-                            label="Search"
-                            type="submit"
-                            color="info"
-                            class="ml-4 inline-flex items-center px-4 py-2"
-                        />
-                    </div>
-                </div>
-            </FormField>
-        </CardBox>
         <CardBox class="mb-6" has-table>
             <table>
                 <thead>
                     <tr>
-                        <th>
-                            <Sort label="Period" attribute="name" />
+                        <th class="before:hidden lg:w-1 whitespace-nowrap">
+                            Period
                         </th>
-                        <th>
-                            <Sort
-                                label="Number of timeslots"
-                                attribute="number_of_timeslots"
+                        <th class="relative lg:w-1/3">Timeslots</th>
+                        <th v-for="index in classdayCount" :key="index">
+                            {{ classdays[index] }}
+                        </th>
+                        <th
+                            v-if="addRow"
+                            class="before:hidden lg:w-1 whitespace-nowrap"
+                        >
+                            <IconRounded
+                                v-if="!showEditButton"
+                                :icon="mdiPlusMinusVariant"
+                                color="light"
+                                class="mr-3"
+                                bg
+                                @click="showEdit"
                             />
+                            <BaseButtons
+                                v-if="showEditButton"
+                                type="justify-start lg:justify-end"
+                                no-wrap
+                            >
+                                <BaseButton
+                                    v-if="can.edit"
+                                    color="danger"
+                                    @click="removeCol"
+                                    :icon="mdiMinusCircleOutline"
+                                    small
+                                />
+                                <BaseButton
+                                    v-if="can.delete"
+                                    color="success"
+                                    :icon="mdiPlusCircleOutline"
+                                    small
+                                    @click="addCol"
+                                />
+                            </BaseButtons>
                         </th>
-                        <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <tr v-for="period in periods.data" :key="period.id">
                         <td data-label="Period">
-                            <Link
-                                :href="route('period.show', period.id)"
-                                class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
-                            >
-                                {{ period.name }}
-                            </Link>
+                            <span>
+                                {{ period.rank }}
+                            </span>
                         </td>
-                        <td data-label="Number of hours">
-                            {{ period.number_of_timeslots }}
+                        <td data-label="Timeslots">
+                            {{ timeslots[period.timeslot_id] }}
                         </td>
-                        <td
-                            v-if="can.edit || can.delete"
-                            class="before:hidden lg:w-1 whitespace-nowrap"
-                        >
+                        <td v-for="index in classdayCount" />
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons
                                 type="justify-start lg:justify-end"
                                 no-wrap
@@ -134,7 +176,7 @@ function destroy(id) {
                                 <BaseButton
                                     v-if="can.edit"
                                     :route-name="
-                                        route('period.edit', period.id)
+                                        route('teacher.edit', period.id)
                                     "
                                     color="info"
                                     :icon="mdiSquareEditOutline"
@@ -150,10 +192,16 @@ function destroy(id) {
                             </BaseButtons>
                         </td>
                     </tr>
+                    <Create
+                        v-if="addRow"
+                        :period="periods.data.length + 1"
+                        :timeslots="unassignedTimeslots"
+                        @submit-clicked="submitClicked"
+                    />
                 </tbody>
             </table>
             <div class="py-4">
-                <!-- <Pagination :data="periods" /> -->
+                <Pagination :data="periods" />
             </div>
         </CardBox>
     </SectionMain>

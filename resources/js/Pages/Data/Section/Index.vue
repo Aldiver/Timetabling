@@ -126,7 +126,7 @@ function destroy(id) {
                             {{ section.room_number }}
                         </td>
 
-                        <td data-label="Department">
+                        <td data-label="Grade Level">
                             {{ gradelevels[section.gradelevel_id] }}
                         </td>
                         <td

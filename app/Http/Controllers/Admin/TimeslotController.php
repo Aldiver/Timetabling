@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Timeslot;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class TimeslotController extends Controller
 {
@@ -27,8 +28,7 @@ class TimeslotController extends Controller
     {
         $timeslots = (new Timeslot)->newQuery();
 
-
-        $timeslots = $timeslots->orderBy('rank', 'ASC')->paginate(5)->onEachSide(2)->appends(request()->query());
+        $timeslots = $timeslots->paginate(5)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Timeslot/Index', [
             'timeslots' => $timeslots,
@@ -61,13 +61,13 @@ class TimeslotController extends Controller
     {
         $request->validate([
             'time_to' => ['required', 'string', 'max:255',],
-            'time_from' => ['required', 'string', 'max:255',],
-            'rank' => 'integer'
+            'time_from' => ['required', 'string', 'max:255',]
         ]);
+        $time_from = Carbon::parse($request->time_from)->format('h:i A');
+        $time_to = Carbon::parse($request->time_to)->format('h:i A');
 
         Timeslot::create([
-            'time' => $request->time_from.' - '.$request->time_to,
-            'rank' => $request->rank
+            'time' => $time_from.' - '.$time_to,
         ]);
 
         return redirect()->route('timeslot.index')

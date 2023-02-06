@@ -7,6 +7,8 @@ use App\Actions\Admin\UpdateTeacher;
 use App\Http\Requests\Admin\StoreTeacherRequest;
 use App\Http\Requests\Admin\UpdateTeacherRequest;
 use App\Models\Teacher;
+use App\Models\Gradelevel;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +31,9 @@ class TeacherController extends Controller
      */
     public function index()
     {
+        // $gradelevels = Gradelevel::all()->pluck("level","id");
+        // $departments = Department::all()->pluck("name","id");
+        // $teachers = (new Teacher)->newQuery()->with('department', 'gradelevel')->paginate(5)->appends(request()->query());;
         $teachers = (new Teacher)->newQuery();
 
         if (request()->has('search')) {
@@ -46,8 +51,10 @@ class TeacherController extends Controller
         } else {
             $teachers->latest();
         }
+        // $teachers = $teachers->with('department', 'gradelevel')->get();
+        // $teachers = $teachers->paginate(5)->onEachSide(2)->appends(request()->query());
+        $teachers = $teachers->with('department', 'gradelevel')->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        $teachers = $teachers->paginate(5)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Teacher/Index', [
             'teachers' => $teachers,
@@ -67,13 +74,18 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        //$roles = Role::all()->pluck("name","id"); grade level
+        $gradelevels = Gradelevel::all()->pluck("level","id");
+        $departments = Department::all()->pluck("name","id");
 
-        // return Inertia::render('Data/Teacher/Create', [
-        //     'roles' => $roles,
-        // ]);
+        if($gradelevels->count() == 0){
+            return redirect()->route('section.index')
+                        ->with('error', __('No Gradelevel found'));
+        }
 
-        return Inertia::render('Data/Teacher/Create');
+        return Inertia::render('Data/Teacher/Create', [
+            'gradelevels' => $gradelevels,
+            'departments' => $departments,
+        ]);
     }
 
     /**
@@ -86,7 +98,6 @@ class TeacherController extends Controller
     public function store(StoreTeacherRequest $request, CreateTeacher $createTeacher)
     {
         $createTeacher->handle($request);
-
         return redirect()->route('teacher.index')
                         ->with('message', __('Teacher added successfully.'));
     }

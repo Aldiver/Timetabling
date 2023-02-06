@@ -14,5 +14,10 @@ class Timeslot extends Model
      *
      * @var array
      */
-    protected $fillable = ['time', 'rank'];
+    protected $fillable = ['time'];
+
+    public function period()
+    {
+        return $this->hasOne(Period::class);
+    }
 }

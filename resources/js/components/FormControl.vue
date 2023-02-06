@@ -154,6 +154,18 @@ if (props.ctrlKFocus) {
             :required="required"
         />
         <input
+            v-else-if="computedType === 'time'"
+            :id="id"
+            v-model="computedValue"
+            :name="name"
+            :inputmode="inputmode"
+            :autocomplete="autocomplete"
+            :required="required"
+            :placeholder="placeholder"
+            :type="computedType"
+            :class="inputElClass"
+        />
+        <input
             v-else
             :id="id"
             ref="inputEl"

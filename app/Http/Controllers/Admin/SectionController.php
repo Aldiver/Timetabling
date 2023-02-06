@@ -63,18 +63,18 @@ class SectionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        $gradelevels = Gradelevel::all()->pluck("level","id");
+    // public function create()
+    // {
+    //     $gradelevels = Gradelevel::all()->pluck("level","id");
 
-        if($gradelevels->count() == 0){
-            return redirect()->route('section.index')
-                        ->with('error', __('No Gradelevel found'));
-        }
-        return Inertia::render('Data/Section/Create', [
-            'gradelevels' => $gradelevels,
-        ]);
-    }
+    //     if($gradelevels->count() == 0){
+    //         return redirect()->route('section.index')
+    //                     ->with('error', __('No Gradelevel found'));
+    //     }
+    //     return Inertia::render('Data/Section/Create', [
+    //         'gradelevels' => $gradelevels,
+    //     ]);
+    // }
 
     /**
      * Store a newly created resource in storage.

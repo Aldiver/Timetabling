@@ -11,6 +11,7 @@ import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
+import TimePicker from "@/components/TimePicker.vue";
 import { computed } from "vue";
 
 const props = defineProps({
@@ -37,29 +38,6 @@ const save = () => confirmCancel("update");
 const form = useForm({
     time_to: "",
     time_from: "",
-    rank: "",
-});
-
-function setrank() {
-    form.rank = timeOptions.find((x) => x.label === form.time_from)?.id || null;
-}
-
-var timeArray = [],
-    current = new Date();
-current.setHours(6, 0);
-while (current.getHours() < 20) {
-    timeArray.push(
-        current.toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-        })
-    );
-    current.setMinutes(current.getMinutes() + 30);
-}
-
-let timeOptions = timeArray.map((label, index) => {
-    return { id: index, label };
 });
 </script>
 
@@ -76,30 +54,24 @@ let timeOptions = timeArray.map((label, index) => {
             <div class="xl:flex xl:items-center xl:justify-between">
                 <FormControl
                     v-model="form.time_from"
-                    @change="setrank"
-                    type="text"
-                    placeholder="from"
+                    type="time"
                     :error="form.errors.time_from"
-                    class="xl:w-1/2 xl:mr-5 xl:mb-0 mb-6"
-                    :options="timeOptions"
-                    :icon="mdiClockTimeNineOutline"
+                    class="xl:w-1/2 xl:mb-0 mb-6 relative"
                 />
-                <div class="text-red-400 text-sm" v-if="form.errors.time_from">
-                    {{ form.errors.time_from }}
+                <div class="px-5 py-3 text-xs sm:text-base text-gray-600">
+                    to
                 </div>
                 <FormControl
                     v-model="form.time_to"
-                    type="text"
-                    placeholder="to"
+                    type="time"
                     :error="form.errors.time_to"
                     class="xl:w-1/2"
-                    :options="timeOptions"
-                    :icon="mdiClockTimeNineOutline"
                 />
-                <div class="text-red-400 text-sm" v-if="form.errors.time_to">
-                    {{ form.errors.time_to }}
-                </div>
             </div>
+            <div class="text-red-400 text-sm" v-if="form.errors.time_to">
+                {{ form.errors.time_to }}
+            </div>
+            <slot />
         </FormField>
 
         <BaseDivider />

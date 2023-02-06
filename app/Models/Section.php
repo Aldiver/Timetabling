@@ -20,4 +20,9 @@ class Section extends Model
     {
         return $this->belongsTo(Gradelevel::class);
     }
+
+    public function schoolprograms()
+    {
+        return $this->belongsToMany(SchoolProgram::class);
+    }
 }

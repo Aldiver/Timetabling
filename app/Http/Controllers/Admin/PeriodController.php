@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Period;
+use App\Models\Timeslot;
+use App\Models\Classday;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PeriodController extends Controller
@@ -26,28 +29,18 @@ class PeriodController extends Controller
     public function index()
     {
         $periods = (new Period)->newQuery();
+        $relatedTimeslots = Timeslot::all()->pluck("time","id");
+        $classdays = Classday::all()->pluck("short_name","id");
+        $unassignedTimeslots = Timeslot::doesntHave('period')->get();
 
-        if (request()->has('search')) {
-            $periods->where('name', 'Like', '%'.request()->input('search').'%');
-        }
-
-        if (request()->query('sort')) {
-            $attribute = request()->query('sort');
-            $sort_order = 'ASC';
-            if (strncmp($attribute, '-', 1) === 0) {
-                $sort_order = 'DESC';
-                $attribute = substr($attribute, 1);
-            }
-            $periods->orderBy($attribute, $sort_order);
-        } else {
-            $periods->latest();
-        }
 
         $periods = $periods->paginate(5)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Period/Index', [
             'periods' => $periods,
-            'filters' => request()->all('search'),
+            'timeslots' => $relatedTimeslots,
+            'unassignedTimeslots' => $unassignedTimeslots,
+            'classdays' => $classdays,
             'can' => [
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
@@ -63,7 +56,8 @@ class PeriodController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Period/Create');
+        $unassignedTimeslots = Timeslot::doesntHave('period')->get();
+        return Inertia::render('Data/Period/Create', ['timeslots' => $unassignedTimeslots,]);
     }
 
     /**
@@ -76,14 +70,17 @@ class PeriodController extends Controller
     {
 
         $request->validate([
-            'name' => 'required',
-            'number_of_timeslots' => 'required'
+            'rank' => 'required',
+            'timeslot' => 'required',
         ]);
-
-        Period::create($request->all());
+        $timeslot = Timeslot::where('time', $request->timeslot)->first();
+        $period = Period::create([
+            'rank'=> $request->rank,
+        ]);
+        $timeslot->period()->save($period);
 
         return redirect()->route('period.index')
-                        ->with('message', __('Period added.'));
+                        ->with('message', __('Period added'));
     }
 
     /**
@@ -140,7 +137,15 @@ class PeriodController extends Controller
      */
     public function destroy(Period $period)
     {
-        $period->delete();
+        DB::transaction(function () use ($period) {
+            $period->delete();
+
+            $periods = Period::where('rank', '>', $period->rank)->get();
+            foreach ($periods as $p) {
+                $p->rank--;
+                $p->save();
+            }
+        });
 
         return redirect()->route('period.index')
                         ->with('message', __('Period deleted successfully'));

@@ -22,13 +22,8 @@ return new class extends Migration
             $table->string('middle_name');
             $table->string('specialization'); //Major
             $table->string('gender');
-            $table->string('designation_name')->nullable(); //nullable?
-            $table->string('designation_period')->nullable();
             // $table->string('image')->nullable;
             $table->timestamps();
-
-            // relation
-            $table->bigInteger('department_id')->nullable();
         });
     }
 

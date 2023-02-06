@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ClassDaySeeder::class,
             BasicAdminPermissionSeeder::class,
             GradeLevelSeeder::class,
+            DepartmentSeeder::class,
         ]);
     }
 }

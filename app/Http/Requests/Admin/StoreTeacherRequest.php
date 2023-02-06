@@ -30,6 +30,8 @@ class StoreTeacherRequest extends FormRequest
             'middle_name' => ['required', 'string', 'max:255'],
             'specialization' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'max:255'],
+            'gradelevel' => ['required'],
+            'department' => ['required']
         ];
     }
 }

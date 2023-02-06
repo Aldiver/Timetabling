@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        //Pivot table
-        Schema::create('department_teacher', function (Blueprint $table) {
+        Schema::create('periods', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('department_id');
-            $table->bigInteger('teacher_id');
-            $table->string('school_year'); //pass school_year through teachers model
+            $table->integer('rank')->unique();
+            $table->foreignId('timeslot_id')->nullable()->constrained()->onDelete('cascade');
+            $table->unique(['timeslot_id']);
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('department_teacher');
+        Schema::dropIfExists('periods');
     }
 };

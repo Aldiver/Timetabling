@@ -20,6 +20,10 @@ import Pagination from "@/components/Admin/Pagination.vue";
 import Sort from "@/components/Admin/Sort.vue";
 
 const props = defineProps({
+    schoolprogram: {
+        type: Object,
+        default: () => ({}),
+    },
     gradelevels: {
         type: Object,
         default: () => ({}),
@@ -52,7 +56,7 @@ function destroy(id) {
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="School Program"
+            title="School Program (Not Final)"
             main
         >
             <BaseButton
@@ -72,80 +76,35 @@ function destroy(id) {
         >
             {{ $page.props.flash.message }}
         </NotificationBar>
-        <CardBox
-            class="mb-6"
-            has-table
-            is-form
-            @submit.prevent="form.get(route('gradelevel.index'))"
-        >
-            <FormField>
-                <div class="py-2 flex">
-                    <div class="flex pl-4">
-                        <FormControl
-                            v-model="form.search"
-                            type="text"
-                            placeholder="Search"
-                            :error="form.errors.name"
-                        />
-                        <BaseButton
-                            label="Search"
-                            type="submit"
-                            color="info"
-                            class="ml-4 inline-flex items-center px-4 py-2"
-                        />
-                    </div>
-                </div>
-            </FormField>
-        </CardBox>
         <CardBox class="mb-6" has-table>
             <table>
                 <thead>
                     <tr>
-                        <th>
-                            <Sort label="Grade Level" attribute="level" />
-                        </th>
-                        <th v-if="can.edit || can.delete">Actions</th>
+                        <th>ID</th>
+                        <th>School Program Name</th>
+                        <th class="flex">Gradelevel</th>
+                        <th>Section</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     <tr
-                        v-for="gradelevel in gradelevels.data"
-                        :key="gradelevel.id"
+                        v-for="schoolprogramdata in schoolprogram"
+                        :key="schoolprogramdata.id"
                     >
-                        <td data-label="Grade Level">
-                            <Link
-                                :href="route('gradelevel.show', gradelevel.id)"
-                                class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
-                            >
-                                {{ gradelevel.level }}
-                            </Link>
+                        <td>{{ schoolprogramdata.id }}</td>
+                        <td>{{ schoolprogramdata.school_year }}</td>
+                        <td>
+                            <span
+                                v-for="gradelevel in schoolprogramdata.gradelevels"
+                                >{{ gradelevel.level }} -
+                            </span>
                         </td>
-                        <td
-                            v-if="can.edit || can.delete"
-                            class="before:hidden lg:w-1 whitespace-nowrap"
-                        >
-                            <BaseButtons
-                                type="justify-start lg:justify-end"
-                                no-wrap
-                            >
-                                <BaseButton
-                                    v-if="can.edit"
-                                    :route-name="
-                                        route('gradelevel.edit', gradelevel.id)
-                                    "
-                                    color="info"
-                                    :icon="mdiSquareEditOutline"
-                                    small
-                                />
-                                <BaseButton
-                                    v-if="can.delete"
-                                    color="danger"
-                                    :icon="mdiTrashCan"
-                                    small
-                                    @click="destroy(gradelevel.id)"
-                                />
-                            </BaseButtons>
+                        <td>
+                            <!-- <span
+                                v-for="section in schoolprogramdata.gradelevels
+                                    .sections"
+                                >{{ section.name }}-
+                            </span> -->
                         </td>
                     </tr>
                 </tbody>

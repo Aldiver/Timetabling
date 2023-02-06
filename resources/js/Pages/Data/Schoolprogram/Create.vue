@@ -40,11 +40,6 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
-    gradelevels: {
-        type: Object,
-        default: () => ({}),
-    },
-
     can: {
         type: Object,
         default: () => ({}),
@@ -52,7 +47,7 @@ const props = defineProps({
 });
 
 const form = useForm({
-    schoolyear: "",
+    school_year: "",
     levels: [],
     sections: [],
     timeslots: [],
@@ -128,7 +123,7 @@ function nextStep() {
         route("schoolprogram.check.form"),
         {
             stepValue: stepvalue.value[formStep.value - 1],
-            schoolyear: form.schoolyear,
+            school_year: form.school_year,
             levels: form.levels,
             sections: form.sections,
             timeslots: form.timeslots,
@@ -183,19 +178,19 @@ watch(
                 <FormField
                     label="School Year"
                     help="Input School Year eg (2020 - 2021)"
-                    :class="{ 'text-red-400': errors.schoolyear }"
+                    :class="{ 'text-red-400': errors.school_year }"
                 >
                     <FormControl
-                        v-model="form.schoolyear"
+                        v-model="form.school_year"
                         type="text"
                         placeholder="Enter school year"
-                        :error="errors.schoolyear"
+                        :error="errors.school_year"
                     >
                         <div
                             class="text-red-400 text-sm"
-                            v-if="errors.schoolyear"
+                            v-if="errors.school_year"
                         >
-                            {{ errors.schoolyear }}
+                            {{ errors.school_year }}
                         </div>
                     </FormControl>
                 </FormField>
