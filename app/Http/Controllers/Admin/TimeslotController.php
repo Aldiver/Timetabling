@@ -29,7 +29,6 @@ class TimeslotController extends Controller
         $timeslots = (new Timeslot)->newQuery();
 
         $timeslots = $timeslots->paginate(5)->onEachSide(2)->appends(request()->query());
-
         return Inertia::render('Data/Timeslot/Index', [
             'timeslots' => $timeslots,
             'filters' => request()->all('search'),
@@ -111,13 +110,13 @@ class TimeslotController extends Controller
     {
         $request->validate([
             'time_to' => ['required', 'string', 'max:255',],
-            'time_from' => ['required', 'string', 'max:255',],
-            'rank' => 'integer'
+            'time_from' => ['required', 'string', 'max:255',]
         ]);
+        $time_from = Carbon::parse($request->time_from)->format('h:i A');
+        $time_to = Carbon::parse($request->time_to)->format('h:i A');
 
         $timeslot->update([
-                'time' => $request->time_from.' - '.$request->time_to,
-                'rank' => $request->rank
+                'time' => $time_from.' - '.$time_to,
             ]
             );
 

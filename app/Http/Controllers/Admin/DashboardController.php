@@ -9,6 +9,7 @@ use App\Models\Section;
 use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+
 class DashboardController extends Controller
 {
     public function __construct()

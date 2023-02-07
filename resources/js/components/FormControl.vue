@@ -90,11 +90,15 @@ const textareaEl = ref(null);
 
 const inputEl = ref(null);
 
+const inputElTime = ref(null);
+
 onMounted(() => {
     if (selectEl.value) {
         emit("setRef", selectEl.value);
     } else if (textareaEl.value) {
         emit("setRef", textareaEl.value);
+    } else if (inputElTime.value) {
+        emit("setRef", inputElTime.value);
     } else {
         emit("setRef", inputEl.value);
     }
@@ -159,7 +163,6 @@ if (props.ctrlKFocus) {
             v-model="computedValue"
             :name="name"
             :inputmode="inputmode"
-            :autocomplete="autocomplete"
             :required="required"
             :placeholder="placeholder"
             :type="computedType"

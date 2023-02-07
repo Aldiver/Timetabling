@@ -32,8 +32,13 @@ const value = computed({
 });
 
 const confirmCancel = (mode) => {
-    value.value = false;
-    emit(mode);
+    form.post(route("section.store"), {
+        onSuccess: () => {
+            value.value = false;
+            emit(mode);
+            form.reset();
+        },
+    });
 };
 
 const save = () => confirmCancel("update");
@@ -55,7 +60,7 @@ const gradelevelsDropdown = Object.keys(props.gradelevels).map((key) => ({
     <SectionTitleLineWithButton :icon="mdiAccountKey" title="Add section" main>
         <slot />
     </SectionTitleLineWithButton>
-    <CardBox is-form @submit.prevent="form.post(route('section.store'))">
+    <CardBox>
         <FormField
             label="Section name"
             :class="{ 'text-red-400': form.errors.name }"

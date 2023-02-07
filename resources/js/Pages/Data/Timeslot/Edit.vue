@@ -15,8 +15,12 @@ import { computed, watch } from "vue";
 
 const props = defineProps({
     timeslot: {
-        type: Object,
-        default: () => ({}),
+        type: Array,
+        default: [],
+    },
+    timeslot_id: {
+        type: Number,
+        default: null,
     },
     modelValue: {
         type: [String, Number, Boolean],
@@ -32,55 +36,42 @@ const value = computed({
 });
 
 const confirmCancel = (mode) => {
+    form.post(route("timeslot.update", props.timeslot_id), {
+        onSuccess: () => {
+            form.reset();
+        },
+    });
     value.value = false;
     emit(mode);
 };
 
+function to24HourFormat(timeStr) {
+    let [time, period] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":");
+
+    hours = period === "AM" && hours === "12" ? "00" : hours;
+    hours =
+        period === "PM" && hours !== "12"
+            ? (parseInt(hours, 10) + 12).toString()
+            : hours;
+
+    return `${hours}:${minutes}`;
+}
+
 const update = () => confirmCancel("update");
-var timeString, result;
 
 const form = useForm({
     _method: "put",
-    time_to: "",
     time_from: "",
+    time_to: "",
     rank: "",
 });
-
-function setrank() {
-    form.rank = timeOptions.find((x) => x.label === form.time_from)?.id || null;
-}
-
-var timeArray = [],
-    current = new Date();
-current.setHours(6, 0);
-while (current.getHours() < 20) {
-    timeArray.push(
-        current.toLocaleString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-        })
-    );
-    current.setMinutes(current.getMinutes() + 30);
-}
-
-let timeOptions = timeArray.map((label, index) => {
-    return { id: index, label };
-});
-
-function setStrings(text) {
-    timeString = text;
-    result = timeString.split(" - ");
-    // selectedFrom = timeOptions.find((x) => x.label === result[0])?.id || null;
-    // selectedTo = timeOptions.find((x) => x.label === result[1])?.id || null;
-}
 
 watch(
     () => props.timeslot, // use a getter like this
     () => {
-        setStrings(props.timeslot.time);
-        form.time_from = result[0];
-        form.time_to = result[1];
+        form.time_from = to24HourFormat(props.timeslot[0]);
+        form.time_to = to24HourFormat(props.timeslot[1]);
     }
 );
 </script>
@@ -94,50 +85,33 @@ watch(
         >
             <slot />
         </SectionTitleLineWithButton>
-        <CardBox
-            is-form
-            @submit.prevent="
-                form.post(route('timeslot.update', props.timeslot.id))
-            "
-        >
+        <CardBox>
             <FormField
                 label="Timeslots"
-                help="Time range must be correct"
+                help="Select a timeslot"
                 :class="{ 'text-red-400': form.errors.time_to }"
             >
                 <div class="xl:flex xl:items-center xl:justify-between">
                     <FormControl
                         v-model="form.time_from"
-                        @change="setrank"
-                        type="text"
-                        placeholder="from"
+                        type="time"
                         :error="form.errors.time_from"
-                        class="xl:w-1/2 xl:mr-5 xl:mb-0 mb-6"
-                        :options="timeOptions"
-                        :icon="mdiClockTimeNineOutline"
+                        class="xl:w-1/2 xl:mb-0 mb-6 relative"
                     />
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.time_from"
-                    >
-                        {{ form.errors.time_from }}
+                    <div class="px-5 py-3 text-xs sm:text-base text-gray-600">
+                        to
                     </div>
                     <FormControl
                         v-model="form.time_to"
-                        type="text"
-                        placeholder="to"
+                        type="time"
                         :error="form.errors.time_to"
                         class="xl:w-1/2"
-                        :options="timeOptions"
-                        :icon="mdiClockTimeNineOutline"
                     />
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.time_to"
-                    >
-                        {{ form.errors.time_to }}
-                    </div>
                 </div>
+                <div class="text-red-400 text-sm" v-if="form.errors.time_to">
+                    {{ form.errors.time_to }}
+                </div>
+                <slot />
             </FormField>
 
             <BaseDivider />
@@ -147,7 +121,7 @@ watch(
                     <BaseButton
                         type="submit"
                         color="info"
-                        label="Update"
+                        label="Submit"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="update"

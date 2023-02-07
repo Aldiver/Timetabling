@@ -29,6 +29,11 @@ const value = computed({
 });
 
 const confirmCancel = (mode) => {
+    form.post(route("timeslot.store"), {
+        onSuccess: () => {
+            form.reset();
+        },
+    });
     value.value = false;
     emit(mode);
 };
@@ -45,7 +50,7 @@ const form = useForm({
     <SectionTitleLineWithButton :icon="mdiTimetable" title="Add timeslot" main>
         <slot />
     </SectionTitleLineWithButton>
-    <CardBox is-form @submit.prevent="form.post(route('timeslot.store'))">
+    <CardBox>
         <FormField
             label="Timeslots"
             help="Select a timeslot"

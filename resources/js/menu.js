@@ -35,14 +35,14 @@ export default [
                 label: "Class Days",
             },
             {
-                route: "period.index",
-                icon: mdiNumeric10Box,
-                label: "Periods",
-            },
-            {
                 route: "timeslot.index",
                 icon: mdiNumeric10Box,
                 label: "Timeslots",
+            },
+            {
+                route: "period.index",
+                icon: mdiNumeric10Box,
+                label: "Periods",
             },
         ],
     },

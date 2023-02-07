@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import {
     mdiTimetable,
@@ -19,7 +19,6 @@ import CardBoxModal from "@/components/CardBoxModal.vue";
 import Pagination from "@/components/Admin/Pagination.vue";
 import Edit from "./Edit.vue";
 import Create from "./Create.vue";
-import { isIntegerKey } from "@vue/shared";
 
 const props = defineProps({
     timeslots: {
@@ -41,10 +40,11 @@ const formDelete = useForm({});
 const modalEdit = ref(false);
 const modalCreate = ref(false);
 
-var data;
+var data, timeslot_id;
 
-function editClick(id) {
-    data = id;
+function editClick(timeslot, id) {
+    data = timeslot.split(" - ");
+    timeslot_id = id;
     modalEdit.value = !modalEdit.value;
 }
 
@@ -53,11 +53,18 @@ function destroy(id) {
         formDelete.delete(route("timeslot.destroy", id));
     }
 }
+
+let isMounted = ref(true);
+onMounted(() => {
+    setTimeout(() => {
+        isMounted.value = false;
+    }, 3000);
+});
 </script>
 
 <template>
     <CardBoxModal v-model="modalEdit" class="mb-6" title="">
-        <Edit :timeslot="data" v-model="modalEdit" />
+        <Edit :timeslot="data" :timeslot_id="timeslot_id" v-model="modalEdit" />
     </CardBoxModal>
 
     <CardBoxModal v-model="modalCreate" class="mb-6" title="">
@@ -79,7 +86,7 @@ function destroy(id) {
             <!-- :route-name="route('timeslot.create')" -->
         </SectionTitleLineWithButton>
         <NotificationBar
-            v-if="$page.props.flash.message"
+            v-if="$page.props.flash.message && isMounted"
             color="success"
             :icon="mdiAlertBoxOutline"
         >
@@ -118,7 +125,9 @@ function destroy(id) {
                                     " -->
                                 <BaseButton
                                     v-if="can.edit"
-                                    @click="editClick(timeslot)"
+                                    @click="
+                                        editClick(timeslot.time, timeslot.id)
+                                    "
                                     color="info"
                                     :icon="mdiSquareEditOutline"
                                     small

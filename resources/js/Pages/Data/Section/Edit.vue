@@ -32,11 +32,13 @@ const value = computed({
 });
 
 const confirmCancel = (mode) => {
-    console.log(form.wasSuccessful);
-    if (form.wasSuccessful) {
-        value.value = false;
-        emit(mode);
-    }
+    form.post(route("section.update", props.section.id), {
+        onSuccess: () => {
+            value.value = false;
+            form.reset();
+            emit(mode);
+        },
+    });
 };
 
 const update = () => confirmCancel("update");
@@ -47,12 +49,6 @@ const form = useForm({
     bldg_letter: "",
     room_number: "",
 });
-watch(
-    () => form.wasSuccessful, // use a getter like this
-    () => {
-        confirmCancel("update");
-    }
-);
 watch(
     () => props.section, // use a getter like this
     () => {
@@ -71,10 +67,7 @@ watch(
     >
         <slot />
     </SectionTitleLineWithButton>
-    <CardBox
-        is-form
-        @submit.prevent="form.post(route('section.update', props.section.id))"
-    >
+    <CardBox>
         <FormField
             label="Section name"
             :class="{ 'text-red-400': form.errors.name }"
@@ -137,6 +130,7 @@ watch(
                     label="Submit"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
+                    @click="update"
                 />
             </BaseButtons>
         </template>
