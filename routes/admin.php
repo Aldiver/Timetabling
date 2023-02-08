@@ -5,6 +5,7 @@ Route::group([
     'prefix' => config('admin.prefix'),
     'middleware' => ['auth'],
 ], function () {
+    Route::resource('timetableGenerator', 'TimetableGeneratorController');
     Route::resource('dashboard', 'DashboardController');
     Route::resource('department', 'DepartmentController');
     Route::resource('user', 'UserController');

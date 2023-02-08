@@ -25,8 +25,8 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $departments = Department::all()->pluck("name","id");
-        $subjects = (new Subject)->newQuery();
+        $departments = Department::all()->pluck("name", "id");
+        $subjects = (new Subject())->newQuery();
         // $departments = Department::all()->pluck("name","id");
         if (request()->has('search')) {
             $subjects->where('name', 'Like', '%'.request()->input('search').'%');
@@ -65,9 +65,9 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        $departments = Department::all()->pluck("name","id");
+        $departments = Department::all()->pluck("name", "id");
 
-        if($departments->count() == 0){
+        if ($departments->count() == 0) {
             return redirect()->route('subject.index')
                         ->with('error', __('No departments found'));
         }
@@ -84,7 +84,6 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'name' => 'required',
             'hours_per_week' => 'required',

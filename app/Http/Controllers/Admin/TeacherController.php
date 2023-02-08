@@ -34,7 +34,7 @@ class TeacherController extends Controller
         // $gradelevels = Gradelevel::all()->pluck("level","id");
         // $departments = Department::all()->pluck("name","id");
         // $teachers = (new Teacher)->newQuery()->with('department', 'gradelevel')->paginate(5)->appends(request()->query());;
-        $teachers = (new Teacher)->newQuery();
+        $teachers = (new Teacher())->newQuery();
 
         if (request()->has('search')) {
             $teachers->where('last_name', 'Like', '%'.request()->input('search').'%');
@@ -74,10 +74,10 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        $gradelevels = Gradelevel::all()->pluck("level","id");
-        $departments = Department::all()->pluck("name","id");
+        $gradelevels = Gradelevel::all()->pluck("level", "id");
+        $departments = Department::all()->pluck("name", "id");
 
-        if($gradelevels->count() == 0){
+        if ($gradelevels->count() == 0) {
             return redirect()->route('section.index')
                         ->with('error', __('No Gradelevel found'));
         }

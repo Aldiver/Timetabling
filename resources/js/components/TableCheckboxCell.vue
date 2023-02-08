@@ -1,16 +1,27 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 
-defineProps({
+const props = defineProps({
     type: {
         type: String,
         default: "td",
+    },
+    check: {
+        type: Boolean,
+        default: true,
     },
 });
 
 const emit = defineEmits(["checked"]);
 
 const checked = ref(false);
+
+onMounted(() => {
+    if (props.check) {
+        checked.value = props.check;
+        emit("checked", checked.value);
+    }
+});
 
 watch(checked, (newVal) => {
     emit("checked", newVal);

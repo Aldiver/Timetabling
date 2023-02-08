@@ -27,7 +27,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = (new Role)->newQuery();
+        $roles = (new Role())->newQuery();
 
         if (request()->has('search')) {
             $roles->where('name', 'Like', '%'.request()->input('search').'%');
@@ -65,7 +65,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all()->pluck("name","id");
+        $permissions = Permission::all()->pluck("name", "id");
 
         return Inertia::render('Admin/Role/Create', [
             'permissions' => $permissions,
@@ -98,7 +98,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $permissions = Permission::all()->pluck("name","id");
+        $permissions = Permission::all()->pluck("name", "id");
         $roleHasPermissions = array_column(json_decode($role->permissions, true), 'id');
 
         return Inertia::render('Admin/Role/Show', [
@@ -116,7 +116,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions = Permission::all()->pluck("name","id");
+        $permissions = Permission::all()->pluck("name", "id");
         $roleHasPermissions = array_column(json_decode($role->permissions, true), 'id');
 
         return Inertia::render('Admin/Role/Edit', [

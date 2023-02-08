@@ -4,9 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up()
     {
         Schema::create('gradelevel_school_program', function (Blueprint $table) {
@@ -27,14 +25,20 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('school_program_timeslot', function (Blueprint $table) {
-            $table->foreignId('timeslot_id')->constrained()->onDelete('cascade');
+        Schema::create('period_school_program', function (Blueprint $table) {
+            $table->foreignId('period_id')->constrained()->onDelete('cascade');
             $table->foreignId('school_program_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
 
         Schema::create('school_program_teacher', function (Blueprint $table) {
             $table->foreignId('teacher_id')->constrained()->onDelete('cascade');
+            $table->foreignId('school_program_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('department_school_program', function (Blueprint $table) {
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->foreignId('school_program_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
@@ -46,8 +50,7 @@ return new class extends Migration
         Schema::dropIfExists('school_program_teacher');
         Schema::dropIfExists('gradelevel_school_program');
         Schema::dropIfExists('classday_school_program');
-        Schema::dropIfExists('school_program_timeslot');
+        Schema::dropIfExists('period_school_program');
+        Schema::dropIfExists('department_school_program');
     }
 };
-
-

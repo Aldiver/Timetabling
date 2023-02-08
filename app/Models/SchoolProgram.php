@@ -29,4 +29,23 @@ class SchoolProgram extends Model
         return $this->belongsToMany(Section::class);
     }
 
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class);
+    }
+
+    public function classdays()
+    {
+        return $this->belongsToMany(Classday::class);
+    }
+
+    public function periods()
+    {
+        return $this->belongsToMany(Period::class);
+    }
+
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class);
+    }
 }

@@ -24,7 +24,7 @@ class Gradelevel extends Model
 
     public function teachers()
     {
-    return $this->belongsToMany(Teacher::class, 'teacher_gl_dep')->withPivot('department_id');
+        return $this->belongsToMany(Teacher::class, 'teacher_gl_dep')->withPivot('department_id');
     }
 
     public function schoolprograms()

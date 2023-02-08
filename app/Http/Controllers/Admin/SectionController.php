@@ -25,8 +25,8 @@ class SectionController extends Controller
      */
     public function index()
     {
-        $gradelevels = Gradelevel::all()->pluck("level","id");
-        $sections = (new Section)->newQuery();
+        $gradelevels = Gradelevel::all()->pluck("level", "id");
+        $sections = (new Section())->newQuery();
 
         if (request()->has('search')) {
             $sections->where('name', 'Like', '%'.request()->input('search').'%');

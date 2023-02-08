@@ -28,9 +28,9 @@ class PeriodController extends Controller
      */
     public function index()
     {
-        $periods = (new Period)->newQuery();
-        $relatedTimeslots = Timeslot::all()->pluck("time","id");
-        $classdays = Classday::all()->pluck("short_name","id");
+        $periods = (new Period())->newQuery();
+        $relatedTimeslots = Timeslot::all()->pluck("time", "id");
+        $classdays = Classday::all()->pluck("short_name", "id");
         $unassignedTimeslots = Timeslot::doesntHave('period')->get();
 
 
@@ -68,7 +68,6 @@ class PeriodController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'rank' => 'required',
             'timeslot' => 'required',

@@ -25,7 +25,7 @@ class GradelevelController extends Controller
      */
     public function index()
     {
-        $gradelevels = (new Gradelevel)->newQuery();
+        $gradelevels = (new Gradelevel())->newQuery();
 
         if (request()->has('search')) {
             $gradelevels->where('level', 'Like', '%'.request()->input('search').'%');
@@ -74,7 +74,6 @@ class GradelevelController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'level' => 'required',
         ]);
