@@ -12,6 +12,7 @@ import { gradientBgPinkRed } from "@/colors";
         </h1>
         <div>
             <BaseButton
+                :route-name="route('timetable.generate')"
                 :icon="mdiGithub"
                 label="Generate"
                 target="_blank"

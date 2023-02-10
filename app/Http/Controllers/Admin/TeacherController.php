@@ -53,7 +53,7 @@ class TeacherController extends Controller
         }
         // $teachers = $teachers->with('department', 'gradelevel')->get();
         // $teachers = $teachers->paginate(5)->onEachSide(2)->appends(request()->query());
-        $teachers = $teachers->with('department', 'gradelevel')->paginate(5)->onEachSide(2)->appends(request()->query());
+        $teachers = $teachers->with('department', 'gradelevel')->paginate(10)->onEachSide(2)->appends(request()->query());
 
 
         return Inertia::render('Data/Teacher/Index', [

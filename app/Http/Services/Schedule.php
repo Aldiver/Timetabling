@@ -1,52 +1,116 @@
 <?php
 
-use App\Http\Services\ClassData;
+namespace App\Http\Services;
 
-class Schedule
+use App\Http\Services\ClassData;
+use App\Http\Services\Subject;
+use App\Models\Teacher;
+
+class Schedule implements \Serializable
 {
+    private $schoolprogram;
     private $classes;
     private $fitness;
     private $schedules;
-    private $id = 0;
+    private $id;
 
     public function __construct($schoolprogram)
     {
         $this->schoolprogram = $schoolprogram;
-        // $this->generateSchedule();
+        $this->generateSchedule();
         // $this->calculateFitness();
     }
 
     public function generateSchedule()
     {
-        foreach ($this->$schoolprogram->gradelevels as $gradelevel) {
-            foreach ($this->$schoolprogram->sections as $section) {
+        $this->id = 0;
+        $this->schedules = [];
+        $classdayCount = $this->schoolprogram->classdays->count();
+        $periodCount = $this->schoolprogram->periods->count();
+        foreach ($this->schoolprogram->gradelevels as $gradelevel) {
+            foreach ($this->schoolprogram->sections as $section) {
                 $class = new ClassData($this->id++, $gradelevel, $section);
-                $reservedClassdays = $this->createScheduleBlocks($this->schoolprogram->periods->count, $this->schoolprogram->classdays->count);
-                foreach ($this->$schoolprogram->departments as $department) {
-                    $teacher = Teacher::getRandomTeacher($this->$schoolprogram, $gradelevel, $department);
+                $reservedClassdays = $this->createScheduleBlocks($periodCount, $classdayCount);
+                foreach ($this->schoolprogram->departments as $department) {
+                    $teachers = $this->schoolprogram->teachers;
+                    $filteredTeachers = $teachers->filter(function ($teacher) use ($gradelevel, $department) {
+                        return $teacher->gradelevel->contains($gradelevel) && $teacher->department->contains($department);
+                    });
+                    $randomTeacher = $filteredTeachers->random();
                     $periods = [];
                     $classdays = [];
-                    $meetings = $department->subject->number_of_meeting;
+                    $meetings = $department->subjects()->first()->hours_per_week;
+                    $subject = new Subject($department->subjects()->first()->name, $randomTeacher);
+
                     while ($meetings > 0) {
-                        $periodIndex = mt_rand(0, $schoolprogram->periods->count() - 1);
-                        $periods[] = $schoolprogram->period->find($periodIndex);
+                        $periodIndex = mt_rand(1, $periodCount);
+                        $periods[] = $this->schoolprogram->periods()->where('rank', $periodIndex)->first();
                         $classdayArr = [];
                         for ($classdayIndex = 0; $classdayIndex < 5; $classdayIndex++) {
-                            if (!isset($reservedClassdays[$periodIndex][$classdayIndex])) {
-                                $classday = $schoolprogram->classdays->where('rank', $classdayIndex + 1)->first();
-                                if (!in_array($classday, $classdays)) {
+                            if (!isset($reservedClassdays[$periodIndex -1][$classdayIndex])) {
+                                $classday = $this->schoolprogram->classdays->where('rank', $classdayIndex + 1)->first();
+                                if (!in_array($classday, $classdayArr)) {
+                                    $reservedClassdays[$periodIndex-1][$classdayIndex] = true;
                                     $classdayArr[] = $classday;
                                     $meetings--;
                                 }
                             }
+                            if ($meetings == 0) {
+                                break;
+                            }
                         }
-                        $classdays[] = $classdayArr;
+                        if (!empty($classdayArr)) {
+                            $classdays[] = $classdayArr;
+                            $subject->setClass($periods, $classdays);
+                        }
                     }
-                    $subject = new Subject($department->subject->name, $periods, $classdays, $teacher);
-                    $class->addSubject($subject);
+                    $class->addSubject($subject->toArray());
                 }
+                $this->schedules[] = $class->toArray();
             }
         }
+        // return $this->schedules;
+    }
+
+    public function getSchedules()
+    {
+        return $this->schedules;
+    }
+
+    public function toArray()
+    {
+        return [
+            'schoolprogram' => $this->schoolprogram,
+            'classes' => $this->classes,
+            'fitness' => $this->fitness,
+            'schedules' => $this->schedules,
+            'id' => $this->id,
+        ];
+    }
+
+    public function serialize()
+    {
+        return serialize($this->toArray());
+    }
+
+    public function unserialize($data)
+    {
+        $data = unserialize($data);
+        $this->schoolprogram = $data['schoolprogram'];
+        $this->classes = $data['classes'];
+        $this->fitness = $data['fitness'];
+        $this->schedules = $data['schedules'];
+        $this->id = $data['id'];
+    }
+
+    public function __sleep()
+    {
+        return ['schoolprogram', 'classes', 'fitness', 'schedules', 'id'];
+    }
+
+    public function __wakeup()
+    {
+        // ...
     }
 
     private function createScheduleBlocks($periodCount, $classdayCount)
@@ -57,11 +121,17 @@ class Schedule
         $reservedClassdays[$periodCount-1][$classdayCount-1] = true;  // Reserve last classday of last period
 
         // Reserve random classdays between first and last periods
+        $reservedDays = [];
+        $reservedperiods = [];
         for ($i = 0; $i < 4; $i++) {
             $randomPeriodIndex = mt_rand(1, $periodCount - 2);
             $randomClassdayIndex = mt_rand(0, $classdayCount - 1);
 
-            if (!isset($reservedClassdays[$randomPeriodIndex][$randomClassdayIndex])) {
+            if (!isset($reservedClassdays[$randomPeriodIndex][$randomClassdayIndex])
+            && !in_array($randomClassdayIndex, $reservedDays)
+            && !in_array($randomPeriodIndex, $reservedperiods)) {
+                $reservedDays [] = $randomClassdayIndex;
+                $reservedperiods [] = $randomPeriodIndex;
                 $reservedClassdays[$randomPeriodIndex][$randomClassdayIndex] = true;
             } else {
                 // If the block is already reserved, decrement $i and try again
@@ -70,6 +140,16 @@ class Schedule
         }
 
         return $reservedClassdays;
+    }
+
+    private function isPeriodFull($scheduleBlock, $period, $classdayCount)
+    {
+        for ($i = 0; $i < $classdayCount; $i++) {
+            if (!isset($scheduleBlock[($period-1)][$i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

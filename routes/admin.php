@@ -5,7 +5,7 @@ Route::group([
     'prefix' => config('admin.prefix'),
     'middleware' => ['auth'],
 ], function () {
-    Route::resource('timetableGenerator', 'TimetableGeneratorController');
+    Route::resource('timetableGenerator', 'TimeTableGeneratorController');
     Route::resource('dashboard', 'DashboardController');
     Route::resource('department', 'DepartmentController');
     Route::resource('user', 'UserController');
@@ -23,4 +23,5 @@ Route::group([
     Route::post('edit-account-info', 'UserController@accountInfoStore')->name('admin.account.info.store');
     Route::post('change-password', 'UserController@changePasswordStore')->name('admin.account.password.store');
     Route::post('check-form', 'SchoolprogramController@checkForm')->name('schoolprogram.check.form');
+    Route::get('generate-timtabl;e', 'TimeTableGeneratorController@generateTimetable')->name('timetable.generate');
 });

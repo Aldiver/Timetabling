@@ -39,6 +39,11 @@ class Teacher extends Model
         return $this->belongsToMany(Gradelevel::class, 'teacher_gl_dep')->withPivot('department_id');
     }
 
+    public function schoolprogram()
+    {
+        return $this->belongsToMany(SchoolProgram::class, 'school_program_teacher', 'teacher_id', 'school_program_id');
+    }
+
     public static function getRandomTeacher($schoolprogram, $gradelevel, $department)
     {
         return self::whereHas('gradelevel', function ($query) use ($gradelevel) {
@@ -47,7 +52,7 @@ class Teacher extends Model
                 ->whereHas('department', function ($query) use ($department) {
                     $query->where('id', $department->id);
                 })
-                ->whereHas('schoolprograms', function ($query) use ($schoolprogram) {
+                ->whereHas('schoolprogram', function ($query) use ($schoolprogram) {
                     $query->where('id', $schoolprogram->id);
                 })
                 ->get()

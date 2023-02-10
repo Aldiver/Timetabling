@@ -33,7 +33,6 @@ class PeriodController extends Controller
         $classdays = Classday::all()->pluck("short_name", "id");
         $unassignedTimeslots = Timeslot::doesntHave('period')->get();
 
-
         $periods = $periods->paginate(5)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Period/Index', [

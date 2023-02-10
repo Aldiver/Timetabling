@@ -58,6 +58,7 @@ const form = useForm({
     classdays: [],
     teachers: [],
 });
+
 const periodChecked = (period) => {
     return form.periods.some((obj) => obj.id === period.id);
 };
@@ -80,7 +81,9 @@ onMounted(() => {
         form.sections.push(section);
     });
     Object(props.classdays).forEach((classday) => {
-        form.classdays.push(classday);
+        if (classday.rank >= 1 && classday.rank <= 5) {
+            form.classdays.push(classday);
+        }
     });
     Object(props.teachers).forEach((teacher) => {
         form.teachers.push(teacher);
@@ -101,7 +104,14 @@ let stepvalue = ref([
     "SCHEDULE",
     "TEACHER",
 ]);
-const levelsChecked = ref(false);
+
+const years = ref([]);
+
+onMounted(() => {
+    for (let i = 2000; i <= new Date().getFullYear() + 10; i++) {
+        years.value.push(`${i} - ${i + 1}`);
+    }
+});
 
 //functions
 const remove = (arr, cb) => {
@@ -266,8 +276,6 @@ watch(
                         class="p-3 bg-gray-100/50 dark:bg-slate-800 w-1/2 m-auto"
                     >
                         <span
-                            v-for="section in form.sections"
-                            :key="section.id"
                             class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                         >
                             {{ form.sections.length }}
@@ -321,11 +329,9 @@ watch(
                         class="p-3 bg-gray-100/50 dark:bg-slate-800"
                     >
                         <span
-                            v-for="period in form.periods"
-                            :key="period.id"
                             class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                         >
-                            {{ timeslots[period.timeslot_id] }}
+                            {{ form.periods.length }}
                         </span>
                     </div>
                     <table class="m-auto">
@@ -358,11 +364,9 @@ watch(
                         class="p-3 bg-gray-100/50 dark:bg-slate-800"
                     >
                         <span
-                            v-for="classday in form.classdays"
-                            :key="classday.id"
                             class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                         >
-                            {{ classday.name }}
+                            {{ form.classdays.length }}
                         </span>
                     </div>
                     <table class="m-auto">

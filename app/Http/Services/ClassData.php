@@ -1,16 +1,13 @@
 <?php
 
-class ClassData
+namespace App\Http\Services;
+
+class ClassData implements \Serializable
 {
     private $id;
     private $gradelevel;
     private $section;
-    private $subject;
-    private $classes;
-    private $period;
-    private $classdays;
-    private $teacher;
-
+    private $subjects = [];
 
     public function __construct($id, $gradelevel, $section)
     {
@@ -19,18 +16,38 @@ class ClassData
         $this->section = $section;
     }
 
-    public function setTeacher($teacher)
+    public function addSubject($subject)
     {
-        $this->teacher = $teacher;
+        $this->subjects[] = $subject;
     }
 
-    public function setPeriod($period)
+    public function toArray()
     {
-        $this->period = $period;
+        return [
+            'id' => $this->id,
+            'gradelevel' => $this->gradelevel,
+            'section' => $this->section,
+            'subject' => $this->subjects
+        ];
     }
 
-    public function setClassdays($classdays)
+    public function serialize()
     {
-        $this->classdays = $classdays;
+        return serialize([
+            $this->id,
+            $this->gradelevel,
+            $this->section,
+            $this->subjects
+        ]);
+    }
+
+    public function unserialize($data)
+    {
+        list(
+            $this->id,
+            $this->gradelevel,
+            $this->section,
+            $this->subjects
+        ) = unserialize($data);
     }
 }

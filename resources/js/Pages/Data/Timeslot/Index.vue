@@ -53,13 +53,6 @@ function destroy(id) {
         formDelete.delete(route("timeslot.destroy", id));
     }
 }
-
-let isMounted = ref(true);
-onMounted(() => {
-    setTimeout(() => {
-        isMounted.value = false;
-    }, 3000);
-});
 </script>
 
 <template>
@@ -86,7 +79,7 @@ onMounted(() => {
             <!-- :route-name="route('timeslot.create')" -->
         </SectionTitleLineWithButton>
         <NotificationBar
-            v-if="$page.props.flash.message && isMounted"
+            v-if="$page.props.flash.message"
             color="success"
             :icon="mdiAlertBoxOutline"
         >

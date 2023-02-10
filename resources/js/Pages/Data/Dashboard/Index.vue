@@ -38,6 +38,10 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
+    schedule: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const chartData = ref(null);

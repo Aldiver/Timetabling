@@ -9,6 +9,7 @@ use App\Models\Timeslot;
 use App\Models\Classday;
 use App\Models\Teacher;
 use App\Models\Period;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class SchoolprogramController extends Controller
      */
     public function index()
     {
-        $schoolprogram = SchoolProgram::with('gradelevels', 'sections')->get();
+        $schoolprogram = SchoolProgram::with('gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods')->get();
 
 
         return Inertia::render('Data/Schoolprogram/Index', [
@@ -89,7 +90,7 @@ class SchoolprogramController extends Controller
                 break;
             case 'SCHEDULE':
                 $request->validate([
-                    'timeslots' => 'required|array',
+                    'periods' => 'required|array',
                     'classdays' => 'required|array',
                 ]);
                 break;
@@ -109,6 +110,7 @@ class SchoolprogramController extends Controller
      */
     public function store(Request $request)
     {
+        $departments = Department::all();
         $request->validate([
             'teachers' => ['required'],
         ]);
@@ -121,13 +123,20 @@ class SchoolprogramController extends Controller
 
         $schoolProgram->gradelevels()->attach($request->levels);
 
+        foreach ($request->classdays as $classday) {
+            $schoolProgram->classdays()->attach($classday['id']);
+        };
         foreach ($request->sections as $section) {
-            $section = Section::find($section['id']);
-            $schoolProgram->sections()->attach($section);
+            $schoolProgram->sections()->attach($section['id']);
+        };
+        foreach ($request->teachers as $teacher) {
+            $schoolProgram->teachers()->attach($teacher['id']);
+        };
+        foreach ($request->periods as $period) {
+            $schoolProgram->periods()->attach($period['id']);
         };
 
-        // dd($schoolProgram);
-
+        $schoolProgram->departments()->sync($departments);
 
         return redirect()->route('schoolprogram.index')
                         ->with('message', __('school program added.'));

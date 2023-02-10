@@ -50,13 +50,6 @@ function destroy(id) {
         formDelete.delete(route("subject.destroy", id));
     }
 }
-
-let isMounted = ref(true);
-onMounted(() => {
-    setTimeout(() => {
-        isMounted.value = false;
-    }, 3000);
-});
 </script>
 
 <template>
@@ -74,7 +67,7 @@ onMounted(() => {
             />
         </SectionTitleLineWithButton>
         <NotificationBar
-            v-if="$page.props.flash.message && isMounted"
+            v-if="$page.props.flash.message"
             color="success"
             :icon="mdiAlertBoxOutline"
         >

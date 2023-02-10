@@ -102,6 +102,8 @@ function destroy(id) {
                         </th>
                         <th>Specialization</th>
                         <th>Gender</th>
+                        <th>Grade Level</th>
+                        <th>Department</th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
@@ -123,6 +125,12 @@ function destroy(id) {
                         </td>
                         <td data-label="Gender">
                             {{ teacher.gender }}
+                        </td>
+                        <td data-label="Gender">
+                            {{ teacher.gradelevel[0].level }}
+                        </td>
+                        <td data-label="Gender">
+                            {{ teacher.department[0].name }}
                         </td>
                         <td
                             v-if="can.edit || can.delete"

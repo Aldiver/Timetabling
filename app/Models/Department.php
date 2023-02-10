@@ -24,12 +24,15 @@ class Department extends Model
     public function subjects()
     {
         return $this->hasMany(Subject::class);
-
-        // $department->teachers()->attach($teacher)
     }
 
     public function teachers()
     {
         return $this->belongsToMany(Teacher::class, 'teacher_gl_dep')->withPivot('gradelevel_id');
+    }
+
+    public function schoolprograms()
+    {
+        return $this->belongsToMany(SchoolProgram::class, 'department_school_program', 'department_id', 'school_program_id');
     }
 }
