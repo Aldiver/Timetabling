@@ -43,19 +43,4 @@ class Teacher extends Model
     {
         return $this->belongsToMany(SchoolProgram::class, 'school_program_teacher', 'teacher_id', 'school_program_id');
     }
-
-    public static function getRandomTeacher($schoolprogram, $gradelevel, $department)
-    {
-        return self::whereHas('gradelevel', function ($query) use ($gradelevel) {
-            $query->where('id', $gradelevel->id);
-        })
-                ->whereHas('department', function ($query) use ($department) {
-                    $query->where('id', $department->id);
-                })
-                ->whereHas('schoolprogram', function ($query) use ($schoolprogram) {
-                    $query->where('id', $schoolprogram->id);
-                })
-                ->get()
-                ->random();
-    }
 }

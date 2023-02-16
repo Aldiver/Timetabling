@@ -404,11 +404,9 @@ watch(
                     class="p-3 bg-gray-100/50 dark:bg-slate-800"
                 >
                     <span
-                        v-for="teacher in form.teachers"
-                        :key="teacher.id"
                         class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                     >
-                        {{ teacher.first_name }} {{ teacher.last_name }}
+                        {{ form.teachers.length }}
                     </span>
                 </div>
                 <table>

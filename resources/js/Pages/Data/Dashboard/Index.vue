@@ -44,21 +44,33 @@ const props = defineProps({
     },
 });
 
-const chartData = ref(null);
+const perPage = ref(1);
+const currentPage = ref(0);
 
-const fillChartData = () => {
-    chartData.value = chartConfig.sampleChartData();
-};
+const itemsPaginated = props.schedule.schedules
+    ? computed(() =>
+          props.schedule.schedules.slice(
+              perPage.value * currentPage.value,
+              perPage.value * (currentPage.value + 1)
+          )
+      )
+    : null;
 
-onMounted(() => {
-    fillChartData();
+const numPages = computed(() =>
+    Math.ceil(props.schedule.schedules.length / perPage.value)
+);
+
+const currentPageHuman = computed(() => currentPage.value + 1);
+
+const pagesList = computed(() => {
+    const pagesList = [];
+
+    for (let i = 0; i < numPages.value; i++) {
+        pagesList.push(i);
+    }
+
+    return pagesList;
 });
-
-const mainStore = useMainStore();
-
-const clientBarItems = computed(() => mainStore.clients.slice(0, 4));
-
-const transactionBarItems = computed(() => mainStore.history);
 </script>
 
 <template>
@@ -98,44 +110,75 @@ const transactionBarItems = computed(() => mainStore.history);
                 to="department.index"
             />
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div class="flex flex-col justify-between">
-                <CardBoxTransaction
-                    v-for="(transaction, index) in transactionBarItems"
-                    :key="index"
-                    :amount="transaction.amount"
-                    :date="transaction.date"
-                    :business="transaction.business"
-                    :type="transaction.type"
-                    :name="transaction.name"
-                    :account="transaction.account"
-                />
-            </div>
-            <div class="flex flex-col justify-between">
-                <CardBoxClient
-                    v-for="client in clientBarItems"
-                    :key="client.id"
-                    :name="client.name"
-                    :login="client.login"
-                    :date="client.created"
-                    :progress="client.progress"
-                />
-            </div>
-        </div>
 
         <SectionBannerStarOnGitHub class="mt-6 mb-6" />
 
         <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
-            <BaseButton
-                :icon="mdiReload"
-                color="whiteDark"
-                @click="fillChartData"
-            />
+            <BaseButton :icon="mdiReload" color="whiteDark" />
         </SectionTitleLineWithButton>
 
-        <CardBox class="mb-6">
-            <div>Display none if no current timetable for school year</div>
+        <CardBox class="mb-6" has-table v-if="schedule.schedules">
+            <h1>Grade Level: {{ itemsPaginated[0].gradelevel.level }}</h1>
+            <h2>Section: {{ itemsPaginated[0].section.name }}</h2>
+            <table v-if="schedule.schedules">
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th>Classdays</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-for="subject in itemsPaginated[0].subject"
+                        :key="subject.id"
+                    >
+                        <td>
+                            <span
+                                v-for="sched in subject.class"
+                                :key="sched.id"
+                            >
+                                {{ sched.period.rank }} -
+                            </span>
+                        </td>
+                        <td>
+                            <span
+                                v-for="sched in subject.class"
+                                :key="sched.id"
+                            >
+                                <span
+                                    v-for="classday in sched.classday"
+                                    :key="classday.id"
+                                >
+                                    {{ classday.name }} -
+                                </span>
+                            </span>
+                        </td>
+                        <td>{{ subject.subject }}</td>
+                        <td>{{ subject.teacher.full_name }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </CardBox>
+        <!-- <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+            <BaseLevel>
+                <BaseButtons>
+                    <BaseButton
+                        v-for="page in pagesList"
+                        :key="page"
+                        :active="page === currentPage"
+                        :label="page + 1"
+                        :color="
+                            page === currentPage ? 'lightDark' : 'whiteDark'
+                        "
+                        small
+                        @click="currentPage = page"
+                    />
+                </BaseButtons>
+                <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
+            </BaseLevel>
+        </div> -->
     </SectionMain>
 </template>
 <script>

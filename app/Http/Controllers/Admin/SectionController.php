@@ -44,7 +44,7 @@ class SectionController extends Controller
             $sections->latest();
         }
 
-        $sections = $sections->paginate(5)->onEachSide(2)->appends(request()->query());
+        $sections = $sections->with('gradelevel')->paginate(10)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Section/Index', [
             'sections' => $sections,
@@ -86,8 +86,8 @@ class SectionController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'bldg_letter' => 'required',
-            'room_number' => 'required',
+            'bldg_letter' => ['required'],
+            'room_number' => ['required', 'integer'],
             'gradelevels' => 'required'
         ]);
 
@@ -142,10 +142,19 @@ class SectionController extends Controller
         $request->validate([
             'name' => 'required',
             'bldg_letter' => 'required',
-            'room_number' => 'required'
+            'room_number' => ['required', 'integer'],
+            'gradelevels' => 'required'
         ]);
 
-        $section->update($request->all());
+        $section->update([
+            'name' => $request->name,
+            'bldg_letter' =>$request->bldg_letter,
+            'room_number' => $request->room_number,
+        ]);
+
+        $gradelevel = Gradelevel::where('level', $request->gradelevels)->first();
+        $section->gradelevel()->associate($gradelevel);
+        $section->save();
 
         return redirect()->back()
                         ->with('message', __('section updated.'));

@@ -31,7 +31,7 @@ class TimeTableGeneratorController extends Controller
 
     public function generateTimetable()
     {
-        $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find(2);
+        $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find(1);
         // dd($selectedSchoolProgram);
         $schedule = new Schedule($selectedSchoolProgram);
 

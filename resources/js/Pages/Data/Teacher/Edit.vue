@@ -17,27 +17,40 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
-    // roles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
-    // userHasRoles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
+    gradelevels: {
+        type: Object,
+        default: () => ({}),
+    },
+    departments: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const form = useForm({
     _method: "put",
-    teacher_id: props.teacher.teacher_id,
     last_name: props.teacher.last_name,
     first_name: props.teacher.first_name,
     middle_name: props.teacher.middle_name,
-    grade_level_assigned: props.teacher.grade_level_assigned,
-    special_task: props.teacher.special_task,
-    image: props.teacher.image,
-    email: props.teacher.email,
+    specialization: props.teacher.specialization,
+    gender: props.teacher.gender,
+    gradelevel: props.teacher.gradelevel[0]
+        ? props.teacher.gradelevel[0].level
+        : "",
+    department: props.teacher.department[0]
+        ? props.teacher.department[0].name
+        : "",
 });
+
+const gradelevelsDropdown = Object.keys(props.gradelevels).map((key) => ({
+    id: key,
+    label: props.gradelevels[key],
+}));
+
+const departmentDropdown = Object.keys(props.departments).map((key) => ({
+    id: key,
+    label: props.departments[key],
+}));
 </script>
 
 <template>
@@ -45,11 +58,11 @@ const form = useForm({
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="Update teacher"
+            title="Add teacher"
             main
         >
             <BaseButton
-                :route-name="route('teacher.index')"
+                :routeName="route('teacher.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -63,25 +76,6 @@ const form = useForm({
                 form.post(route('teacher.update', props.teacher.id))
             "
         >
-            <FormField
-                label="ID Number"
-                :class="{ 'text-red-400': form.errors.teacher_id }"
-            >
-                <FormControl
-                    v-model="form.teacher_id"
-                    type="text"
-                    placeholder="Enter ID Number"
-                    :error="form.errors.teacher_id"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.teacher_id"
-                    >
-                        {{ form.errors.teacher_id }}
-                    </div>
-                </FormControl>
-            </FormField>
-
             <FormField
                 label="Last Name"
                 :class="{ 'text-red-400': form.errors.last_name }"
@@ -140,85 +134,68 @@ const form = useForm({
             </FormField>
 
             <FormField
-                label="Grade Level"
-                :class="{ 'text-red-400': form.errors.grade_level_assigned }"
+                label="Specialization"
+                :class="{ 'text-red-400': form.errors.specialization }"
             >
                 <FormControl
-                    v-model="form.grade_level_assigned"
+                    v-model="form.specialization"
                     type="text"
-                    placeholder="Enter Grade Level"
-                    :error="form.errors.grade_level_assigned"
+                    placeholder="Enter Specialization"
+                    :error="form.errors.specialization"
                 >
                     <div
                         class="text-red-400 text-sm"
-                        v-if="form.errors.grade_level_assigned"
+                        v-if="form.errors.specialization"
                     >
-                        {{ form.errors.grade_level_assigned }}
+                        {{ form.errors.specialization }}
                     </div>
                 </FormControl>
             </FormField>
 
             <FormField
-                label="Special Task"
-                :class="{ 'text-red-400': form.errors.special_task }"
+                label="Gender"
+                :class="{ 'text-red-400': form.errors.gender }"
             >
-                <FormControl
-                    v-model="form.special_task"
-                    type="text"
-                    placeholder="Enter Special Task"
-                    :error="form.errors.special_task"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.special_task"
-                    >
-                        {{ form.errors.special_task }}
-                    </div>
-                </FormControl>
+                <FormCheckRadioGroup
+                    name="gender-radio"
+                    v-model="form.gender"
+                    type="radio"
+                    :error="form.errors.gender"
+                    :options="{ Male: 'Male', Female: 'Female' }"
+                />
             </FormField>
 
             <FormField
-                label="Insert Image"
-                :class="{ 'text-red-400': form.errors.image }"
+                label="Grade level"
+                :class="{ 'text-red-400': form.errors.gradelevel }"
             >
                 <FormControl
-                    v-model="form.image"
-                    type="text"
-                    placeholder="Enter Last Name"
-                    :error="form.errors.image"
-                >
-                    <div class="text-red-400 text-sm" v-if="form.errors.image">
-                        {{ form.errors.image }}
-                    </div>
-                </FormControl>
+                    v-model="form.gradelevel"
+                    placeholder="Grade levels"
+                    :error="form.errors.gradelevel"
+                    :options="gradelevelsDropdown"
+                />
+                <div class="text-red-400 text-sm" v-if="form.errors.gradelevel">
+                    {{ form.errors.gradelevels }}
+                </div>
             </FormField>
 
             <FormField
-                label="Email"
-                :class="{ 'text-red-400': form.errors.email }"
+                label="Department"
+                :class="{ 'text-red-400': form.errors.department }"
             >
                 <FormControl
-                    v-model="form.email"
-                    type="text"
-                    placeholder="Enter Email"
-                    :error="form.errors.email"
-                >
-                    <div class="text-red-400 text-sm" v-if="form.errors.email">
-                        {{ form.errors.email }}
-                    </div>
-                </FormControl>
+                    v-model="form.department"
+                    placeholder="Department"
+                    :error="form.errors.department"
+                    :options="departmentDropdown"
+                />
+                <div class="text-red-400 text-sm" v-if="form.errors.department">
+                    {{ form.errors.department }}
+                </div>
             </FormField>
 
             <BaseDivider />
-
-            <!-- <FormField label="Roles" wrap-body>
-                <FormCheckRadioGroup
-                    v-model="form.roles"
-                    name="roles"
-                    is-column
-                    :options="props.roles"
-                />
-            </FormField> -->
 
             <template #footer>
                 <BaseButtons>

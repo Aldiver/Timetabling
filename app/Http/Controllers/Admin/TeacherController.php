@@ -128,13 +128,15 @@ class TeacherController extends Controller
      */
     public function edit(Teacher $teacher)
     {
-        // $roles = Role::all()->pluck("name","id");
-        // $userHasRoles = array_column(json_decode($user->roles, true), 'id');
+        $gradelevels = Gradelevel::all()->pluck("level", "id");
+        $departments = Department::all()->pluck("name", "id");
 
+        $selectedTeacher = $teacher->with('department', 'gradelevel')->where('id', $teacher->id)->first();
+        // dd($selectedTeacher);
         return Inertia::render('Data/Teacher/Edit', [
-            'teacher' => $teacher,
-            // 'roles' => $roles,
-            // 'userHasRoles' => $userHasRoles,
+            'teacher' => $selectedTeacher,
+            'gradelevels' => $gradelevels,
+            'departments' => $departments,
         ]);
     }
 

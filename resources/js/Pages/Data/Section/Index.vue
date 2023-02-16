@@ -67,7 +67,7 @@ function destroy(id) {
 
 <template>
     <CardBoxModal v-model="modalEdit" title="">
-        <Edit :section="data" v-model="modalEdit" />
+        <Edit :section="data" v-model="modalEdit" :gradelevels="gradelevels" />
     </CardBoxModal>
 
     <CardBoxModal v-model="modalCreate" class="mb-6" title="">

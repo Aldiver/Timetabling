@@ -14,8 +14,7 @@ return new class () extends Migration {
     {
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('load_id');
-            $table->string('hours_per_week');
+            $table->string('name');
             $table->timestamps();
         });
     }

@@ -16,7 +16,7 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->string('bldg_letter');
-            $table->string('room_number');
+            $table->integer('room_number');
             $table->foreignId('gradelevel_id')->nullable()->constrained('gradelevels')->onDelete('cascade');
             $table->timestamps();
         });
