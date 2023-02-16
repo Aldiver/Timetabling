@@ -24,6 +24,7 @@ import CardBoxClient from "@/components/CardBoxClient.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import SectionBannerStarOnGitHub from "@/components/SectionBannerStarOnGitHub.vue";
+import BaseButtons from "@/components/BaseButtons.vue";
 
 const props = defineProps({
     teachers: {
@@ -161,7 +162,7 @@ const pagesList = computed(() => {
                 </tbody>
             </table>
         </CardBox>
-        <!-- <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+        <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
             <BaseLevel>
                 <BaseButtons>
                     <BaseButton
@@ -178,7 +179,7 @@ const pagesList = computed(() => {
                 </BaseButtons>
                 <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
             </BaseLevel>
-        </div> -->
+        </div>
     </SectionMain>
 </template>
 <script>
