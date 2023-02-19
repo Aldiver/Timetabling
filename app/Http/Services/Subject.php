@@ -8,9 +8,13 @@ class Subject
     public $class;
     public $teacher;
 
-    public function __construct($subject, $teacher)
+    public function __construct($subject)
     {
         $this->subject = $subject;
+    }
+
+    public function setTeacher($teacher)
+    {
         $this->teacher = $teacher;
     }
 

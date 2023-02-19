@@ -25,7 +25,7 @@ import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import SectionBannerStarOnGitHub from "@/components/SectionBannerStarOnGitHub.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
-
+import BaseLevel from "@/components/BaseLevel.vue";
 const props = defineProps({
     teachers: {
         type: Number,
@@ -57,21 +57,23 @@ const itemsPaginated = props.schedule.schedules
       )
     : null;
 
-const numPages = computed(() =>
-    Math.ceil(props.schedule.schedules.length / perPage.value)
-);
+const numPages = props.schedule.schedules
+    ? computed(() => Math.ceil(props.schedule.schedules.length / perPage.value))
+    : null;
 
 const currentPageHuman = computed(() => currentPage.value + 1);
 
-const pagesList = computed(() => {
-    const pagesList = [];
+const pagesList = numPages
+    ? computed(() => {
+          const pagesList = [];
 
-    for (let i = 0; i < numPages.value; i++) {
-        pagesList.push(i);
-    }
+          for (let i = 0; i < numPages.value; i++) {
+              pagesList.push(i);
+          }
 
-    return pagesList;
-});
+          return pagesList;
+      })
+    : null;
 </script>
 
 <template>
@@ -121,6 +123,7 @@ const pagesList = computed(() => {
         <CardBox class="mb-6" has-table v-if="schedule.schedules">
             <h1>Grade Level: {{ itemsPaginated[0].gradelevel.level }}</h1>
             <h2>Section: {{ itemsPaginated[0].section.name }}</h2>
+            <h1>Conflicts: {{ schedule.conflicts }}</h1>
             <table v-if="schedule.schedules">
                 <thead>
                     <tr>
@@ -157,7 +160,7 @@ const pagesList = computed(() => {
                             </span>
                         </td>
                         <td>{{ subject.subject }}</td>
-                        <td>{{ subject.teacher.full_name }}</td>
+                        <td>{{ subject.teacher }}</td>
                     </tr>
                 </tbody>
             </table>

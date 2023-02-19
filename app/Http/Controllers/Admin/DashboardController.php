@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Teacher;
 use App\Models\Section;
 use App\Models\Department;
+use App\Models\Gradelevel;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -31,7 +32,7 @@ class DashboardController extends Controller
         $departments = Department::count();
 
         return Inertia::render('Data/Dashboard/Index', [
-            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments
+            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments,
         ]);
     }
 }
