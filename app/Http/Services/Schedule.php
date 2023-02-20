@@ -13,6 +13,7 @@ class Schedule implements \Serializable
     private $schedules;
     private $id;
     private $conflicts;
+    private $teacher_conflicts;
     private $fitnessChanged = true;
     private $teacher_loading = [];
 
@@ -36,74 +37,81 @@ class Schedule implements \Serializable
         $gradelevel = $this->schoolprogram->with('gradelevels.sections')->first();
         $classdayCount = $this->schoolprogram->classdays->count();
         $periodCount = $this->schoolprogram->periods->count();
-
+        $periods = $this->schoolprogram->periods()->with('timeslot')->get();
         //Assign admin task and OHSP randomly to teachers'
         //$admin = $this->schoolprogram->admins;
         $admin = ['Admin1', 'Admin2', 'Admin3', 'Admin4', 'Admin5', 'Admin6', 'Admin7', 'Admin8', 'Admin9', 'Admin10'];
+
         // $this->assignOHSPLoads();
         // $this->assignAdminLoads($this->schoolprogram->teachers, collect($admin));
+
         foreach ($this->schoolprogram->gradelevels as $gradelevel) {
+            //unique per grade level
+            $departmentLastIndex = 1;
             foreach ($gradelevel->sections as $section) {
                 //create a class schedule for each section
                 $class = new ClassData($classID++, $gradelevel, $section);
                 $reservedClassdays = $this->createScheduleBlocks($periodCount, $classdayCount);
-                foreach ($this->schoolprogram->departments as $department) {
-                    $filteredTeachers = $this->schoolprogram->teachers()
-                    ->whereHas('gradelevel', function ($query) use ($gradelevel) {
-                        $query->where('id', $gradelevel->id);
-                    })->whereHas('department', function ($query) use ($department) {
-                        $query->where('id', $department->id);
-                    })->pluck('id');
-                    // dd($filteredTeachers);
-                    $periods = [];
-                    $periodsArr = [];
+                $departments = $this->schoolprogram->departments;
+                $periodIndex = 1;
+
+
+                //section unique variables
+
+                $periodsWithVacantSlot = [];
+                $advisory = false;
+                foreach ($periods as $period) {
+                    if ($periodIndex == 1) {
+                        $advisory = true;
+                        if ($departmentLastIndex > 8) {
+                            $departmentLastIndex = 1;
+                        }
+                        $selectedDepartment = $departments->find($departmentLastIndex);
+                        $departmentLastIndex++;
+                    } else {
+                        $selectedDepartment = $departments->random();
+                    }
+
+                    //remove current selection from list
+                    $departments = $departments->reject(function ($department) use ($selectedDepartment) {
+                        return $department->id === $selectedDepartment->id;
+                    });
+
+                    //filter teacher for current Grade level and department for each period
+                    $filteredTeachers = $this->getFilteredTeachers($gradelevel, $selectedDepartment);
+
+                    //Fill up the available slots for the current period
                     $classdays = [];
-                    $subjectName = $department->subjects()->first()->name;
-                    $meetings = $department->subjects()->first()->hours_per_week;
-                    $subject = new Subject($department->subjects()->first()->name);
-                    $chooseTeacher = true;
+                    $selectedDepartmentID = $selectedDepartment->id;
+                    $subjectName = $selectedDepartment->subjects()->first()->name;
+                    $meetings = $selectedDepartment->subjects()->first()->hours_per_week;
+                    $periodObj = new Period($subjectName);
+                    $randomTeacher = $filteredTeachers->random();
+
+                    //load assigning for Teacher
+                    if ($advisory) {
+                        do {
+                            $randomTeacher = $filteredTeachers->random();
+                            $filteredTeachers->forget($filteredTeachers->search($randomTeacher));
+                        } while ($this->checkIfAdvisor($randomTeacher) || !($this->loadCount($randomTeacher) < 5));
+                        $this->assignRegularLoads($randomTeacher, "Advisory");
+                        $advisory = false;
+                    } else {
+                        do {
+                            $randomTeacher = $filteredTeachers->random();
+                            $filteredTeachers->forget($filteredTeachers->search($randomTeacher));
+                        } while (!($this->loadCount($randomTeacher) < 8) && ($selectedDepartmentID != 8));
+                    }
+                    $this->assignRegularLoads($randomTeacher, $section->name);
+
                     while ($meetings > 0) {
-                        if ($meetings == 4) {
-                            $triedPeriods = [];
-                            do {
-                                $periodIndex = mt_rand(1, $periodCount);
-                            } while (!$this->checkAvailability($reservedClassdays, $periodIndex, $classdayCount) || in_array($periodIndex, $triedPeriods));
-                            $triedPeriods[] = $periodIndex;
-                        } else {
-                            $triedPeriods = [];
-                            do {
-                                $periodIndex = mt_rand(1, $periodCount);
-                            } while ($this->checkPeriodFull($reservedClassdays, $periodIndex, $classdayCount) || in_array($periodIndex, $triedPeriods));
-                            $triedPeriods[] = $periodIndex;
-                        }
-
-                        if ($chooseTeacher) {
-                            if ($periodIndex == 1) {
-                                $randomTeacher = $filteredTeachers->random();
-                                // while ($this->checkIfAdvisor($randomTeacher) || !($this->loadCount($randomTeacher) < 5)) {
-                                //     $randomTeacher = $filteredTeachers->random();
-                                // }
-                                $this->assignRegularLoads($randomTeacher, "Advisory");
-                                $this->assignRegularLoads($randomTeacher, $section->name);
-
-                            // dd($this->teacher_loading[$randomTeacher->id], $this->loadCount($randomTeacher));
-                            } else {
-                                $randomTeacher = $filteredTeachers->random();
-                                // while (!($this->loadCount($randomTeacher) < 7)) {
-                                //     $randomTeacher = $filteredTeachers->random();
-                                // }
-                                $this->assignRegularLoads($randomTeacher, $section->name);
-                            }
-                            // dd($randomTeacher);
-                            $chooseTeacher = false;
-                        }
                         $classdayArr = [];
                         for ($classdayIndex = 0; $classdayIndex < 5; $classdayIndex++) {
                             if (!isset($reservedClassdays[$periodIndex-1][$classdayIndex])) {
                                 $classday = $this->schoolprogram->classdays->where('rank', $classdayIndex + 1)->first();
                                 if (!in_array($classday, $classdayArr)) {
                                     $reservedClassdays[$periodIndex-1][$classdayIndex] = $subjectName;
-                                    $classdayArr[] = $classday;
+                                    $classdayArr[] = $classday->short_name; //can change back to model
                                     $meetings--;
                                 }
                             }
@@ -113,17 +121,67 @@ class Schedule implements \Serializable
                         }
                         if (!empty($classdayArr)) {
                             $classdays[] = $classdayArr;
-                            $periods[] = $this->schoolprogram->periods()->where('rank', $periodIndex)->first();
-                            $subject->setClass($periods, $classdays);
-                            $subject->setTeacher($randomTeacher);
+                            $periodObj->setClass($classdayArr);
+                            $periodObj->setTeacher($randomTeacher);
                         }
                     }
-                    $class->addSubject($subject->toArray());
+                    //if last subject is either TLE or ESP, remove the other one from the list of selections
+                    if (($selectedDepartmentID == 7 || $selectedDepartmentID == 8)) {
+                        // && !($departments->count() < 1)
+                        $reservedSubject = ($selectedDepartmentID == 7) ? 8 : 7;
+                        $departments = $departments->reject(function ($department) use ($reservedSubject) {
+                            return $department->id === $reservedSubject;
+                        });
+                        $reservedSubject = $this->schoolprogram->departments()->find($reservedSubject);
+                        // dd($selectedDepartmentID, $selectedDepartment->name, $reservedSubject->id, $reservedSubject->name);
+                    }
+
+                    //if current period is not full, store it in array of period with vacant
+                    if (!($this->checkPeriodFull($reservedClassdays, $periodIndex-1, $classdayCount))) {
+                        $periodsWithVacantSlot[] = $periodIndex-1;
+                    }
+
+                    $class->addPeriod([$periodObj->toArray()]); //to add mul
+                    $periodIndex++; //increment sa last part
                 }
+
+                //Insert last vacant subject
+                $insertSubject = $reservedSubject->subjects()->first();
+                $randomTeacher = ($this->getFilteredTeachers($gradelevel, $reservedSubject))->random();
+                $index = 0;
+                $numOfMeetings = $insertSubject->hours_per_week;
+                $periodObj = new Period($insertSubject->name);
+                while ($numOfMeetings > 0) {
+                    $classdayArr = [];
+                    if ($index==2) {
+                        dd($periodsWithVacantSlot, $index, $reservedClassdays);
+                    }
+                    for ($classdayIndex = 0; $classdayIndex < 5; $classdayIndex++) {
+                        if (!isset($reservedClassdays[$periodsWithVacantSlot[$index]][$classdayIndex])) {
+                            $classday = $this->schoolprogram->classdays->where('rank', $classdayIndex + 1)->first();
+                            if (!in_array($classday, $classdayArr)) {
+                                $reservedClassdays[$periodsWithVacantSlot[$index]][$classdayIndex] = $insertSubject->name;
+                                $classdayArr[] = $classday->short_name; //can change back to model
+                                $numOfMeetings--;
+                            }
+                        }
+                        if ($numOfMeetings == 0) {
+                            break;
+                        }
+                    }
+                    if (!empty($classdayArr)) {
+                        $periodObj->setClass($classdayArr);
+                        $periodObj->setTeacher($randomTeacher);
+                    }
+                    $class->insertPeriod($periodsWithVacantSlot[$index], $periodObj->toArray());
+                    $index++;
+                } // end of inserting
+
                 $this->schedules[] = $class->toArray();
+                // dd($class);
             }
         }
-        // dd($this->teacher_loading);
+        // dd(($this->teacher_loading));
         $this->getFitness();
         return $this->schedules;
     }
@@ -143,6 +201,7 @@ class Schedule implements \Serializable
             'id' => $this->id,
             'teacher_loading' => $this->teacher_loading,
             'conflicts' => $this->conflicts,
+            'teacher_conflicts' => $this->teacher_conflicts,
         ];
     }
 
@@ -161,11 +220,12 @@ class Schedule implements \Serializable
         $this->id = $data['id'];
         $this->teacher_loading = $data['teacher_loading'];
         $this->conflicts = $data['conflicts'];
+        $this->teacher_conflicts = $data['teacher_conflicts'];
     }
 
     public function __sleep()
     {
-        return ['schoolprogram', 'classes', 'fitness', 'schedules', 'id', 'teacher_loading', 'conflicts'];
+        return ['schoolprogram', 'classes', 'fitness', 'schedules', 'id', 'teacher_loading', 'conflicts', 'teacher_conflicts'];
     }
 
     public function __wakeup()
@@ -173,6 +233,15 @@ class Schedule implements \Serializable
         // ...
     }
 
+    private function getFilteredTeachers($gradelevel, $selectedDepartment)
+    {
+        return $this->schoolprogram->teachers()
+                    ->whereHas('gradelevel', function ($query) use ($gradelevel) {
+                        $query->where('id', $gradelevel->id);
+                    })->whereHas('department', function ($query) use ($selectedDepartment) {
+                        $query->where('id', $selectedDepartment->id);
+                    })->pluck('full_name');
+    }
     private function assignAdminLoads($teachers, $adminLoads)
     {
         $teachers = $teachers->shuffle();
@@ -289,7 +358,7 @@ class Schedule implements \Serializable
     {
         $count = 0;
         for ($i = 0; $i < $classdayCount; $i++) {
-            if (!isset($scheduleBlock[($period-1)][$i])) {
+            if (!isset($scheduleBlock[($period)][$i])) {
                 $count++;
             }
             if ($count == 4) {
@@ -302,7 +371,7 @@ class Schedule implements \Serializable
     private function checkPeriodFull($scheduleBlock, $period, $classdayCount)
     {
         for ($i = 0; $i < $classdayCount; $i++) {
-            if (!isset($scheduleBlock[($period-1)][$i])) {
+            if (!isset($scheduleBlock[($period)][$i])) {
                 return false;
             }
         }
@@ -327,47 +396,38 @@ class Schedule implements \Serializable
     {
         $this->conflicts = 0;
         $teacher_schedules = [];
+        $conflicting_teachers = [];
         $teacher_section_counts = [];
 
         foreach ($this->schedules as $schedule) {
-            foreach ($schedule['subject'] as $subject) {
-                $teacher = $subject['teacher'];
-                $teacher_id = $teacher;
-                $grade_level = $schedule['gradelevel']['level'];
+            $section = $schedule['section']->name;
+            foreach ($schedule['period'] as $periodIndex => $period) {
+                foreach ($period as $classBlock) {
+                    $teacher_id = $classBlock['teacher'];
+                    $grade_level = $schedule['gradelevel']['level'];
 
-                if (!isset($teacher_schedules[$grade_level][$teacher_id])) {
-                    $teacher_schedules[$grade_level][$teacher_id] = [];
-                }
-
-                foreach ($subject['class'] as $class) {
-                    $period = $class['period']['rank'];
-                    $classdays = array_map(function ($classday) {
-                        return $classday['rank'];
-                    }, $class['classday']);
-
-                    if (!isset($teacher_schedules[$grade_level][$teacher_id][$period])) {
-                        $teacher_schedules[$grade_level][$teacher_id][$period] = [];
+                    if (!isset($teacher_schedules[$grade_level][$teacher_id])) {
+                        $teacher_schedules[$grade_level][$teacher_id] = [];
                     }
 
-                    foreach ($classdays as $classday) {
-                        //if the "classday" is already mapped in the array with the same period,
-                        //add conflict
-                        if (in_array($classday, $teacher_schedules[$grade_level][$teacher_id][$period])) {
+                    if (!isset($teacher_schedules[$grade_level][$teacher_id][$periodIndex])) {
+                        $teacher_schedules[$grade_level][$teacher_id][$periodIndex] = [];
+                    }
+
+                    // Check for conflicts
+                    foreach ($classBlock['classday'] as $day) {
+                        if (in_array($day, $teacher_schedules[$grade_level][$teacher_id][$periodIndex])) {
+                            $conflicting_teachers[$grade_level][$day][$teacher_id][] = $section;
                             $this->conflicts++;
                         } else {
-                            $teacher_schedules[$grade_level][$teacher_id][$period][] = $classday;
+                            $teacher_schedules[$grade_level][$teacher_id][$periodIndex][] = $day;
                         }
-                    }
-
-                    // increment section count for the teacher handling this class
-                    if (!isset($teacher_section_counts[$teacher_id])) {
-                        $teacher_section_counts[$teacher_id] = 1;
-                    } else {
-                        $teacher_section_counts[$teacher_id]++;
                     }
                 }
             }
         }
+        $this->teacher_conflicts = $conflicting_teachers;
+        // dd($this->conflicts, $conflicting_teachers);
         // dd($teacher_schedules, $this->teacher_loading);
         return round((1 / ($this->conflicts + 1)), 6);
     }

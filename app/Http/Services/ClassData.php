@@ -7,7 +7,7 @@ class ClassData implements \Serializable
     private $id;
     private $gradelevel;
     private $section;
-    private $subjects = [];
+    private $periods = [];
 
     public function __construct($id, $gradelevel, $section)
     {
@@ -16,9 +16,14 @@ class ClassData implements \Serializable
         $this->section = $section;
     }
 
-    public function addSubject($subject)
+    public function addPeriod($period)
     {
-        $this->subjects[] = $subject;
+        $this->periods[] = $period;
+    }
+    public function insertPeriod($periodIndex, $period)
+    {
+        array_push($this->periods[$periodIndex], $period);
+        // $this->periods[] = $period;
     }
 
     public function toArray()
@@ -27,7 +32,7 @@ class ClassData implements \Serializable
             'id' => $this->id,
             'gradelevel' => $this->gradelevel,
             'section' => $this->section,
-            'subject' => $this->subjects
+            'period' => $this->periods
         ];
     }
 
@@ -37,7 +42,7 @@ class ClassData implements \Serializable
             $this->id,
             $this->gradelevel,
             $this->section,
-            $this->subjects
+            $this->periods
         ]);
     }
 
@@ -47,7 +52,7 @@ class ClassData implements \Serializable
             $this->id,
             $this->gradelevel,
             $this->section,
-            $this->subjects
+            $this->periods
         ) = unserialize($data);
     }
 }

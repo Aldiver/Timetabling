@@ -62,7 +62,7 @@ const props = defineProps({
                             ID Number
                         </td>
                         <td data-label="ID Number">
-                            {{ teacher.teacher_id }}
+                            {{ teacher.id }}
                         </td>
                     </tr>
                     <tr>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Services;
 
-class Subject
+class Period
 {
     public $subject;
-    public $class;
+    public $classday;
     public $teacher;
 
     public function __construct($subject)
@@ -18,23 +18,16 @@ class Subject
         $this->teacher = $teacher;
     }
 
-    public function setClass($period, $classday)
+    public function setClass($classday)
     {
-        $this->class = [];
-
-        for ($i = 0; $i < count($classday); $i++) {
-            $this->class[] = [
-                "period" => $period[$i],
-                "classday" => $classday[$i]
-            ];
-        }
+        $this->classday = $classday;
     }
 
     public function toArray()
     {
         return [
             'subject' => $this->subject,
-            'class' => $this->class,
+            'classday' => $this->classday,
             'teacher' => $this->teacher,
         ];
     }
@@ -43,7 +36,7 @@ class Subject
     {
         return serialize([
             $this->subject,
-            $this->class,
+            $this->classday,
             $this->teacher,
         ]);
     }
@@ -52,7 +45,7 @@ class Subject
     {
         list(
             $this->subject,
-            $this->class,
+            $this->classday,
             $this->teacher,
         ) = unserialize($data);
     }

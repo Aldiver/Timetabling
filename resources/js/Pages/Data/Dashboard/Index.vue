@@ -45,7 +45,27 @@ const props = defineProps({
     },
 });
 
-const perPage = ref(1);
+const days = ["Mon", "Tue", "Wed", "Thur", "Fri"];
+function hasSubject(period, day) {
+    if (period) {
+        for (let i = 0; i < period.length; i++) {
+            if (period[i].classday.includes(day)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function getSubjectIndex(period, day) {
+    for (let i = 0; i < period.length; i++) {
+        if (period[i].classday.includes(day)) {
+            return i;
+        }
+    }
+}
+
+const perPage = ref(2); //change this value to display tables per page.
 const currentPage = ref(0);
 
 const itemsPaginated = props.schedule.schedules
@@ -121,46 +141,52 @@ const pagesList = numPages
         </SectionTitleLineWithButton>
 
         <CardBox class="mb-6" has-table v-if="schedule.schedules">
-            <h1>Grade Level: {{ itemsPaginated[0].gradelevel.level }}</h1>
-            <h2>Section: {{ itemsPaginated[0].section.name }}</h2>
             <h1>Conflicts: {{ schedule.conflicts }}</h1>
-            <table v-if="schedule.schedules">
+
+            <table v-for="items in itemsPaginated" :key="items.id" class="mb-6">
                 <thead>
                     <tr>
-                        <th>Period</th>
-                        <th>Classdays</th>
-                        <th>Subject</th>
-                        <th>Teacher</th>
+                        <th class="text-center py-1" colspan="7">
+                            Grade Level:
+                            {{ itemsPaginated[0].gradelevel.level }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-center py-1" colspan="7">
+                            Section: {{ items.section.name }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th class="text-center py-1" colspan="7">
+                            {{ items.section.bldg_letter }}
+                            {{ items.section.room_number }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th colspan="1">Period</th>
+                        <th v-for="day in days">{{ day }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        v-for="subject in itemsPaginated[0].subject"
-                        :key="subject.id"
-                    >
-                        <td>
-                            <span
-                                v-for="sched in subject.class"
-                                :key="sched.id"
-                            >
-                                {{ sched.period.rank }} -
-                            </span>
+                    <tr v-for="(period, index) in items.period" :key="index">
+                        <td>{{ index + 1 }}</td>
+                        <td v-for="(day, dayIndex) in days" :key="dayIndex">
+                            <template v-if="hasSubject(period, day)">
+                                <div>
+                                    {{
+                                        period[getSubjectIndex(period, day)]
+                                            .subject
+                                    }}
+                                </div>
+                                <div>
+                                    {{
+                                        period[getSubjectIndex(period, day)]
+                                            .teacher
+                                    }}
+                                </div>
+                            </template>
+                            <template v-else><b>RESERVED</b></template>
                         </td>
-                        <td>
-                            <span
-                                v-for="sched in subject.class"
-                                :key="sched.id"
-                            >
-                                <span
-                                    v-for="classday in sched.classday"
-                                    :key="classday.id"
-                                >
-                                    {{ classday.name }} -
-                                </span>
-                            </span>
-                        </td>
-                        <td>{{ subject.subject }}</td>
-                        <td>{{ subject.teacher }}</td>
                     </tr>
                 </tbody>
             </table>
