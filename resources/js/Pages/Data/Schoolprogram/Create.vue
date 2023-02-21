@@ -14,7 +14,7 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import CardBoxComponentTitle from "@/components/CardBoxComponentTitle.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 
 const errors = computed(() => usePage().props.value.errors);
@@ -25,6 +25,10 @@ const props = defineProps({
         default: () => ({}),
     },
     sections: {
+        type: Object,
+        default: () => ({}),
+    },
+    periods: {
         type: Object,
         default: () => ({}),
     },
@@ -50,14 +54,64 @@ const form = useForm({
     school_year: "",
     levels: [],
     sections: [],
-    timeslots: [],
+    periods: [],
     classdays: [],
     teachers: [],
 });
 
+const periodChecked = (period) => {
+    return form.periods.some((obj) => obj.id === period.id);
+};
+const classdayChecked = (classday) => {
+    return form.classdays.some((obj) => obj.id === classday.id);
+};
+const teacherChecked = (teacher) => {
+    return form.teachers.some((obj) => obj.id === teacher.id);
+};
+const sectionChecked = (section) => {
+    return form.sections.some((obj) => obj.id === section.id);
+};
+
+//set all data as default values
+onMounted(() => {
+    Object.keys(props.gradelevels).forEach((key) => {
+        form.levels.push(Number(key));
+    });
+    Object(props.sections).forEach((section) => {
+        form.sections.push(section);
+    });
+    Object(props.classdays).forEach((classday) => {
+        if (classday.rank >= 1 && classday.rank <= 5) {
+            form.classdays.push(classday);
+        }
+    });
+    Object(props.teachers).forEach((teacher) => {
+        form.teachers.push(teacher);
+    });
+    Object(props.periods).forEach((period) => {
+        form.periods.push(period);
+    });
+});
+
 let formStep = ref(1);
-let stepvalue = ref(["SCHOOLYEAR", "GRADELEVEL", "SCHEDULE", "TEACHER"]);
-const levelsChecked = ref(false);
+let stepvalue = ref([
+    "SCHOOLYEAR",
+    "GRADELEVEL",
+    "SECTION",
+    "SECTION",
+    "SECTION",
+    "SECTION",
+    "SCHEDULE",
+    "TEACHER",
+]);
+
+const years = ref([]);
+
+onMounted(() => {
+    for (let i = 2000; i <= new Date().getFullYear() + 10; i++) {
+        years.value.push(`${i} - ${i + 1}`);
+    }
+});
 
 //functions
 const remove = (arr, cb) => {
@@ -73,16 +127,23 @@ const remove = (arr, cb) => {
 };
 
 const checked = (isChecked, object, classification) => {
-    console.log("clicked");
     if (isChecked) {
         if (classification == "sections") {
-            form.sections.push(object);
-        } else if (classification == "timeslots") {
-            form.timeslots.push(object);
+            if (!form.sections.some((obj) => obj.id === object.id)) {
+                form.sections.push(object);
+            }
+        } else if (classification == "periods") {
+            if (!form.periods.some((obj) => obj.id === object.id)) {
+                form.periods.push(object);
+            }
         } else if (classification == "classdays") {
-            form.classdays.push(object);
+            if (!form.classdays.some((obj) => obj.id === object.id)) {
+                form.classdays.push(object);
+            }
         } else if (classification == "teachers") {
-            form.teachers.push(object);
+            if (!form.teachers.some((obj) => obj.id === object.id)) {
+                form.teachers.push(object);
+            }
         }
     } else {
         if (classification == "sections") {
@@ -90,11 +151,8 @@ const checked = (isChecked, object, classification) => {
                 form.sections,
                 (row) => row.id === object.id
             );
-        } else if (classification == "timeslots") {
-            form.timeslots = remove(
-                form.timeslots,
-                (row) => row.id === object.id
-            );
+        } else if (classification == "periods") {
+            form.periods = remove(form.periods, (row) => row.id === object.id);
         } else if (classification == "classdays") {
             form.classdays = remove(
                 form.classdays,
@@ -118,7 +176,6 @@ const submit = () => {
 };
 
 function nextStep() {
-    console.log(stepvalue.value[formStep.value - 1]);
     Inertia.post(
         route("schoolprogram.check.form"),
         {
@@ -126,7 +183,7 @@ function nextStep() {
             school_year: form.school_year,
             levels: form.levels,
             sections: form.sections,
-            timeslots: form.timeslots,
+            periods: form.periods,
             classdays: form.classdays,
         },
         {
@@ -145,10 +202,8 @@ watch(
     () => form.levels.length, // use a getter like this
     (newLength, oldLength) => {
         if (newLength > oldLength) {
-            console.log("Array length increased");
             stepvalue.value.splice(2, 0, "SECTION");
         } else if (newLength < oldLength) {
-            console.log("Array length decreased");
             stepvalue.value.splice(2, 1);
         }
     }
@@ -221,11 +276,9 @@ watch(
                         class="p-3 bg-gray-100/50 dark:bg-slate-800 w-1/2 m-auto"
                     >
                         <span
-                            v-for="section in form.sections"
-                            :key="section.id"
                             class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                         >
-                            {{ section.name }}
+                            {{ form.sections.length }}
                         </span>
                     </div>
 
@@ -247,9 +300,10 @@ watch(
                                     @checked="
                                         checked($event, section, 'sections')
                                     "
+                                    :check="sectionChecked(section)"
                                 />
                                 <td v-if="section.gradelevel_id == gradelevel">
-                                    {{ section.name }}
+                                    {{ section.name }} {{ index }}
                                 </td>
                             </tr>
                         </tbody>
@@ -271,15 +325,13 @@ watch(
                 <div />
                 <CardBox>
                     <div
-                        v-if="form.timeslots.length"
+                        v-if="form.periods.length"
                         class="p-3 bg-gray-100/50 dark:bg-slate-800"
                     >
                         <span
-                            v-for="timeslot in form.timeslots"
-                            :key="timeslot.id"
                             class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                         >
-                            {{ timeslot.time }}
+                            {{ form.periods.length }}
                         </span>
                     </div>
                     <table class="m-auto">
@@ -291,17 +343,15 @@ watch(
                         </thead>
 
                         <tbody>
-                            <tr
-                                v-for="timeslot in timeslots"
-                                :key="timeslot.id"
-                            >
+                            <tr v-for="period in periods" :key="period.id">
                                 <TableCheckboxCell
                                     @checked="
-                                        checked($event, timeslot, 'timeslots')
+                                        checked($event, period, 'periods')
                                     "
+                                    :check="periodChecked(period)"
                                 />
                                 <td>
-                                    {{ timeslot.time }}
+                                    {{ timeslots[period.timeslot_id] }}
                                 </td>
                             </tr>
                         </tbody>
@@ -314,11 +364,9 @@ watch(
                         class="p-3 bg-gray-100/50 dark:bg-slate-800"
                     >
                         <span
-                            v-for="classday in form.classdays"
-                            :key="classday.id"
                             class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                         >
-                            {{ classday.name }}
+                            {{ form.classdays.length }}
                         </span>
                     </div>
                     <table class="m-auto">
@@ -338,6 +386,7 @@ watch(
                                     @checked="
                                         checked($event, classday, 'classdays')
                                     "
+                                    :check="classdayChecked(classday)"
                                 />
                                 <td>
                                     {{ classday.name }}
@@ -355,11 +404,9 @@ watch(
                     class="p-3 bg-gray-100/50 dark:bg-slate-800"
                 >
                     <span
-                        v-for="teacher in form.teachers"
-                        :key="teacher.id"
                         class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
                     >
-                        {{ teacher.first_name }} {{ teacher.last_name }}
+                        {{ form.teachers.length }}
                     </span>
                 </div>
                 <table>
@@ -374,6 +421,7 @@ watch(
                         <tr v-for="teacher in teachers" :key="teacher.id">
                             <TableCheckboxCell
                                 @checked="checked($event, teacher, 'teachers')"
+                                :check="teacherChecked(teacher)"
                             />
                             <td>
                                 {{ teacher.first_name }} {{ teacher.last_name }}

@@ -31,11 +31,16 @@ class Teacher extends Model
      */
     public function department()
     {
-    return $this->belongsToMany(Department::class, 'teacher_gl_dep');
+        return $this->belongsToMany(Department::class, 'teacher_gl_dep');
     }
 
     public function gradelevel()
     {
-    return $this->belongsToMany(Gradelevel::class, 'teacher_gl_dep')->withPivot('department_id');
+        return $this->belongsToMany(Gradelevel::class, 'teacher_gl_dep')->withPivot('department_id');
+    }
+
+    public function schoolprogram()
+    {
+        return $this->belongsToMany(SchoolProgram::class, 'school_program_teacher', 'teacher_id', 'school_program_id');
     }
 }

@@ -25,7 +25,7 @@ class ClassdayController extends Controller
      */
     public function index()
     {
-        $classdays = (new Classday)->newQuery();
+        $classdays = (new Classday())->newQuery();
 
         if (request()->has('search')) {
             $classdays->where('name', 'Like', '%'.request()->input('search').'%');
@@ -74,7 +74,6 @@ class ClassdayController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'name' => 'required',
         ]);

@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\SchoolProgram;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Teacher;
-use App\Models\Section;
-use App\Models\Department;
-use App\Models\Gradelevel;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Http\Services\Schedule;
 
-class DashboardController extends Controller
+class TimeTableGeneratorController extends Controller
 {
     public function __construct()
     {
@@ -20,6 +18,7 @@ class DashboardController extends Controller
         $this->middleware('can:permission edit', ['only' => ['edit', 'update']]);
         $this->middleware('can:permission delete', ['only' => ['destroy']]);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -27,12 +26,18 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $teachers = Teacher::count();
-        $sections = Section::count();
-        $departments = Department::count();
+        //Insert Program Here
+    }
 
+    public function generateTimetable()
+    {
+        $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find(1);
+        // dd($selectedSchoolProgram);
+        $schedule = new Schedule($selectedSchoolProgram);
+
+        // dd($schedule);
         return Inertia::render('Data/Dashboard/Index', [
-            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments,
+            'schedule' => $schedule->toArray(),
         ]);
     }
 }

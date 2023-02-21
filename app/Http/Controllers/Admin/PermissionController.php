@@ -26,7 +26,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permissions = (new Permission)->newQuery();
+        $permissions = (new Permission())->newQuery();
 
         if (request()->has('search')) {
             $permissions->where('name', 'Like', '%'.request()->input('search').'%');

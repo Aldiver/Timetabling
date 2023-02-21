@@ -3,6 +3,8 @@
 namespace App\Actions\Admin;
 
 use App\Models\Teacher;
+use App\Models\Gradelevel;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -19,6 +21,10 @@ class UpdateTeacher
             'specialization' => $request->specialization,
             'gender' => $request->gender,
         ]);
+
+        $gradelevel = Gradelevel::where('level', $request->gradelevel)->first();
+        $department = Department::where('name', $request->department)->first();
+        $teacher->gradelevel()->sync([$gradelevel->id => ['department_id' => $department->id]]);
 
         return $teacher;
     }

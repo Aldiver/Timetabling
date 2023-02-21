@@ -26,7 +26,7 @@ class TimeslotController extends Controller
      */
     public function index()
     {
-        $timeslots = (new Timeslot)->newQuery();
+        $timeslots = (new Timeslot())->newQuery();
 
         $timeslots = $timeslots->paginate(5)->onEachSide(2)->appends(request()->query());
         return Inertia::render('Data/Timeslot/Index', [
@@ -115,10 +115,11 @@ class TimeslotController extends Controller
         $time_from = Carbon::parse($request->time_from)->format('h:i A');
         $time_to = Carbon::parse($request->time_to)->format('h:i A');
 
-        $timeslot->update([
+        $timeslot->update(
+            [
                 'time' => $time_from.' - '.$time_to,
             ]
-            );
+        );
 
         return redirect()->route('timeslot.index')
                         ->with('message', __('Timeslot updated successfully.'));

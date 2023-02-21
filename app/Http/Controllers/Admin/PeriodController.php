@@ -28,13 +28,12 @@ class PeriodController extends Controller
      */
     public function index()
     {
-        $periods = (new Period)->newQuery();
-        $relatedTimeslots = Timeslot::all()->pluck("time","id");
-        $classdays = Classday::all()->pluck("short_name","id");
+        $periods = (new Period())->newQuery();
+        $relatedTimeslots = Timeslot::all()->pluck("time", "id");
+        $classdays = Classday::all()->pluck("short_name", "id");
         $unassignedTimeslots = Timeslot::doesntHave('period')->get();
 
-
-        $periods = $periods->paginate(5)->onEachSide(2)->appends(request()->query());
+        $periods = $periods->paginate(10)->onEachSide(2)->appends(request()->query());
 
         return Inertia::render('Data/Period/Index', [
             'periods' => $periods,
@@ -68,7 +67,6 @@ class PeriodController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'rank' => 'required',
             'timeslot' => 'required',

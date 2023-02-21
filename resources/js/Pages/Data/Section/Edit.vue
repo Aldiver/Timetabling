@@ -18,6 +18,10 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    gradelevels: {
+        type: Object,
+        default: () => ({}),
+    },
     modelValue: {
         type: [String, Number, Boolean],
         default: null,
@@ -48,6 +52,7 @@ const form = useForm({
     name: "",
     bldg_letter: "",
     room_number: "",
+    gradelevels: "",
 });
 watch(
     () => props.section, // use a getter like this
@@ -55,8 +60,16 @@ watch(
         form.name = props.section.name;
         form.bldg_letter = props.section.bldg_letter;
         form.room_number = props.section.room_number;
+        form.gradelevels = props.section.gradelevel
+            ? props.section.gradelevel.level
+            : "";
     }
 );
+
+const gradelevelsDropdown = Object.keys(props.gradelevels).map((key) => ({
+    id: key,
+    label: props.gradelevels[key],
+}));
 </script>
 
 <template>
@@ -118,6 +131,22 @@ watch(
                     {{ form.errors.room_number }}
                 </div>
             </FormControl>
+        </FormField>
+
+        <FormField
+            label="Grade level"
+            :class="{ 'text-red-400': form.errors.gradelevels }"
+        >
+            <FormControl
+                v-model="form.gradelevels"
+                placeholder="Grade levels"
+                :error="form.errors.gradelevels"
+                class="xl:w-1/2"
+                :options="gradelevelsDropdown"
+            />
+            <div class="text-red-400 text-sm" v-if="form.errors.gradelevels">
+                {{ form.errors.gradelevels }}
+            </div>
         </FormField>
 
         <BaseDivider />

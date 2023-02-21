@@ -32,7 +32,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = (new User)->newQuery();
+        $users = (new User())->newQuery();
 
         if (request()->has('search')) {
             $users->where('name', 'Like', '%'.request()->input('search').'%');
@@ -70,7 +70,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::all()->pluck("name","id");
+        $roles = Role::all()->pluck("name", "id");
 
         return Inertia::render('Admin/User/Create', [
             'roles' => $roles,
@@ -100,7 +100,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $roles = Role::all()->pluck("name","id");
+        $roles = Role::all()->pluck("name", "id");
         $userHasRoles = array_column(json_decode($user->roles, true), 'id');
 
         return Inertia::render('Admin/User/Show', [
@@ -118,7 +118,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $roles = Role::all()->pluck("name","id");
+        $roles = Role::all()->pluck("name", "id");
         $userHasRoles = array_column(json_decode($user->roles, true), 'id');
 
         return Inertia::render('Admin/User/Edit', [
@@ -208,7 +208,8 @@ class UserController extends Controller
             }
             if (! Hash::check($request->input('old_password'), \Auth::user()->password)) {
                 $validator->errors()->add(
-                    'old_password', __('Old password is incorrect.')
+                    'old_password',
+                    __('Old password is incorrect.')
                 );
             }
         });

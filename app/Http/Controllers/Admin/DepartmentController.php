@@ -25,7 +25,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = (new department)->newQuery();
+        $departments = (new department())->newQuery();
 
         if (request()->has('search')) {
             $departments->where('level', 'Like', '%'.request()->input('search').'%');
@@ -74,7 +74,6 @@ class DepartmentController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate([
             'name' => 'required',
         ]);
@@ -126,7 +125,8 @@ class DepartmentController extends Controller
             'name' => 'required',
         ]);
 
-        $department->update([
+        $department->update(
+            [
             'name' => $request->name,
         ]
         );

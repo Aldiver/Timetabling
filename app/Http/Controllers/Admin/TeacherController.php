@@ -34,7 +34,7 @@ class TeacherController extends Controller
         // $gradelevels = Gradelevel::all()->pluck("level","id");
         // $departments = Department::all()->pluck("name","id");
         // $teachers = (new Teacher)->newQuery()->with('department', 'gradelevel')->paginate(5)->appends(request()->query());;
-        $teachers = (new Teacher)->newQuery();
+        $teachers = (new Teacher())->newQuery();
 
         if (request()->has('search')) {
             $teachers->where('last_name', 'Like', '%'.request()->input('search').'%');
@@ -53,7 +53,7 @@ class TeacherController extends Controller
         }
         // $teachers = $teachers->with('department', 'gradelevel')->get();
         // $teachers = $teachers->paginate(5)->onEachSide(2)->appends(request()->query());
-        $teachers = $teachers->with('department', 'gradelevel')->paginate(5)->onEachSide(2)->appends(request()->query());
+        $teachers = $teachers->with('department', 'gradelevel')->paginate(10)->onEachSide(2)->appends(request()->query());
 
 
         return Inertia::render('Data/Teacher/Index', [
@@ -74,10 +74,10 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        $gradelevels = Gradelevel::all()->pluck("level","id");
-        $departments = Department::all()->pluck("name","id");
+        $gradelevels = Gradelevel::all()->pluck("level", "id");
+        $departments = Department::all()->pluck("name", "id");
 
-        if($gradelevels->count() == 0){
+        if ($gradelevels->count() == 0) {
             return redirect()->route('section.index')
                         ->with('error', __('No Gradelevel found'));
         }
@@ -128,13 +128,15 @@ class TeacherController extends Controller
      */
     public function edit(Teacher $teacher)
     {
-        // $roles = Role::all()->pluck("name","id");
-        // $userHasRoles = array_column(json_decode($user->roles, true), 'id');
+        $gradelevels = Gradelevel::all()->pluck("level", "id");
+        $departments = Department::all()->pluck("name", "id");
 
+        $selectedTeacher = $teacher->with('department', 'gradelevel')->where('id', $teacher->id)->first();
+        // dd($selectedTeacher);
         return Inertia::render('Data/Teacher/Edit', [
-            'teacher' => $teacher,
-            // 'roles' => $roles,
-            // 'userHasRoles' => $userHasRoles,
+            'teacher' => $selectedTeacher,
+            'gradelevels' => $gradelevels,
+            'departments' => $departments,
         ]);
     }
 
