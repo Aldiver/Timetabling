@@ -6,7 +6,7 @@ use App\Http\Services\ClassData;
 use App\Http\Services\Subject;
 use App\Models\Teacher;
 
-class Schedule implements \Serializable
+class Schedule
 {
     private $schoolprogram;
     private $fitness;
@@ -22,9 +22,6 @@ class Schedule implements \Serializable
         $this->schoolprogram = $schoolprogram;
 
         $this->generateSchedule();
-
-
-        // $this->calculateFitness();
     }
 
     public function generateSchedule()
@@ -46,8 +43,19 @@ class Schedule implements \Serializable
         // $this->assignAdminLoads($this->schoolprogram->teachers, collect($admin));
 
         foreach ($this->schoolprogram->gradelevels as $gradelevel) {
-            //unique per grade level
-            $departmentLastIndex = 1;
+            // $gradelevel = $this->schoolprogram->gradelevels->find(1);
+            $departmentsToCut = $this->schoolprogram->departments;
+            $advisoryPool = collect(); // create a new empty collection
+
+            foreach ($departmentsToCut as $currentDepartment) {
+                $count = ($this->getFilteredTeachers($gradelevel, $currentDepartment, false))->count();
+
+                // Insert the $currentDepartment to the $advisoryPool collection by N times where N = $count
+                for ($i = 0; $i < $count; $i++) {
+                    $advisoryPool->push($currentDepartment);
+                }
+            }
+
             foreach ($gradelevel->sections as $section) {
                 //create a class schedule for each section
                 $class = new ClassData($classID++, $gradelevel, $section);
@@ -55,21 +63,83 @@ class Schedule implements \Serializable
                 $departments = $this->schoolprogram->departments;
                 $periodIndex = 1;
 
-
                 //section unique variables
 
                 $periodsWithVacantSlot = [];
                 $advisory = false;
+                $unsetFlag = false;
+
                 foreach ($periods as $period) {
                     if ($periodIndex == 1) {
                         $advisory = true;
-                        if ($departmentLastIndex > 8) {
-                            $departmentLastIndex = 1;
+                        if ($gradelevel->id > 2) {
+                            $filteredDepartments = $departments->whereIn('name', $advisoryPool->pluck('name'));
+                            $departmentsAdvisory = $filteredDepartments->filter(function ($department) {
+                                return $department->name !== "TLE DEPARTMENT";
+                            });
+                            $selectedDepartment = $departmentsAdvisory->random();
+
+                            if ($advisoryPool->count() > 1) {
+                                $indexToRemove = $advisoryPool->search(function ($item) use ($selectedDepartment) {
+                                    return $item->name === $selectedDepartment->name;
+                                });
+                                $advisoryPool->splice($indexToRemove, 1);
+                            }
+                        } else {
+                            //fix advisory pool
+                            $filteredDepartments = $departments->whereIn('name', $advisoryPool->pluck('name'));
+
+                            // Select a random item from the filtered collection
+                            $selectedDepartment = $filteredDepartments->random();
+
+                            // Remove one item from the $advisoryPool collection
+                            if ($advisoryPool->count() > 1) {
+                                $indexToRemove = $advisoryPool->search(function ($item) use ($selectedDepartment) {
+                                    return $item->name === $selectedDepartment->name;
+                                });
+                                $advisoryPool->splice($indexToRemove, 1);
+                            }
                         }
-                        $selectedDepartment = $departments->find($departmentLastIndex);
-                        $departmentLastIndex++;
+                    } elseif ($this->checkAvailability($reservedClassdays, $periodIndex - 1, $classdayCount)) {
+                        // dd($reservedClassdays, $periodIndex-1);
+                        $departmentsToInsert = $departments->filter(function ($department) {
+                            return $department->name === "ARPAN DEPARTMENT" || $department->name === "EDUKASYON SA PAGPAPAHALAGA DEPARTMENT";
+                        });
+                        //if arpan and esp is not yet assigned
+                        if ($departmentsToInsert->count() == 2) {
+                            //get either of the two as selectedDepartment, then store
+                            $selectedDepartment = $departmentsToInsert->random();
+
+                            $reservedSubject = $departmentsToInsert->reject(function ($department) use ($selectedDepartment) {
+                                return $department->id === $selectedDepartment->id;
+                            })->first();
+                            //remove reserved subject from pool
+                            $departments = $departments->reject(function ($department) use ($reservedSubject) {
+                                return $department->id === $reservedSubject->id;
+                            });
+                        //insert subject
+                        //save remaining values
+                        } else {
+                            $reservedSubject = $departmentsToInsert->first();
+                            if (!$reservedSubject) {
+                                dd($reservedClassdays, $reservedSubject, $this->teacher_loading);
+                            }// dd($reservedSubject);
+                            $departments = $departments->reject(function ($department) use ($reservedSubject) {
+                                return $department->id === $reservedSubject->id;
+                            });
+                            //set one slot in random order
+                            $unsetClassday = rand(0, $classdayCount-1);
+                            $unsetPeriod = $periodIndex - 1;
+                            $periodsWithVacantSlot[] = $periodIndex-1;
+                            $reservedClassdays[$periodIndex-1][$unsetClassday][] = "SET";
+                            $unsetFlag = true;
+                            $selectedDepartment = $departments->random();
+                        }
                     } else {
-                        $selectedDepartment = $departments->random();
+                        $departmentsFullLoads = $departments->filter(function ($department) {
+                            return $department->name !== "ARPAN DEPARTMENT" && $department->name !== "EDUKASYON SA PAGPAPAHALAGA DEPARTMENT";
+                        });
+                        $selectedDepartment = $departmentsFullLoads->random();
                     }
 
                     //remove current selection from list
@@ -78,29 +148,29 @@ class Schedule implements \Serializable
                     });
 
                     //filter teacher for current Grade level and department for each period
-                    $filteredTeachers = $this->getFilteredTeachers($gradelevel, $selectedDepartment);
-
+                    $filteredTeachers = $this->getFilteredTeachers($gradelevel, $selectedDepartment, $advisory);
+                    if ($filteredTeachers->isEmpty()) {
+                        dd($filteredTeachers, $reservedClassdays, $selectedDepartment, $gradelevel, $advisory);
+                    }
+                    $randomTeacher = $filteredTeachers->random();
                     //Fill up the available slots for the current period
                     $classdays = [];
-                    $selectedDepartmentID = $selectedDepartment->id;
+                    $selectedDepartmentID = $selectedDepartment->name;
+
                     $subjectName = $selectedDepartment->subjects()->first()->name;
                     $meetings = $selectedDepartment->subjects()->first()->hours_per_week;
                     $periodObj = new Period($subjectName);
-                    $randomTeacher = $filteredTeachers->random();
 
                     //load assigning for Teacher
                     if ($advisory) {
+                        $filteredTeachersAdvisory = $this->getFilteredTeachers($gradelevel, $selectedDepartment, $advisory);
                         do {
-                            $randomTeacher = $filteredTeachers->random();
-                            $filteredTeachers->forget($filteredTeachers->search($randomTeacher));
-                        } while ($this->checkIfAdvisor($randomTeacher) || !($this->loadCount($randomTeacher) < 5));
+                            $randomTeacher = $filteredTeachersAdvisory->random();
+                            $filteredTeachersAdvisory->forget($filteredTeachersAdvisory->search($randomTeacher));
+                            // || !($this->loadCount($randomTeacher) < 5)
+                        } while ($this->checkIfAdvisor($randomTeacher));
                         $this->assignRegularLoads($randomTeacher, "Advisory");
                         $advisory = false;
-                    } else {
-                        do {
-                            $randomTeacher = $filteredTeachers->random();
-                            $filteredTeachers->forget($filteredTeachers->search($randomTeacher));
-                        } while (!($this->loadCount($randomTeacher) < 8) && ($selectedDepartmentID != 8));
                     }
                     $this->assignRegularLoads($randomTeacher, $section->name);
 
@@ -125,37 +195,29 @@ class Schedule implements \Serializable
                             $periodObj->setTeacher($randomTeacher);
                         }
                     }
-                    //if last subject is either TLE or ESP, remove the other one from the list of selections
-                    if (($selectedDepartmentID == 7 || $selectedDepartmentID == 8)) {
-                        // && !($departments->count() < 1)
-                        $reservedSubject = ($selectedDepartmentID == 7) ? 8 : 7;
-                        $departments = $departments->reject(function ($department) use ($reservedSubject) {
-                            return $department->id === $reservedSubject;
-                        });
-                        $reservedSubject = $this->schoolprogram->departments()->find($reservedSubject);
-                        // dd($selectedDepartmentID, $selectedDepartment->name, $reservedSubject->id, $reservedSubject->name);
-                    }
 
                     //if current period is not full, store it in array of period with vacant
                     if (!($this->checkPeriodFull($reservedClassdays, $periodIndex-1, $classdayCount))) {
                         $periodsWithVacantSlot[] = $periodIndex-1;
                     }
 
+                    if ($unsetFlag) {
+                        unset($reservedClassdays[$unsetPeriod][$unsetClassday]);
+                    }
+
                     $class->addPeriod([$periodObj->toArray()]); //to add mul
                     $periodIndex++; //increment sa last part
                 }
 
-                //Insert last vacant subject
+                // Insert last vacant subject
                 $insertSubject = $reservedSubject->subjects()->first();
-                $randomTeacher = ($this->getFilteredTeachers($gradelevel, $reservedSubject))->random();
+                $randomTeacher = ($this->getFilteredTeachers($gradelevel, $reservedSubject, $advisory))->random();
+                $this->assignRegularLoads($randomTeacher, $section->name);
                 $index = 0;
                 $numOfMeetings = $insertSubject->hours_per_week;
                 $periodObj = new Period($insertSubject->name);
                 while ($numOfMeetings > 0) {
                     $classdayArr = [];
-                    if ($index==2) {
-                        dd($periodsWithVacantSlot, $index, $reservedClassdays);
-                    }
                     for ($classdayIndex = 0; $classdayIndex < 5; $classdayIndex++) {
                         if (!isset($reservedClassdays[$periodsWithVacantSlot[$index]][$classdayIndex])) {
                             $classday = $this->schoolprogram->classdays->where('rank', $classdayIndex + 1)->first();
@@ -205,42 +267,36 @@ class Schedule implements \Serializable
         ];
     }
 
-    public function serialize()
+    private function getFilteredTeachers($gradelevel, $selectedDepartment, $isAdvisory)
     {
-        return serialize($this->toArray());
-    }
+        $teacher_loading = $this->teacher_loading;
 
-    public function unserialize($data)
-    {
-        $data = unserialize($data);
-        $this->schoolprogram = $data['schoolprogram'];
-        $this->classes = $data['classes'];
-        $this->fitness = $data['fitness'];
-        $this->schedules = $data['schedules'];
-        $this->id = $data['id'];
-        $this->teacher_loading = $data['teacher_loading'];
-        $this->conflicts = $data['conflicts'];
-        $this->teacher_conflicts = $data['teacher_conflicts'];
-    }
-
-    public function __sleep()
-    {
-        return ['schoolprogram', 'classes', 'fitness', 'schedules', 'id', 'teacher_loading', 'conflicts', 'teacher_conflicts'];
-    }
-
-    public function __wakeup()
-    {
-        // ...
-    }
-
-    private function getFilteredTeachers($gradelevel, $selectedDepartment)
-    {
-        return $this->schoolprogram->teachers()
+        $filteredTeachers = $this->schoolprogram->teachers()
                     ->whereHas('gradelevel', function ($query) use ($gradelevel) {
                         $query->where('id', $gradelevel->id);
                     })->whereHas('department', function ($query) use ($selectedDepartment) {
                         $query->where('id', $selectedDepartment->id);
                     })->pluck('full_name');
+
+        if ($isAdvisory) {
+            $minCount = $filteredTeachers->reject(function ($teacher) use ($teacher_loading) {
+                return in_array('Advisory', $teacher_loading[$teacher] ?? []);
+            })->min(function ($teacher) use ($teacher_loading) {
+                return count($teacher_loading[$teacher] ?? []);
+            });
+
+            return $filteredTeachers->reject(function ($teacher) use ($teacher_loading, $minCount) {
+                return in_array('Advisory', $teacher_loading[$teacher] ?? []) || count($teacher_loading[$teacher] ?? []) > $minCount;
+            })->values();
+        }
+
+        $minCount = $filteredTeachers->min(function ($teacher) use ($teacher_loading) {
+            return count($teacher_loading[$teacher] ?? []);
+        });
+
+        return $filteredTeachers->filter(function ($teacher) use ($teacher_loading, $minCount) {
+            return count($teacher_loading[$teacher] ?? []) == $minCount;
+        });
     }
     private function assignAdminLoads($teachers, $adminLoads)
     {
@@ -361,9 +417,9 @@ class Schedule implements \Serializable
             if (!isset($scheduleBlock[($period)][$i])) {
                 $count++;
             }
-            if ($count == 4) {
-                return true;
-            }
+        }
+        if ($count==5) {
+            return true;
         }
         return false;
     }
@@ -427,8 +483,9 @@ class Schedule implements \Serializable
             }
         }
         $this->teacher_conflicts = $conflicting_teachers;
-        // dd($this->conflicts, $conflicting_teachers);
-        // dd($teacher_schedules, $this->teacher_loading);
+        // if ($this->conflicts > 70) {
+        //     $this->generateSchedule();
+        // }
         return round((1 / ($this->conflicts + 1)), 6);
     }
 

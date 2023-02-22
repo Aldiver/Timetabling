@@ -10,6 +10,7 @@ import {
     mdiReload,
     mdiGithub,
     mdiChartPie,
+    mdiConsoleNetwork,
 } from "@mdi/js";
 import * as chartConfig from "@/components/Charts/chart.config.js";
 import LineChart from "@/components/Charts/LineChart.vue";
@@ -90,10 +91,40 @@ const pagesList = numPages
           for (let i = 0; i < numPages.value; i++) {
               pagesList.push(i);
           }
-
           return pagesList;
       })
     : null;
+
+if (numPages) {
+    console.log(numPages.value);
+}
+const maxPageButtons = 10;
+const startPage = numPages
+    ? computed(() => {
+          if (numPages.value <= maxPageButtons) {
+              return 0;
+          }
+          if (currentPage.value < Math.floor(maxPageButtons / 2)) {
+              return 0;
+          }
+          if (
+              currentPage.value >=
+              numPages.value - Math.floor(maxPageButtons / 2)
+          ) {
+              return numPages.value - maxPageButtons;
+          }
+          return currentPage.value - Math.floor(maxPageButtons / 2);
+      })
+    : null;
+
+const endPage = numPages
+    ? computed(() => Math.min(startPage.value + maxPageButtons, numPages.value))
+    : null;
+
+const adjustedStartPage = startPage
+    ? computed(() => startPage.value - 1)
+    : null;
+const adjustedEndPage = endPage ? computed(() => endPage.value - 1) : null;
 </script>
 
 <template>
@@ -190,25 +221,49 @@ const pagesList = numPages
                     </tr>
                 </tbody>
             </table>
+
+            <div
+                class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800"
+            >
+                <BaseLevel>
+                    <BaseButtons>
+                        <!-- Render Previous button if current page set is not the first page set -->
+                        <BaseButton
+                            v-if="adjustedStartPage >= 0"
+                            :key="`prev-${adjustedStartPage}-${adjustedEndPage}`"
+                            :label="'Prev'"
+                            :color="'lightDark'"
+                            small
+                            @click="currentPage = currentPage - 1"
+                        />
+                        <!-- Render page buttons -->
+                        <BaseButton
+                            v-for="page in adjustedEndPage - adjustedStartPage"
+                            :key="`page-${adjustedStartPage + page}`"
+                            :active="adjustedStartPage + page === currentPage"
+                            :label="adjustedStartPage + page + 1"
+                            :color="
+                                adjustedStartPage + page === currentPage
+                                    ? 'lightDark'
+                                    : 'whiteDark'
+                            "
+                            small
+                            @click="currentPage = adjustedStartPage + page"
+                        />
+                        <!-- Render Next button if current page set is not the last page set -->
+                        <BaseButton
+                            v-if="adjustedEndPage < numPages - 1"
+                            :key="`next-${adjustedStartPage}-${adjustedEndPage}`"
+                            :label="'Next'"
+                            :color="'lightDark'"
+                            small
+                            @click="currentPage = currentPage + 1"
+                        />
+                    </BaseButtons>
+                    <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
+                </BaseLevel>
+            </div>
         </CardBox>
-        <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-            <BaseLevel>
-                <BaseButtons>
-                    <BaseButton
-                        v-for="page in pagesList"
-                        :key="page"
-                        :active="page === currentPage"
-                        :label="page + 1"
-                        :color="
-                            page === currentPage ? 'lightDark' : 'whiteDark'
-                        "
-                        small
-                        @click="currentPage = page"
-                    />
-                </BaseButtons>
-                <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
-            </BaseLevel>
-        </div>
     </SectionMain>
 </template>
 <script>

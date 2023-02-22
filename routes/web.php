@@ -25,6 +25,10 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::prefix('jobs')->group(function () {
+    Route::queueMonitor();
+});
+
 // Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 //     return Inertia::render('HomeView');
 // })->name('/dashboard');

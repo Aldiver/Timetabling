@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Services\Schedule;
+use App\Jobs\GenerateTimetableJob;
 
 class TimeTableGeneratorController extends Controller
 {
@@ -32,12 +33,9 @@ class TimeTableGeneratorController extends Controller
     public function generateTimetable()
     {
         $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find(1);
-        // dd($selectedSchoolProgram);
-        $schedule = new Schedule($selectedSchoolProgram);
-
-        // dd($schedule);
+        $schedule = GenerateTimetableJob::dispatchNow($selectedSchoolProgram);
         return Inertia::render('Data/Dashboard/Index', [
-            'schedule' => $schedule->toArray(),
+            'schedule' => $schedule,
         ]);
     }
 }

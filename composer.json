@@ -11,6 +11,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^2.8",
         "laravel/tinker": "^2.7",
+        "romanzipp/laravel-queue-monitor": "^2.3",
         "spatie/laravel-permission": "^5.7",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
         "tightenco/ziggy": "^1.0"

@@ -17,20 +17,12 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
-    // roles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
-    // userHasRoles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
 });
 
 const form = useForm({
     _method: "put",
     name: props.subject.name,
-    subject: props.subject.hours_per_week,
+    hours_per_week: props.subject.hours_per_week,
 });
 </script>
 
