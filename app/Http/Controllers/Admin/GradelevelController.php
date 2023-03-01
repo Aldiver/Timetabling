@@ -78,7 +78,7 @@ class GradelevelController extends Controller
             'level' => 'required',
         ]);
 
-        Gradelevel::create($request->all());
+        Gradelevel::create($request->all()); //saving to database
 
         return redirect()->route('gradelevel.index')
                         ->with('message', __('Grade level added.'));
@@ -123,7 +123,7 @@ class GradelevelController extends Controller
             'level' => 'required',
         ]);
 
-        $gradelevel->update($request->all());
+        $gradelevel->update($request->all()); //to update to the database
 
         return redirect()->route('gradelevel.index')
                         ->with('message', __('Grade level updated successfully.'));

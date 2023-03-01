@@ -12,14 +12,6 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
-    // teaches: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
-    // userHasRoles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
 });
 </script>
 

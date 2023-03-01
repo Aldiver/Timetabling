@@ -3,6 +3,13 @@ import { mdiGithub } from "@mdi/js";
 import BaseButton from "@/components/BaseButton.vue";
 import SectionBanner from "@/components/SectionBanner.vue";
 import { gradientBgPinkRed } from "@/colors";
+// :route-name="route('timetable.generate')"
+const emit = defineEmits(["openModal"]);
+
+const handleClick = () => {
+    // Emit the 'openModal' event
+    emit("openModal");
+};
 </script>
 
 <template>
@@ -12,7 +19,7 @@ import { gradientBgPinkRed } from "@/colors";
         </h1>
         <div>
             <BaseButton
-                :route-name="route('timetable.generate')"
+                @click="handleClick"
                 :icon="mdiGithub"
                 label="Generate"
                 target="_blank"

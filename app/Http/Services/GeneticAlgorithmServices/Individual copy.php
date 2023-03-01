@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Http\Services\GeneticAlgorithmServices;
 
 use App\Http\Services\ClassData;
 use App\Http\Services\Subject;
+use App\Http\Services\Period;
 use App\Models\Teacher;
 
-class Schedule
+class Individual
 {
     private $schoolprogram;
     private $fitness;
@@ -310,20 +311,6 @@ class Schedule
      *
      * @param double $fitness The fitness of this individual
      */
-    public function setFitness($fitness)
-    {
-        $this->fitness = $fitness;
-    }
-
-    /**
-     * Get the fitness for this individual
-     *
-     * @return double The fitness of the individual
-     */
-    public function getFitness()
-    {
-        return $this->fitness;
-    }
 
     public function toArray()
     {
@@ -510,29 +497,24 @@ class Schedule
         return $this->conflicts;
     }
 
-    public function getSchedules()
+    public function setFitness($fitness)
     {
-        $this->fitnessChanged = true;
-        return $this->schedules;
+        $this->fitness = $fitness;
     }
 
-    public function getFitness2()
+    public function getFitness()
     {
-        if ($this->fitnessChanged) {
-            $this->fitness = $this->calculateFitness();
-            $this->fitnessChanged = false;
-        }
         return $this->fitness;
     }
 
-    private function calculateFitness()
+    public function calculateFitness()
     {
         $this->conflicts = 0;
         $teacher_schedules = [];
         $conflicting_teachers = [];
         $teacher_section_counts = [];
 
-        foreach ($this->schedules as $schedule) {
+        foreach ($this->chromosome as $schedule) {
             $section = $schedule['section']->name;
             foreach ($schedule['period'] as $periodIndex => $period) {
                 foreach ($period as $classBlock) {
@@ -560,9 +542,6 @@ class Schedule
             }
         }
         $this->teacher_conflicts = $conflicting_teachers;
-        // if ($this->conflicts > 250) {
-        //     $this->generateSchedule();
-        // }
         return round((1 / ($this->conflicts + 1)), 6);
     }
 

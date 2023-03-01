@@ -26,6 +26,11 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = (new department())->newQuery();
+        // $department = Department::find(1);
+        // $gradelevelId = 1;
+
+        // $teachers = $department->teachers()->wherePivot('gradelevel_id', $gradelevelId)->get();
+        // dd($teachers); eto lang ang code.
 
         if (request()->has('search')) {
             $departments->where('level', 'Like', '%'.request()->input('search').'%');

@@ -1,32 +1,25 @@
 <script setup>
-import { computed, ref, onMounted } from "vue";
-import { useMainStore } from "@/stores/main";
+import { computed, ref } from "vue";
 import { Head } from "@inertiajs/inertia-vue3";
 import {
     mdiAccountMultiple,
     mdiCartOutline,
     mdiChartTimelineVariant,
-    mdiMonitorCellphone,
     mdiReload,
-    mdiGithub,
     mdiChartPie,
-    mdiConsoleNetwork,
 } from "@mdi/js";
-import * as chartConfig from "@/components/Charts/chart.config.js";
-import LineChart from "@/components/Charts/LineChart.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import CardBoxWidget from "@/components/CardBoxWidget.vue";
 import CardBox from "@/components/CardBox.vue";
-import TableSampleClients from "@/components/TableSampleClients.vue";
-import NotificationBar from "@/components/NotificationBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import CardBoxTransaction from "@/components/CardBoxTransaction.vue";
-import CardBoxClient from "@/components/CardBoxClient.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import SectionBannerStarOnGitHub from "@/components/SectionBannerStarOnGitHub.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseLevel from "@/components/BaseLevel.vue";
+import CardBoxModal from "@/components/CardBoxModal.vue";
+import Create from "./Create.vue";
+
 const props = defineProps({
     teachers: {
         type: Number,
@@ -41,6 +34,10 @@ const props = defineProps({
         default: 0,
     },
     schedule: {
+        type: Object,
+        default: () => ({}),
+    },
+    schoolprogram: {
         type: Object,
         default: () => ({}),
     },
@@ -69,7 +66,7 @@ function getSubjectIndex(period, day) {
 const perPage = ref(2); //change this value to display tables per page.
 const currentPage = ref(0);
 
-const itemsPaginated = props.schedule.schedules
+const itemsPaginated = props.schedule
     ? computed(() =>
           props.schedule.schedules.slice(
               perPage.value * currentPage.value,
@@ -78,7 +75,7 @@ const itemsPaginated = props.schedule.schedules
       )
     : null;
 
-const numPages = props.schedule.schedules
+const numPages = props.schedule
     ? computed(() => Math.ceil(props.schedule.schedules.length / perPage.value))
     : null;
 
@@ -125,11 +122,16 @@ const adjustedStartPage = startPage
     ? computed(() => startPage.value - 1)
     : null;
 const adjustedEndPage = endPage ? computed(() => endPage.value - 1) : null;
+
+const modalCreate = ref(false);
 </script>
 
 <template>
     <Head title="Dashboard" />
     <SectionMain>
+        <CardBoxModal v-model="modalCreate" class="mb-6" title="">
+            <Create v-model="modalCreate" :schoolProgram="schoolprogram" />
+        </CardBoxModal>
         <SectionTitleLineWithButton
             :icon="mdiChartTimelineVariant"
             title="Overview"
@@ -165,13 +167,16 @@ const adjustedEndPage = endPage ? computed(() => endPage.value - 1) : null;
             />
         </div>
 
-        <SectionBannerStarOnGitHub class="mt-6 mb-6" />
+        <SectionBannerStarOnGitHub
+            class="mt-6 mb-6"
+            @openModal="modalCreate = true"
+        />
 
         <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
             <BaseButton :icon="mdiReload" color="whiteDark" />
         </SectionTitleLineWithButton>
 
-        <CardBox class="mb-6" has-table v-if="schedule.schedules">
+        <CardBox class="mb-6" has-table v-if="schedule">
             <h1>Conflicts: {{ schedule.conflicts }}</h1>
 
             <table v-for="items in itemsPaginated" :key="items.id" class="mb-6">

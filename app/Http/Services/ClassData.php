@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-class ClassData implements \Serializable
+class ClassData
 {
     private $id;
     private $gradelevel;
@@ -34,25 +34,5 @@ class ClassData implements \Serializable
             'section' => $this->section,
             'period' => $this->periods
         ];
-    }
-
-    public function serialize()
-    {
-        return serialize([
-            $this->id,
-            $this->gradelevel,
-            $this->section,
-            $this->periods
-        ]);
-    }
-
-    public function unserialize($data)
-    {
-        list(
-            $this->id,
-            $this->gradelevel,
-            $this->section,
-            $this->periods
-        ) = unserialize($data);
     }
 }

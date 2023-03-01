@@ -31,22 +31,4 @@ class Period
             'teacher' => $this->teacher,
         ];
     }
-
-    public function serialize()
-    {
-        return serialize([
-            $this->subject,
-            $this->classday,
-            $this->teacher,
-        ]);
-    }
-
-    public function unserialize($data)
-    {
-        list(
-            $this->subject,
-            $this->classday,
-            $this->teacher,
-        ) = unserialize($data);
-    }
 }
