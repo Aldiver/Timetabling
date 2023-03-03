@@ -28,11 +28,6 @@ class Timeslot
      */
     private $timeslotModel;
 
-    /**
-     * ID of next timeslot
-     */
-    private $nextSlot;
-
 
     /**
      * Create a timeslot
@@ -52,7 +47,7 @@ class Timeslot
         $timeslotId = $matches[2];
 
         $this->dayModel = DayModel::find($dayId);
-        $this->timeslotModel = TimeslotModel::where('rank', $timeslotId);
+        $this->timeslotModel = TimeslotModel::where('rank', $timeslotId)->first();
     }
 
     /**
@@ -93,5 +88,15 @@ class Timeslot
     public function getTimeslotId()
     {
         return $this->timeslotModel->id;
+    }
+
+    public function reserveTimeSlots()
+    {
+        //
+    }
+
+    public function resetReservedTimeSlots()
+    {
+        //
     }
 }

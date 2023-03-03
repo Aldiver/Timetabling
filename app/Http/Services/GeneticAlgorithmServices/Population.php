@@ -26,13 +26,13 @@ class Population
      * @param int $populationSize Size of population
      * @param Timetable $timetable Timetable for initializing individuals
      */
-    public function __construct($populationSize = null, $timetable = null)
+    public function __construct($populationSize = null, $timetable = null, $currentGradelevel=null)
     {
         $this->population = [];
 
         if ($timetable) {
             for ($i = 0; $i < $populationSize; $i++) {
-                $individual = new Individual($timetable);
+                $individual = new Individual($timetable, $currentGradelevel);
                 $this->population[$i] = $individual;
             }
         }

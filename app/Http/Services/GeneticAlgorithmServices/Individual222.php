@@ -36,38 +36,56 @@ class Individual
         $chromosomeIndex = 0;
 
         $group = $currentGradelevel;
-
         foreach ($group->getSectionIds() as $sections) {
-            foreach ($group->getModuleIds() as $moduleId) {
-                $module = $timetable->getModule($moduleId, $group->getId());
-                // Add random teacher
-                $teacher = $module->getRandomTeacherId();
-                $newChromosome[$chromosomeIndex] = [$teacher];
-
-
-                // Add random time slot
-                if ($module->getSlots($group->getId()) == 4) {
-                    $timeslotId = $timetable->getRandomGroupedTimeslot($module->getSlots($group->getId()));
-                    foreach ($timeslotId as $keyId) {
-                        $newChromosome[$chromosomeIndex][] = $keyId;
+            $departments = collect($group->getModuleIds());
+            foreach ($timetable->getGroupedTimeslots() as $id => $periodIndex) {
+                if ($group->getId() > 2) {
+                    $selectedModule = $departments->random();
+                    while ($timetable->getModule($selectedModule, $group->getId())->isAdvisory()) {
+                        $selectedModule = $departments->random();
                     }
                 } else {
-                    // for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
-                    // $timeslotId = $timetable->getRandomTimeslot()->getId();
-                    $timeslotId = $timetable->getRandomGroupedTimeslot($module->getSlots($group->getId())-1);
-                    foreach ($timeslotId as $keyId) {
-                        $newChromosome[$chromosomeIndex][] = $keyId;
+                    $selectedModule = $departments->random();
+                }
+                $departments = $departments->reject($selectedModule);
+
+                //teacher selection
+                $module = $timetable->getModule($selectedModule, $group->getId());
+                $teacher = $module->getRandomTeacherId();
+                $newChromosome[$chromosomeIndex] = $teacher;
+                $chromosomeIndex++;
+
+                //select timeslot
+                for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
+                    // Add random time slot
+                    if ($module->getSlots($group->getId()) == 4) {
+                        $timeslotId = $timetable->getRandomGroupedTimeslot($id);
+                        $newChromosome[$chromosomeIndex] = $timeslotId;
+                    } else {
+                        $timeslotId = $timetable->getRandomTimeslot()->getId();
+                        $newChromosome[$chromosomeIndex] = $timeslotId;
                     }
-                    $timeslotId = $timetable->getRandomTimeslot()->getId();
-                    $newChromosome[$chromosomeIndex][] = $timeslotId;
                 }
                 $chromosomeIndex++;
             }
+            $selectedModule = $departments->random();
+            $module = $timetable->getModule($selectedModule, $group->getId());
+            $teacher = $module->getRandomTeacherId();
+            $newChromosome[$chromosomeIndex] = $teacher;
+            $chromosomeIndex++;
+
+            //select timeslot
+            for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
+                // Add random time slot
+                $timeslotId = $timetable->getRandomTimeslot()->getId();
+                $newChromosome[$chromosomeIndex] = $timeslotId;
+            }
+            $chromosomeIndex++;
+            $timetable->resetAllocatedTimeslots();
         }
         // dd($newChromosome);
         $this->chromosome = $newChromosome;
     }
-
 
     /**
      * Create a new individual with a randomised chromosome
@@ -378,8 +396,7 @@ class Individual
 
     public function getChromosomeString()
     {
-        $flatArray = array_merge(...$this->chromosome);
-        return implode(",", $flatArray);
+        return implode(",", $this->chromosome);
     }
 
     public function save()

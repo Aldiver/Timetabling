@@ -5,11 +5,12 @@ namespace App\Http\Services;
 use App\Http\Services\Population;
 use App\Http\Services\Schedule;
 
-class GeneticAlgorithm
+class GeneticAlgorithm2
 {
     private $schoolprogram;
     //instantiate GA with the initial data
     private $ELITISM; //add more
+
     public function __construct($schoolprogram)
     {
         $this->schoolprogram = $schoolprogram;
@@ -21,8 +22,8 @@ class GeneticAlgorithm
     }
     private function crossoverPopulation($population): Population
     {
-        $crossPopulation = new Population(1, $this->schoolprogram);
-        $ELITISM = 1; //based it later
+        $crossPopulation = new Population(50, $this->schoolprogram);
+        $ELITISM = 2; //based it later
         $CROSSOVER_RATE = .9;
         //check this well
         foreach ($crossPopulation->getSchedules() as $index => $schedule) {

@@ -22,7 +22,7 @@ class GenerateTimetableJob implements ShouldQueue
     use IsMonitored;
 
     protected $schoolProgram;
-    public $timeout = 3600;
+    public $timeout = 36000;
 
     public function __construct($schoolProgram)
     {

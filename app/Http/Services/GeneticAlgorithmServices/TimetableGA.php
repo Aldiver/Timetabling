@@ -46,7 +46,8 @@ class TimetableGA
         foreach ($schoolProgram->gradelevels as $gradelevel) {
             $groupId = $gradelevel->id;
             $sectionsIds = [];
-            foreach ($gradelevel->sections as $sections) {
+            $gradelevelSections = $gradelevel->sections->whereIn('id', $schoolProgram->sections()->pluck('id')->toArray());
+            foreach ($gradelevelSections as $sections) {
                 $sectionsIds[] = $sections->id;
             }
             $moduleIds = [];
@@ -67,11 +68,18 @@ class TimetableGA
         $days = $schoolProgram->classdays;
         $timeslots = $schoolProgram->periods;
 
-        foreach ($days as $day) {
-            foreach ($timeslots as $timeslot) {
-                $timeslotId = 'D'.$day->id . "T" . $timeslot->id;
-                $timetable->addTimeslot($timeslotId);
+
+
+        foreach ($timeslots as $timeslot) {
+            $timeslotIds = [];
+            foreach ($days as $day) {
+                if (!((($timeslot->id == 1) && ($day->rank == 1)) || (($timeslot->id == 7) && ($day->rank == 5)))) {
+                    $timeslotId = 'D'.$day->rank . "T" . $timeslot->id;
+                    $timetable->addTimeslot($timeslotId);
+                    $timeslotIds[] = $timeslotId;
+                }
             }
+            $timetable->addGroupedTimeslot($timeslot->id, $timeslotIds);
         }
 
         // Set up professors
@@ -81,7 +89,7 @@ class TimetableGA
             $timetable->addTeacher($teacher->id);
         }
 
-        // dd($timetable);
+        // $timetable->cloneTimeslot();
 
         return $timetable;
     }
@@ -93,44 +101,47 @@ class TimetableGA
     public function run()
     {
         $startTime = microtime(true);
-        $maxGenerations = 1500;
-
         $timetable = $this->initializeTimetable(); //not needed
 
         $algorithm = new GeneticAlgorithm(100, 0.01, 0.9, 2, 10);
 
-        $population = $algorithm->initPopulation($timetable); //timetable is the schoolprogram with relations
+        foreach ($timetable->getGroups() as $currentGradelevel) {
+            $maxGenerations = 1500;
 
-        $algorithm->evaluatePopulation($population); //each individual man already has a method to calculate conflicts
+            $population = $algorithm->initPopulation($timetable, $currentGradelevel);
 
-        // Keep track of current generation
-        $generation = 1;
+            $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel); //each individual man already has a method to calculate conflicts
 
-        while (!$algorithm->isTerminationConditionMet($population)
-            && !$algorithm->isGenerationsMaxedOut($generation, $maxGenerations)) {
-            $fittest = $population->getFittest(0);
+            // Keep track of current generation
+            $generation = 1;
 
-            // Apply crossover
-            $population = $algorithm->crossoverPopulation($population);
+            while (!$algorithm->isTerminationConditionMet($population)
+                && !$algorithm->isGenerationsMaxedOut($generation, $maxGenerations)) {
+                $fittest = $population->getFittest(0);
 
-            // Apply mutation
-            $population = $algorithm->mutatePopulation($population, $timetable);
+                print "Generation: " . $generation . "(" . $fittest->getFitness() . ") - ";
+                print $fittest;
+                print "\n";
 
-            // Evaluate Population
-            $algorithm->evaluatePopulation($population);
+                // Apply crossover
+                $population = $algorithm->crossoverPopulation($population, $currentGradelevel);
 
-            // Increment current
-            $generation++;
+                // Apply mutation
+                $population = $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
 
-            // Cool temperature of GA for simulated annealing
-            $algorithm->coolTemperature();
+                // Evaluate Population
+                $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
 
+                // Increment current
+                $generation++;
+
+                // Cool temperature of GA for simulated annealing
+                $algorithm->coolTemperature();
+            }
             $solution =  $population->getFittest(0);
-            $elapsedTime = microtime(true) - $startTime;
-            dd($elapsedTime, $solution->getFitness());
+            dd($generation, $solution, $solution->getFitness());
+            //update timetable para malaman na tapos na yung first gradelevel
         }
-
-        $solution =  $population->getFittest(0);
 
         // Update the timetable data in the DB
         // $this->timetable->update([

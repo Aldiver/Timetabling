@@ -33,11 +33,26 @@ class Timetable
     private $timeslots;
 
     /**
+     * Classes
+     *
+     * @var int
+     */
+    private $groupedTimeslots;
+
+    /**
      * Number of classes scheduled
      *
      * @var int
      */
     private $numClasses;
+
+    /**
+     * Classes
+     *
+     * @var int
+     */
+    private $groupedClasses;
+
 
 
     /**
@@ -45,7 +60,6 @@ class Timetable
      */
     public function __construct()
     {
-        $this->rooms = [];
         $this->teachers = [];
         $this->modules = [];
         $this->groups = [];
@@ -74,6 +88,16 @@ class Timetable
     }
 
     /**
+     * Get the timeslots
+     *
+     * @return array The timeslots
+     */
+    public function getGroupedTimeslots()
+    {
+        return $this->groupedTimeslots;
+    }
+
+    /**
      * Get the modules
      *
      * @return array The modules
@@ -91,16 +115,6 @@ class Timetable
     public function getteachers()
     {
         return $this->teachers;
-    }
-
-    /**
-     * Add a new lecture room
-     *
-     * @param int $roomId ID of room
-     */
-    public function addRoom($roomId)
-    {
-        $this->rooms[$roomId] = new Room($roomId);
     }
 
     /**
@@ -149,45 +163,52 @@ class Timetable
     }
 
     /**
+     * Add a new grouped Timeslot
+     *
+     * @param int $timeslotId ID of time slot
+     * @param string $timeslot Timeslot
+     */
+    public function addGroupedTimeslot($period, $timeslotIds)
+    {
+        $this->groupedTimeslots[$period] = $timeslotIds;
+    }
+
+    /**
      * Create classes using individual's chromosomes
      *
      * @param Individual $individual Individual
      */
-    public function createClasses($individual)
+    public function createClasses($individual, $currentGradelevel)
     {
         $classes = [];
 
         $chromosome = $individual->getChromosome();
         $chromosomePos = 0;
         $classIndex = 0;
-
-        foreach ($this->groups as $id => $group) {
+        $group = $currentGradelevel;
+        foreach ($group->getSectionIds() as $section) {
             $moduleIds = $group->getModuleIds();
-
+            $groupedClasses[$group->getId()][$section] = [];
             foreach ($moduleIds as $moduleId) {
-                $module = $this->getModule($moduleId);
+                $module = $this->getModule($moduleId, $group->getId());
 
-                for ($i = 1; $i <= $module->getSlots($id); $i++) {
-                    $classes[$classIndex] = new CollegeClass($classIndex, $group->getId(), $moduleId);
+                $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
+                // Add teacher
+                $classes[$classIndex]->addTeacher($chromosome[$chromosomePos][0]);
 
+                for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
                     // Add timeslot
-                    $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos]);
-                    $chromosomePos++;
-
-                    // Add room
-                    $classes[$classIndex]->addRoom($chromosome[$chromosomePos]);
-                    $chromosomePos++;
-
-                    // Add teacher
-                    $classes[$classIndex]->addTeacher($chromosome[$chromosomePos]);
-                    $chromosomePos++;
-
-                    $classIndex++;
+                    $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos][$i]);
                 }
+
+                $chromosomePos++;
+                $groupedClasses[$group->getId()][$section][] =  $classes[$classIndex];
+                $classIndex++;
             }
         }
-
+        $this->groupedClasses = $groupedClasses;
         $this->classes = $classes;
+        // dd($this->groupedClasses);
     }
 
     /**
@@ -195,61 +216,6 @@ class Timetable
      *
      * @return string Chromosome scheme
      */
-    public function getScheme()
-    {
-        $scheme = [];
-
-        foreach ($this->groups as $id => $group) {
-            $moduleIds = $group->getModuleIds();
-
-            $scheme[] = 'G' . $id;
-
-            foreach ($moduleIds as $moduleId) {
-                $module = $this->getModule($moduleId);
-
-                for ($i = 1; $i <= $module->getSlots($id); $i++) {
-                    $scheme[] = $moduleId;
-                }
-            }
-        }
-
-        return implode(",", $scheme);
-    }
-
-    /**
-     * Get a room by ID
-     *
-     * @param int $roomId ID of room
-     */
-    public function getRoom($roomId)
-    {
-        if (!isset($this->rooms[$roomId])) {
-            print "No room with ID " . $roomId;
-            return null;
-        }
-
-        return $this->rooms[$roomId];
-    }
-
-    /**
-     * Get all rooms
-     *
-     * @return array Collection of rooms
-     */
-    public function getRooms()
-    {
-        return $this->rooms;
-    }
-
-    /**
-     * Get a random room
-     *
-     * @return Room room
-     */
-    public function getRandomRoom()
-    {
-        return $this->rooms[array_rand($this->rooms)];
-    }
 
     /**
      * Get teacher with given ID
@@ -315,6 +281,22 @@ class Timetable
     }
 
     /**
+     * Get a random time slot
+     *
+     * @return Timeslot A timeslot
+     */
+    public function getRandomGroupedTimeslot($count)
+    {
+        $randomPeriod = array_rand($this->groupedTimeslots);
+        $randomDays = array_rand($this->groupedTimeslots[$randomPeriod], $count);
+        $returnValue = [];
+        foreach (collect($randomDays) as $key) {
+            $returnValue[] = $this->groupedTimeslots[$randomPeriod][$key];
+        }
+        return $returnValue;
+    }
+
+    /**getRandomGroupedTimeslot
      * Get a collection of classes
      *
      * @return array Classes
@@ -346,29 +328,6 @@ class Timetable
     }
 
     /**
-     * Get classes scheduled for a given day for a given group
-     *
-     * @param $dayId ID of day we are getting classes for
-     * @param $groupId The ID of the group
-     */
-    public function getClassesByDay($dayId, $groupId)
-    {
-        $classes = [];
-
-        foreach ($this->classes as $class) {
-            $timeslot = $this->getTimeslot($class->getTimeslotId());
-
-            $classDayId = $timeslot->getDayId();
-
-            if ($dayId == $classDayId && $class->getGroupId() == $groupId) {
-                $classes[] = $class;
-            }
-        }
-
-        return $classes;
-    }
-
-    /**
      * Calculate the number of clashes
      *
      * @return $numClashes Number of clashes
@@ -376,88 +335,56 @@ class Timetable
     public function calcClashes()
     {
         $clashes = 0;
-        $days = Day::all();
+        $conflict = 0;
+        $conflict2 = 0;
+        $teacher_loads = [];
 
-        foreach ($this->classes as $id => $classA) {
-            $roomCapacity = $this->getRoom($classA->getRoomId())->getCapacity();
-            $groupSize = $this->getGroup($classA->getGroupId())->getSize();
-            $teacher = $this->getTeacher($classA->getTeacherId());
-            $timeslot = $this->getTimeslot($classA->getTimeslotId());
-            $module = $this->getModule($classA->getModuleId());
+        foreach ($this->groupedClasses as $sections) {
+            foreach ($sections as $classes) {
+                $timeslotIds = [];
+                foreach ($classes as $class) {
+                    // dd($class);
 
-            if ($roomCapacity < $groupSize) {
-                $clashes++;
-            }
+                    $teacherId = $class->getTeacherId();
+                    $gradelevelId = $class->getGroupId();
+                    $section = $class->getSectionId();
 
-            // Check if room is taken
-            foreach ($this->classes as $id => $classB) {
-                if ($classA->getId() != $classB->getId()) {
-                    if (($classA->getRoomId() == $classB->getRoomId()) && ($classA->getTimeslotId() == $classB->getTimeslotId())) {
-                        $clashes++;
-                        break;
+                    //
+                    if (!isset($teacher_loads[$gradelevelId][$teacherId])) {
+                        $teacher_loads[$gradelevelId][$teacherId] = [];
                     }
-                }
-            }
 
+                    $schedule_checker = [];
+                    foreach ($class->getTimeslotId() as $timeslot) {
+                        $timeslotObj = $this->getTimeslot($timeslot);
+                        $schedule_checker['day'][] = $timeslotObj->getDayId();
+                        $schedule_checker['time'][] = $timeslotObj->getTimeslotId();
 
-            if (in_array($classA->getRoomId(), $this->getGroup($classA->getGroupId())->getUnavailableRooms())
-            ) {
-                $clashes++;
-            }
+                        $clashes += in_array($timeslot, $timeslotIds) ? 1 : 0;
+                        $timeslotIds[] = $timeslot;
 
-            // Check if teacher is available
-            foreach ($this->classes as $id => $classB) {
-                if ($classA->getId() != $classB->getId()) {
-                    if (($classA->getTeacherId() == $classB->getTeacherId())
-                        && ($classA->getTimeslotId() == $classB->getTimeslotId())) {
-                        $clashes++;
-                        break;
+                        $clashes += in_array($timeslot, $teacher_loads[$gradelevelId][$teacherId]) ? 1 : 0;
+                        $teacher_loads[$gradelevelId][$teacherId][] = $timeslot;
+                        $conflict = $clashes;
                     }
-                }
-            }
 
-            // Check if we don't have same group in two classes at same time
-            foreach ($this->classes as $id => $classB) {
-                if ($classA->getId() != $classB->getId()) {
-                    if (($classA->getGroupId() == $classB->getGroupId()) && ($classA->getTimeslotId() == $classB->getTimeslotId())) {
+                    if (!(count($schedule_checker['day']) === count(array_unique($schedule_checker['day'])))) {
                         $clashes++;
-                        break;
+                        $conflict2++;
                     }
-                }
-            }
-        }
 
-        // Constraint to ensure that no course occurs at two different locations
-        // and or at non-consecutive time slots
-        foreach ($days as $day) {
-            foreach ($this->getGroups() as $group) {
-                $classes = $this->getClassesByDay($day->id, $group->getId());
-                $checkedModules = [];
-
-                foreach ($classes as $classA) {
-                    if (!in_array($classA->getModuleId(), $checkedModules)) {
-                        $moduleTimeslots = [];
-
-                        foreach ($classes as $classB) {
-                            if ($classA->getModuleId() == $classB->getModuleId()) {
-                                if ($classA->getRoomId() != $classB->getRoomId()) {
-                                    $clashes++;
-                                }
-
-                                $moduleTimeslots[] = $classB->getTimeslotId();
-                            }
-                        }
-
-                        if (!$this->areConsecutive($moduleTimeslots)) {
+                    // Check if all elements in array2 are the same
+                    if ($class->getTimeslotCount() == 4) {
+                        if (!(count(array_unique($schedule_checker['time'])) === 1)) {
                             $clashes++;
+                            $conflict2++;
                         }
-
-                        $checkedModules[] = $classA->getModuleId();
                     }
                 }
             }
         }
-
+        // print "Conflicts ". $conflict. " \n". $conflict2."\n";
+        // dd($clashes, $this->getTimeslot($class->getTimeslotId()[0]));
         return $clashes;
     }
 

@@ -34,6 +34,8 @@ class Module
      */
     private $allocatedSlots;
 
+    private $nonAdvisory = false;
+
     /**
      * Create a new module
      *
@@ -44,6 +46,9 @@ class Module
     {
         $this->moduleId = $moduleId;
         $this->moduleModel = Department::find($moduleId);
+        if ($this->moduleModel->name === "TLE DEPARTMENT") {
+            $this->nonAdvisory = true;
+        }
         $this->teacherIds = $teacherIds;
         $this->allocatedSlots = 0;
     }
@@ -114,13 +119,18 @@ class Module
     }
 
     /**
-     * Get a random professor that can teach this module
+     * Get a random teacher that can teach this module
      *
-     * @return int ID of professor
+     * @return int ID of teacher
      */
-    public function getRandomProfessorId()
+    public function getRandomTeacherId()
     {
-        $pos = rand(0, count($this->professorIds) - 1);
-        return $this->professorIds[$pos];
+        $pos = rand(0, count($this->teacherIds) - 1);
+        return $this->teacherIds[$pos];
+    }
+
+    public function isAdvisory()
+    {
+        return $this->nonAdvisory;
     }
 }

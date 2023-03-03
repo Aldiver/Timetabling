@@ -39,7 +39,17 @@ class Population
 
     public function sortByFitness()
     {
-        //sorting algorithm
+        usort($this->population, function ($individualA, $individualB) {
+            if ($individualA->getFitness() > $individualB->getFitness()) {
+                return -1;
+            } elseif ($individualB->getFitness() > $individualA->getFitness()) {
+                return 1;
+            }
+
+            return 0;
+        });
+
+        return $this->population;
     }
 
     //serialize the object to be readable in frontend

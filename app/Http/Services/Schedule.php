@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Services\ClassData;
 use App\Http\Services\Subject;
 use App\Models\Teacher;
+use App\Models\SchoolProgram;
 
 class Schedule
 {
@@ -19,9 +20,11 @@ class Schedule
 
     public function __construct($schoolprogram = null)
     {
-        $this->schoolprogram = $schoolprogram;
         if ($schoolprogram) {
-            $this->generateSchedule($schoolprogram);
+            $selectedSchoolProgram = $schoolprogram->schoolprograms()->first();
+
+            $this->schoolprogram = $selectedSchoolProgram->first();
+            $this->generateSchedule($selectedSchoolProgram->first());
         } else {
             $this->chromosome = [];
         }
@@ -245,6 +248,7 @@ class Schedule
             }
         }
         $this->chromosome = $newChromosome;
+        $this->calculateFitness($this->chromosome);
     }
 
     /**
@@ -532,7 +536,7 @@ class Schedule
         $conflicting_teachers = [];
         $teacher_section_counts = [];
 
-        foreach ($this->schedules as $schedule) {
+        foreach ($this->chromosome as $schedule) {
             $section = $schedule['section']->name;
             foreach ($schedule['period'] as $periodIndex => $period) {
                 foreach ($period as $classBlock) {
@@ -563,6 +567,7 @@ class Schedule
         // if ($this->conflicts > 250) {
         //     $this->generateSchedule();
         // }
+        dd($this->conflicts);
         return round((1 / ($this->conflicts + 1)), 6);
     }
 

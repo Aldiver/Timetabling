@@ -7,7 +7,7 @@ use App\Http\Services\Subject;
 use App\Http\Services\Period;
 use App\Models\Teacher;
 
-class Individual
+class IndividualCopy
 {
     private $schoolprogram;
     private $fitness;

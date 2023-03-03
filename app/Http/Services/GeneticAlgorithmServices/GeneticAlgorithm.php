@@ -74,9 +74,9 @@ class GeneticAlgorithm
      *
      * @param Timetable $timetable Timetable for generating individuals
      */
-    public function initPopulation($timetable)
+    public function initPopulation($timetable, $currentGradelevel)
     {
-        $population = new Population($this->populationSize, $timetable);
+        $population = new Population($this->populationSize, $timetable, $currentGradelevel);
 
         return $population;
     }
@@ -104,9 +104,14 @@ class GeneticAlgorithm
      * @param Individual $individual The individual
      * @return double The fitness of the individual
      */
-    public function calculateFitness($individual)
+    public function calculateFitness($individual, $timetable, $currentGradelevel)
     {
-        $fitness = $individual->calculateFitness();
+        $timetable = clone $timetable;
+
+        $timetable->createClasses($individual, $currentGradelevel);
+        $clashes = $timetable->calcClashes($currentGradelevel);
+        $fitness = 1.0 / ($clashes + 1);
+
         $individual->setFitness($fitness);
         return $fitness;
     }
@@ -115,15 +120,16 @@ class GeneticAlgorithm
      * Evaluate a given population
      *
      * @param Population $population The population to evaluate
+     * @param Timetable $timetable Timetable data
      */
-    public function evaluatePopulation($population)
+    public function evaluatePopulation($population, $timetable, $currentGradelevel)
     {
         $populationFitness = 0;
 
         $individuals = $population->getIndividuals();
 
         foreach ($individuals as $individual) {
-            $populationFitness += $this->calculateFitness($individual);
+            $populationFitness += $this->calculateFitness($individual, $timetable, $currentGradelevel);
         }
 
         $population->setPopulationFitness($populationFitness);
@@ -183,9 +189,9 @@ class GeneticAlgorithm
      * @param Population $population The population
      * @return Population $newPopulation The resulting population
      */
-    public function crossoverPopulation($population)
+    public function crossoverPopulation($population, $currentGradelevel)
     {
-        $newPopulation = new Population($population->size());
+        $newPopulation = new Population($population->size(), null, $currentGradelevel);
 
         for ($i = 0; $i < $population->size(); $i++) {
             $parentA = $population->getFittest($i);
@@ -222,14 +228,14 @@ class GeneticAlgorithm
      *
      * @param Population $population The population to mutate
      */
-    public function mutatePopulation($population, $timetable)
+    public function mutatePopulation($population, $timetable, $currentGradelevel)
     {
         $newPopulation = new Population();
         $bestFitness = $population->getFittest(0)->getFitness();
 
         for ($i = 0; $i < $population->size(); $i++) {
             $individual = $population->getFittest($i);
-            $randomIndividual = new Individual($timetable);
+            $randomIndividual = new Individual($timetable, $currentGradelevel);
 
             // Calculate adaptive mutation rate
             $adaptiveMutationRate = $this->mutationRate;
