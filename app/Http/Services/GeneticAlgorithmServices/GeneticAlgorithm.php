@@ -203,10 +203,17 @@ class GeneticAlgorithm
 
                 $parentB = $this->selectParent($population);
 
-                $swapPoint = mt_rand(0, $parentB->getChromosomeLength());
+                $swapPointA = mt_rand(0, $parentB->getChromosomeLength());
+                $swapPointB = mt_rand(0, $parentB->getChromosomeLength());
+
+                if ($swapPointA > $swapPointB) {
+                    $temp = $swapPointA;
+                    $swapPointA = $swapPointB;
+                    $swapPointB = $temp;
+                }
 
                 for ($j = 0; $j < $parentA->getChromosomeLength(); $j++) {
-                    if ($j < $swapPoint) {
+                    if ($j < $swapPointA || $j >= $swapPointB) {
                         $offspring->setGene($j, $parentA->getGene($j));
                     } else {
                         $offspring->setGene($j, $parentB->getGene($j));

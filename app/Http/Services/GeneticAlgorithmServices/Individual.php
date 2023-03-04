@@ -22,6 +22,15 @@ class Individual
     {
         $this->schoolprogram = $schoolprogram;
         if ($schoolprogram) {
+            //init $teacher_loading
+            foreach ($currentGradelevel->getModuleIds() as $moduleId) {
+                $module = $schoolprogram->getModule($moduleId, $currentGradelevel->getId());
+                foreach ($module->getTeacherIds() as $teacherId) {
+                    if (!isset($this->teacher_loading[$currentGradelevel->getId()][$moduleId][$teacherId])) {
+                        $this->teacher_loading[$currentGradelevel->getId()][$moduleId][$teacherId] = [];
+                    }
+                }
+            }
             $this->generateSchedule($schoolprogram, $currentGradelevel);
         } else {
             $this->chromosome = [];
@@ -38,31 +47,57 @@ class Individual
         $group = $currentGradelevel;
 
         foreach ($group->getSectionIds() as $sections) {
+            $reserveSubjects = [];
             foreach ($group->getModuleIds() as $moduleId) {
                 $module = $timetable->getModule($moduleId, $group->getId());
-                // Add random teacher
-                $teacher = $module->getRandomTeacherId();
-                $newChromosome[$chromosomeIndex] = [$teacher];
+                if ($group->getId() > 2 && $module->getName() === 'TLE DEPARTMENT') {
+                    foreach ($this->teacher_loading[$group->getId()][$moduleId] as $nonAdvisoryTeachers) {
+                        $this->teacher_loading[$group->getId()][$moduleId][$nonAdvisoryTeachers][] = 1; //exclude period 1
+                    }
+                }
+                // Add random teacher. Filtered by lowest number of assigned sections/loads
+                $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$moduleId])->random();
+                $toExclude = (count($this->teacher_loading[$group->getId()][$moduleId][$teacher]) >= 7) ? [] : $this->teacher_loading[$group->getId()][$moduleId][$teacher];
 
+                $newChromosome[$chromosomeIndex] = [$teacher];
 
                 // Add random time slot
                 if ($module->getSlots($group->getId()) == 4) {
-                    $timeslotId = $timetable->getRandomGroupedTimeslot($module->getSlots($group->getId()));
+                    $timeslotId = $timetable->getRandomGroupedTimeslot($module->getSlots($group->getId()), $toExclude);
+                    $this->teacher_loading[$group->getId()][$moduleId][$teacher][] = array_shift($timeslotId);
                     foreach ($timeslotId as $keyId) {
                         $newChromosome[$chromosomeIndex][] = $keyId;
                     }
                 } else {
-                    // for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
-                    // $timeslotId = $timetable->getRandomTimeslot()->getId();
-                    $timeslotId = $timetable->getRandomGroupedTimeslot($module->getSlots($group->getId())-1);
-                    foreach ($timeslotId as $keyId) {
-                        $newChromosome[$chromosomeIndex][] = $keyId;
-                    }
-                    $timeslotId = $timetable->getRandomTimeslot()->getId();
-                    $newChromosome[$chromosomeIndex][] = $timeslotId;
+                    // ARPAN and ESP
+                    $reserveSubjects[] = $chromosomeIndex;
+                    $reserveSubjects[] = $moduleId;
+                    // $chromosomeIndex++;
                 }
                 $chromosomeIndex++;
             }
+            //Add reserved subjects brute forced
+            $moduleId1 = $reserveSubjects[1];
+            $moduleId2 = $reserveSubjects[3];
+            $module1 = $timetable->getModule($moduleId1, $group->getId());
+            $module2 = $timetable->getModule($moduleId2, $group->getId());
+            $teacher1 = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$moduleId1])->random();
+            $teacher2 = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$moduleId2])->random();
+            $toExclude1 = (count($this->teacher_loading[$group->getId()][$moduleId1][$teacher1]) >= 7) ? [] : $this->teacher_loading[$group->getId()][$moduleId1][$teacher1];
+            $toExclude2 = (count($this->teacher_loading[$group->getId()][$moduleId2][$teacher2]) >= 7) ? [] : $this->teacher_loading[$group->getId()][$moduleId2][$teacher2];
+            $timeslotId = $timetable->getRandomGroupedTimeslot(4, array_merge($toExclude1, $toExclude2));
+            $this->teacher_loading[$group->getId()][$moduleId1][$teacher1][] = $timeslotId[0];
+            $this->teacher_loading[$group->getId()][$moduleId2][$teacher2][] = $timeslotId[0];
+
+            $newChromosome[$reserveSubjects[0]] = [$teacher1, $timeslotId[1], $timeslotId[2]];
+
+            if ($module1->getSlots($group->getId()) == 3) {
+                $newChromosome[$reserveSubjects[0]][] = $timetable->getRandomTimeslot()->getId();
+                $newChromosome[$reserveSubjects[2]] = [$teacher2, $timeslotId[3], $timeslotId[4]];
+            } else {
+                $newChromosome[$reserveSubjects[2]] = [$teacher2, $timeslotId[3], $timeslotId[4], $timetable->getRandomTimeslot()->getId()];
+            }
+            //end
         }
         // dd($newChromosome);
         $this->chromosome = $newChromosome;
@@ -146,36 +181,17 @@ class Individual
         ];
     }
 
-    private function getFilteredTeachers($gradelevel, $selectedDepartment, $isAdvisory)
+    private function getFilteredTeachers($teachersPerModule)
     {
-        $teacher_loading = $this->teacher_loading;
+        $teacher_loading = collect($teachersPerModule);
 
-        $filteredTeachers = $this->schoolprogram->teachers()
-                    ->whereHas('gradelevel', function ($query) use ($gradelevel) {
-                        $query->where('id', $gradelevel->id);
-                    })->whereHas('department', function ($query) use ($selectedDepartment) {
-                        $query->where('id', $selectedDepartment->id);
-                    })->pluck('full_name');
-
-        if ($isAdvisory) {
-            $minCount = $filteredTeachers->reject(function ($teacher) use ($teacher_loading) {
-                return in_array('Advisory', $teacher_loading[$teacher] ?? []);
-            })->min(function ($teacher) use ($teacher_loading) {
-                return count($teacher_loading[$teacher] ?? []);
-            });
-
-            return $filteredTeachers->reject(function ($teacher) use ($teacher_loading, $minCount) {
-                return in_array('Advisory', $teacher_loading[$teacher] ?? []) || count($teacher_loading[$teacher] ?? []) > $minCount;
-            })->values();
-        }
-
-        $minCount = $filteredTeachers->min(function ($teacher) use ($teacher_loading) {
-            return count($teacher_loading[$teacher] ?? []);
+        $minCount = $teacher_loading->min(function ($periods) {
+            return count($periods);
         });
 
-        return $filteredTeachers->filter(function ($teacher) use ($teacher_loading, $minCount) {
-            return count($teacher_loading[$teacher] ?? []) == $minCount;
-        });
+        return $teacher_loading->filter(function ($periods) use ($minCount) {
+            return count($periods) === $minCount;
+        })->keys();
     }
     private function assignAdminLoads($teachers, $adminLoads)
     {

@@ -129,6 +129,11 @@ class Module
         return $this->teacherIds[$pos];
     }
 
+    public function getTeacherIds()
+    {
+        return $this->teacherIds;
+    }
+
     public function isAdvisory()
     {
         return $this->nonAdvisory;

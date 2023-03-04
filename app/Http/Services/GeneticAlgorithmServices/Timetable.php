@@ -285,18 +285,23 @@ class Timetable
      *
      * @return Timeslot A timeslot
      */
-    public function getRandomGroupedTimeslot($count)
+    public function getRandomGroupedTimeslot($count, $excluded)
     {
-        $randomPeriod = array_rand($this->groupedTimeslots);
+        if (count($excluded) == 7) {
+            $excluded = [];
+        }
+        $keys = array_keys($this->groupedTimeslots);
+        $filteredKeys = array_diff($keys, $excluded);
+        $randomPeriod = $filteredKeys[array_rand($filteredKeys)];
         $randomDays = array_rand($this->groupedTimeslots[$randomPeriod], $count);
-        $returnValue = [];
-        foreach (collect($randomDays) as $key) {
-            $returnValue[] = $this->groupedTimeslots[$randomPeriod][$key];
+        $returnValue = [$randomPeriod];
+        foreach ($randomDays as $rkey) {
+            $returnValue[] = $this->groupedTimeslots[$randomPeriod][$rkey];
         }
         return $returnValue;
     }
 
-    /**getRandomGroupedTimeslot
+    /**
      * Get a collection of classes
      *
      * @return array Classes
@@ -343,55 +348,60 @@ class Timetable
             foreach ($sections as $classes) {
                 $timeslotIds = [];
                 foreach ($classes as $class) {
-                    // dd($class);
+                    $timeslotIds = $class->getTimeslotId();
+                    $timeslotSet = array_flip($timeslotIds);
 
+                    // Check for timeslot clashes within the class
+                    if (count($timeslotIds) != count($timeslotSet)) {
+                        $clashes++;
+                        $conflict2++;
+                        continue;
+                    }
+
+                    // Check for day clashes within the class
+                    $days = array_unique(array_map(function ($id) {
+                        return $this->getTimeslot($id)->getDayId();
+                    }, $timeslotIds));
+                    if (count($days) != count($timeslotIds)) {
+                        $clashes++;
+                        $conflict2++;
+                        continue;
+                    }
+
+                    // Check for timeslot clashes with other classes
+                    foreach ($timeslotIds as $timeslot) {
+                        if (isset($timeslots[$timeslot])) {
+                            $clashes++;
+                            continue;
+                        }
+                        $timeslots[$timeslot] = true;
+                    }
+
+                    // Update the teacher loads
                     $teacherId = $class->getTeacherId();
                     $gradelevelId = $class->getGroupId();
-                    $section = $class->getSectionId();
-
-                    //
                     if (!isset($teacher_loads[$gradelevelId][$teacherId])) {
                         $teacher_loads[$gradelevelId][$teacherId] = [];
                     }
-
-                    $schedule_checker = [];
-                    foreach ($class->getTimeslotId() as $timeslot) {
-                        $timeslotObj = $this->getTimeslot($timeslot);
-                        $schedule_checker['day'][] = $timeslotObj->getDayId();
-                        $schedule_checker['time'][] = $timeslotObj->getTimeslotId();
-
-                        $clashes += in_array($timeslot, $timeslotIds) ? 1 : 0;
-                        $timeslotIds[] = $timeslot;
-
-                        $clashes += in_array($timeslot, $teacher_loads[$gradelevelId][$teacherId]) ? 1 : 0;
-                        $teacher_loads[$gradelevelId][$teacherId][] = $timeslot;
-                        $conflict = $clashes;
-                    }
-
-                    if (!(count($schedule_checker['day']) === count(array_unique($schedule_checker['day'])))) {
-                        $clashes++;
-                        $conflict2++;
-                    }
-
-                    // Check if all elements in array2 are the same
-                    if ($class->getTimeslotCount() == 4) {
-                        if (!(count(array_unique($schedule_checker['time'])) === 1)) {
+                    foreach ($timeslotIds as $timeslot) {
+                        if (in_array($timeslot, $teacher_loads[$gradelevelId][$teacherId])) {
                             $clashes++;
-                            $conflict2++;
+                            continue;
                         }
+                        $teacher_loads[$gradelevelId][$teacherId][] = $timeslot;
                     }
                 }
             }
+            // print "Conflicts ". $conflict. " \n". $conflict2."\n";
+            // dd($clashes, $this->getTimeslot($class->getTimeslotId()[0]));
+            return $clashes;
         }
-        // print "Conflicts ". $conflict. " \n". $conflict2."\n";
-        // dd($clashes, $this->getTimeslot($class->getTimeslotId()[0]));
-        return $clashes;
     }
 
     /**
-     * Determine whether a given set of numbers are
-     * consecutive
-     */
+         * Determine whether a given set of numbers are
+         * consecutive
+         */
     public function areConsecutive($numbers)
     {
         sort($numbers);
