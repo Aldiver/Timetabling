@@ -31,8 +31,13 @@ class Timetable
      * @var array
      */
     private $timeslots;
-    private $timeslotsCopy;
-    private $groupedTimeslotsCopy;
+
+    /**
+     * Collection of class days
+     *
+     * @var array
+     */
+    private $classdays;
 
     /**
      * Classes
@@ -114,7 +119,7 @@ class Timetable
      *
      * @return array Collection of teachers
      */
-    public function getteachers()
+    public function getTeachers()
     {
         return $this->teachers;
     }
@@ -165,6 +170,17 @@ class Timetable
     }
 
     /**
+     * Add a new classday
+     *
+     * @param int $classDayId ID of class day
+     * @param string $timeslot Timeslot
+     */
+    public function addClassday($classDayId)
+    {
+        $this->classdays[$classDayId] = new Classday($classDayId);
+    }
+
+    /**
      * Add a new grouped Timeslot
      *
      * @param int $timeslotId ID of time slot
@@ -190,27 +206,27 @@ class Timetable
         $group = $currentGradelevel;
         foreach ($group->getSectionIds() as $section) {
             $moduleIds = $group->getModuleIds();
-            $groupedClasses[$group->getId()][$section] = [];
             foreach ($moduleIds as $moduleId) {
                 $module = $this->getModule($moduleId, $group->getId());
 
-                $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
-                // Add teacher
-                $classes[$classIndex]->addTeacher($chromosome[$chromosomePos][0]);
-
                 for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
-                    // Add timeslot
-                    $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos][$i]);
-                }
+                    $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
 
-                $chromosomePos++;
-                $groupedClasses[$group->getId()][$section][] =  $classes[$classIndex];
-                $classIndex++;
+                    // Add timeslot
+                    $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos]);
+                    $chromosomePos++;
+
+                    // Add professor
+                    $classes[$classIndex]->addTeacher($chromosome[$chromosomePos]);
+                    $chromosomePos++;
+
+                    $this->groupedClasses[$section][] = $classes[$classIndex];
+                    $classIndex++;
+                }
             }
         }
-        $this->groupedClasses = $groupedClasses;
-        $this->classes = $classes;
         // dd($this->groupedClasses);
+        $this->classes = $classes;
     }
 
     /**
@@ -272,22 +288,6 @@ class Timetable
         return $this->timeslots[$timeslotId];
     }
 
-    public function getGroupedTimeslot($periodId)
-    {
-        return $this->groupedTimeslot[$periodId];
-    }
-
-    public function removedSomeGroupedTimeslots($periodId, $toRemove)
-    {
-        if (is_array($toRemove)) {
-            foreach ($toRemove as $key) {
-                unset($this->groupedTimeslot[$periodId][$key]);
-            }
-        } else {
-            unset($this->groupedTimeslot[$periodId][$key]);
-        }
-    }
-
     /**
      * Get a random time slot
      *
@@ -298,87 +298,18 @@ class Timetable
         return $this->timeslots[array_rand($this->timeslots)];
     }
 
-    public function copyTimeslot()
-    {
-        $this->timeslotsCopy = $this->timeslots;
-        $this->groupedTimeslotsCopy = $this->groupedTimeslots;
-    }
-
-    public function reset()
-    {
-        $this->timeslots = $this->timeslotsCopy;
-        $this->groupedTimeslots = $this->groupedTimeslotsCopy;
-    }
-
-    public function reserveTimeslots()
-    {
-        $keys = array_keys($this->groupedTimeslots);
-        $filteredKeys = array_diff($keys, [1,7]);
-        $randomPeriods = array_rand($filteredKeys, 4);
-        $randomNumbers = [];
-        while (count($randomNumbers) < 4) {
-            $number = mt_rand(0, 4);
-            if (!in_array($number, $randomNumbers)) {
-                $randomNumbers[] = $number;
-            }
-        }
-        for ($i = 0; $i < 4; $i++) {
-            array_splice($this->groupedTimeslots[$filteredKeys[$randomPeriods[$i]]], $randomNumbers[$i], 1);
-        }
-    }
-
-    public function removeTimeslots($toRemove)
-    {
-        if (is_array($toRemove)) {
-            foreach ($toRemove as $key) {
-                unset($this->timeslots[$key]);
-            }
-        } else {
-            unset($this->timeslots[$toRemove]);
-        }
-    }
-    public function removeGroupedTimeslots($period)
-    {
-        unset($this->groupedTimeslots[$period]);
-    }
     /**
      * Get a random time slot
      *
      * @return Timeslot A timeslot
      */
-    public function getRandomGroupedTimeslot($count, $excluded, $notAllowed)
+    public function getRandomGroupedTimeslot($count)
     {
-        if (count($excluded) >= 7) {
-            $excluded = [];
-        }
-        // $excluded = [];
-        $keys = array_keys($this->groupedTimeslots);
-        // dd($this->groupedTimeslots, $keys);
-        $filteredKeys = array_diff($keys, $excluded);
-
-        if (!$filteredKeys) {
-            return false;
-        }
-        if (!$notAllowed) {
-            do {
-                $randomPeriod = $filteredKeys[array_rand($filteredKeys)];
-                $randomDays = array_rand($this->groupedTimeslots[$randomPeriod], $count);
-            } while (count($this->groupedTimeslots[$randomPeriod]) != 4);
-        } else {
-            do {
-                $randomPeriod = $filteredKeys[array_rand($filteredKeys)];
-                if ($randomPeriod == 1) {
-                    $randomDays = array_rand($this->groupedTimeslots[$randomPeriod], $count);
-                    break;
-                }
-                // print "Period ID " .$randomPeriod. " \n";
-                $randomDays = array_rand($this->groupedTimeslots[$randomPeriod], $count);
-            } while (count($this->groupedTimeslots[$randomPeriod]) < 5);
-        }
-
-        $returnValue = [$randomPeriod];
-        foreach ($randomDays as $rkey) {
-            $returnValue[] = $this->groupedTimeslots[$randomPeriod][$rkey];
+        $randomPeriod = array_rand($this->groupedTimeslots);
+        $randomDays = array_rand($this->groupedTimeslots[$randomPeriod], $count);
+        $returnValue = [];
+        foreach (collect($randomDays) as $key) {
+            $returnValue[] = $this->groupedTimeslots[$randomPeriod][$key];
         }
         return $returnValue;
     }
@@ -415,6 +346,30 @@ class Timetable
     }
 
     /**
+     * Get classes scheduled for a given day for a given group
+     *
+     * @param $dayId ID of day we are getting classes for
+     * @param $groupId The ID of the group
+     */
+    public function getClassesByDay($dayId, $groupId)
+    {
+        $classes = [];
+        $days = [1,2,3,4,5];
+
+        foreach ($this->classes as $class) {
+            $timeslot = $this->getTimeslot($class->getTimeslotId());
+
+            $classDayId = $timeslot->getDayId();
+
+            if ($dayId == $classDayId && $class->getGroupId() == $groupId) {
+                $classes[] = $class;
+            }
+        }
+
+        return $classes;
+    }
+
+    /**
      * Calculate the number of clashes
      *
      * @return $numClashes Number of clashes
@@ -422,81 +377,95 @@ class Timetable
     public function calcClashes()
     {
         $clashes = 0;
-        $conflict = 0;
-        $conflict2 = 0;
-        $teacher_loads = [];
-
-        foreach ($this->groupedClasses as $sections) {
-            foreach ($sections as $classes) {
-                $timeslotIds = [];
-                foreach ($classes as $class) {
-                    $timeslotIds = $class->getTimeslotId();
-                    $timeslotSet = array_flip($timeslotIds);
-
-                    // Check for timeslot clashes within the class
-                    if (count($timeslotIds) != count($timeslotSet)) {
+        $days = $this->classdays;
+        foreach ($this->classes as $id => $classA) {
+            //check if subjects have been assigned with the same timeslot
+            foreach ($this->classes as $id => $classB) {
+                if ($classA->getId() != $classB->getId()) {
+                    if (($classA->getSectionId() != $classB->getSectionId()) && ($classA->getTeacherId() == $classB->getTeacherId()) && ($classA->getTimeslotId() == $classB->getTimeslotId())) {
                         $clashes++;
-                        $conflict2++;
-                        continue;
-                    }
-
-                    // Check for day clashes within the class
-                    $days = array_unique(array_map(function ($id) {
-                        return $this->getTimeslot($id)->getDayId();
-                    }, $timeslotIds));
-                    if (count($days) != count($timeslotIds)) {
-                        $clashes++;
-                        $conflict2++;
-                        continue;
-                    }
-
-                    // Check for timeslot clashes with other classes
-                    foreach ($timeslotIds as $timeslot) {
-                        if (isset($timeslots[$timeslot])) {
-                            $clashes++;
-                            continue;
-                        }
-                        $timeslots[$timeslot] = true;
-                    }
-
-                    // Update the teacher loads
-                    $teacherId = $class->getTeacherId();
-                    $gradelevelId = $class->getGroupId();
-                    if (!isset($teacher_loads[$gradelevelId][$teacherId])) {
-                        $teacher_loads[$gradelevelId][$teacherId] = [];
-                    }
-                    foreach ($timeslotIds as $timeslot) {
-                        if (in_array($timeslot, $teacher_loads[$gradelevelId][$teacherId])) {
-                            $clashes++;
-                            continue;
-                        }
-                        $teacher_loads[$gradelevelId][$teacherId][] = $timeslot;
+                        break;
                     }
                 }
             }
-            // print "Conflicts ". $conflict. " \n". $conflict2."\n";
-            // dd($clashes, $this->getTimeslot($class->getTimeslotId()[0]));
-            return $clashes;
         }
-    }
 
-    /**
-         * Determine whether a given set of numbers are
-         * consecutive
-         */
-    public function areConsecutive($numbers)
-    {
-        sort($numbers);
+        foreach ($this->groupedClasses as $section) {
+            foreach ($section as $classA) {
+                //check if there are conflicts in schedules between modules
+                foreach ($section as $classB) {
+                    if ($classA->getId() != $classB->getId()) {
+                        if (($classA->getModuleId() != $classB->getModuleId()) && ($classA->getTimeslotId() == $classB->getTimeslotId())) {
+                            $clashes++;
+                            break;
+                        }
+                    }
+                }
 
-        $min = $numbers[0];
-        $max = $numbers[count($numbers) - 1];
-
-        for ($i = $min; $i <= $max; $i++) {
-            if (!in_array($i, $numbers)) {
-                return false;
+                foreach ($section as $classB) {
+                    //teacher must be the same per module
+                    if ($classA->getId() != $classB->getId()) {
+                        if (($classA->getModuleId() == $classB->getModuleId()) && ($classA->getTeacherId() != $classB->getTeacherId())) {
+                            $clashes++;
+                            break;
+                        }
+                    }
+                }
+                //modules must always have different classday
+                foreach ($section as $classB) {
+                    if ($classA->getId() != $classB->getId()) {
+                        if (($classA->getModuleId() == $classB->getModuleId()) && ($this->getTimeslot($classA->getTimeslotId())->getDayId() == $this->getTimeslot($classB->getTimeslotId())->getDayId())) {
+                            $clashes++;
+                            break;
+                        }
+                    }
+                }
+                //modules must have the same period unless it's ARPAN/ESP
+                if ($classA->getModuleId() != 6 || $classA->getModuleId() != 8) {
+                    foreach ($section as $classB) {
+                        if ($classA->getId() != $classB->getId()) {
+                            if (($classA->getModuleId() == $classB->getModuleId()) && ($this->getTimeslot($classA->getTimeslotId())->getTimeslotId() == $this->getTimeslot($classB->getTimeslotId())->getTimeslotId())) {
+                                $clashes++;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
 
+        // 345 => App\Http\Services\GeneticAlgorithmServices\SHSClass^ {#2348
+        //     -id: 345
+        //     -groupId: 1
+        //     -sectionId: 12
+        //     -moduleId: 7
+        //     -teacherId: 3
+        //     -timeslotId: "D2T5"
+        //   }
+
+        return $clashes;
+    }
+    public function getClassesBySection($sectionId)
+    {
+        $classes = [];
+
+        foreach ($this->classes as $class) {
+            $bySection = $this->getGroup($groupId)->getSectionId($class->getSectionId());
+
+            if ($bySection == $sectionId) {
+                $classes[] = $class;
+            }
+        }
+
+        return $classes;
+    }
+    public function classdaysAreUnique($numbers)
+    {
+        return true;
+    }
+
+    public function regLoadCheckPeriod($numbers)
+    {
         return true;
     }
 }

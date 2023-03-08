@@ -22,6 +22,7 @@ class Individual
     {
         $this->schoolprogram = $schoolprogram;
         if ($schoolprogram) {
+            //init $teacher_loading
             foreach ($currentGradelevel->getModuleIds() as $moduleId) {
                 $module = $schoolprogram->getModule($moduleId, $currentGradelevel->getId());
                 foreach ($module->getTeacherIds() as $teacherId) {
@@ -38,179 +39,69 @@ class Individual
 
     public function generateSchedule($timetable, $currentGradelevel)
     {
+        // ini_set('max_execution_time', '300');
         //Initialize constants for each class schedules
         $newChromosome = [];
         $chromosomeIndex = 0;
+
         $group = $currentGradelevel;
-        $class = [];
-        $retrySection = false;
-
-
-        foreach ($group->getSectionIds() as $section) {
-            //init
-            $timetable->copyTimeslot();
-            $timetable->reserveTimeslots();
-            $departments = collect($group->getModuleIds())->shuffle();
-            $groupedTimeslots = collect($timetable->getGroupedTimeslots());
-            //for advisory
-            $MODULES = ($group->getId() > 2) ? $departments->reject(fn ($item) => $item === 7) : $departments;
-
-            foreach ($MODULES as $randomDepartment) {
-                if ($randomDepartment == 6 || $randomDepartment == 8) {
-                    $toInsert = ($randomDepartment == 6) ? 8 : 6;
-                    //get meeting times for dep
-                    $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
-
-                    foreach ($teacher as $randomTeacher) {
-                        $timeslotIds = [];
-                        if (!(in_array($groupedTimeslots[1][0], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
-                            $timeslotIds[] = $groupedTimeslots[1][0];
-                            $timeslotIds[] = $groupedTimeslots[1][1];
-                            $teacherId = $randomTeacher;
-                            break;
-                        } elseif (!(in_array($groupedTimeslots[1][2], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
-                            $timeslotIds[] = $groupedTimeslots[1][2];
-                            $timeslotIds[] = $groupedTimeslots[1][3];
-                            $teacherId = $randomTeacher;
-                            break;
-                        } else {
-                            $timeslotIds = false;
-                        }
+        $timetable->copyTimeslot();
+        $timetable->reserveTimeslots();
+        foreach ($group->getSectionIds() as $sections) {
+            $reserveSubjects = [];
+            foreach ($group->getModuleIds() as $moduleId) {
+                $module = $timetable->getModule($moduleId, $group->getId());
+                if ($group->getId() > 2 && $module->getName() === 'TLE DEPARTMENT') {
+                    foreach ($this->teacher_loading[$group->getId()][$moduleId] as $nonAdvisoryTeachers) {
+                        $this->teacher_loading[$group->getId()][$moduleId][$nonAdvisoryTeachers][] = 1; //exclude period 1
                     }
+                }
+                // Add random teacher. Filtered by lowest number of assigned sections/loads
+                $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$moduleId])->random();
+                $toExclude = (count($this->teacher_loading[$group->getId()][$moduleId][$teacher]) >= 7) ? [] : $this->teacher_loading[$group->getId()][$moduleId][$teacher];
 
-                    if ($timeslotIds) {
-                        array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId], ...$timeslotIds);
-                        $groupedTimeslots[1] = array_diff($groupedTimeslots[1], $timeslotIds);
+                $newChromosome[$chromosomeIndex] = [$teacher];
 
-                        $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$toInsert]);
-                        $timeslotIds = [];
-                        foreach ($teacher as $randomTeacher) {
-                            if (!(in_array($groupedTimeslots[1], $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher]))) {
-                                $timeslotIds = $groupedTimeslots[1];
-                                array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
-                                unset($groupedTimeslots[1]);
-                                $teacherId2 = $randomTeacher;
-                                break;
-                            }
-                        }
-
-                        //insert last
-                        foreach ($groupedTimeslots as $key => $timeslot) {
-                            if (count($timeslot) == 5) {
-                                $rand = array_rand($timeslot);
-                                $insertLast = $randomDepartment == 6 ? $teacherId : $teacherId2;
-                                array_push($this->teacher_loading[$group->getId()][6][$insertLast], $timeslot[$rand]);
-                                $groupedTimeslots[$key] = array_diff($groupedTimeslots[$key], [$timeslot[$rand]]);
-                                // dd($randomDepartment, $key, $rand, $groupedTimeslots[$key], $timeslot);
-                                break;
-                            }
-                        }
-                        $departments = $departments->reject(function ($value) {
-                            return $value == 6 || $value == 8;
-                        });
+                // Add random time slot
+                if ($module->getSlots($group->getId()) == 4) {
+                    $timeslotId = $timetable->getRandomGroupedTimeslot($module->getSlots($group->getId()), $toExclude);
+                    $this->teacher_loading[$group->getId()][$moduleId][$teacher][] = array_shift($timeslotId);
+                    foreach ($timeslotId as $keyId) {
+                        $newChromosome[$chromosomeIndex][] = $keyId;
                     }
                 } else {
-                    $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
-                    foreach ($teacher as $randomTeacher) {
-                        $timeslotIds = null;
-                        if (!(in_array($groupedTimeslots[1][0], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
-                            $timeslotIds = $groupedTimeslots[1];
-                            $teacherId = $randomTeacher;
-                            break;
-                        } else {
-                            $timeslotIds = false;
-                        }
-                    }
-
-                    if ($timeslotIds) {
-                        array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId], ...$timeslotIds);
-                        unset($groupedTimeslots[1]);
-
-                        $departments = $departments->reject(fn ($item) => $item === $randomDepartment);
-                    }
-
-                    //code
+                    // ARPAN and ESP
+                    $reserveSubjects[] = $chromosomeIndex;
+                    $reserveSubjects[] = $moduleId;
+                    // $chromosomeIndex++;
                 }
-                // dd($randomDepartment, $this->teacher_loading);
-
-                if ($timeslotIds) {
-                    break;
-                }
+                $chromosomeIndex++;
             }
+            //Add reserved subjects brute forced
+            $moduleId1 = $reserveSubjects[1];
+            $moduleId2 = $reserveSubjects[3];
+            $module1 = $timetable->getModule($moduleId1, $group->getId());
+            $module2 = $timetable->getModule($moduleId2, $group->getId());
+            $teacher1 = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$moduleId1])->random();
+            $teacher2 = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$moduleId2])->random();
+            $toExclude1 = (count($this->teacher_loading[$group->getId()][$moduleId1][$teacher1]) >= 7) ? [] : $this->teacher_loading[$group->getId()][$moduleId1][$teacher1];
+            $toExclude2 = (count($this->teacher_loading[$group->getId()][$moduleId2][$teacher2]) >= 7) ? [] : $this->teacher_loading[$group->getId()][$moduleId2][$teacher2];
+            $timeslotId = $timetable->getRandomGroupedTimeslot(4, array_merge($toExclude1, $toExclude2));
+            $this->teacher_loading[$group->getId()][$moduleId1][$teacher1][] = $timeslotId[0];
+            $this->teacher_loading[$group->getId()][$moduleId2][$teacher2][] = $timeslotId[0];
 
-            //non advisory slots
-            for ($i = 2; $i <= 7; $i++) {
-                if (!(count($groupedTimeslots[$i]) == 5)) {
-                    //get 4 meetings subjects
-                    $filteredDeps = $departments->reject(fn ($item) => $item === 6 || $item ===8);
-                    foreach ($filteredDeps as $randomDepartment) {
-                        //check then get
-                        $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
-                        foreach ($teacher as $randomTeacher) {
-                            $timeslotIds = null;
-                            if (!(in_array($groupedTimeslots[$i][array_rand($groupedTimeslots[$i])], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
-                                $timeslotIds = array_values($groupedTimeslots[$i]);
-                                $teacherId = $randomTeacher;
-                                break;
-                            } else {
-                                $timeslotIds = false;
-                            }
-                        }
+            $newChromosome[$reserveSubjects[0]] = [$teacher1, $timeslotId[1], $timeslotId[2]];
 
-                        if ($timeslotIds) {
-                            array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId], ...$timeslotIds);
-                            unset($groupedTimeslots[$i]);
-
-                            $departments = $departments->reject(fn ($item) => $item == $randomDepartment);
-                            break;
-                        }
-                    }
-                } else {
-                    //get AP/ESP
-                    $filteredDeps = $departments->filter(fn ($item) => $item === 6 || $item === 8);
-
-
-                    $randomDepartment = $filteredDeps->random();
-                    $toInsert = ($randomDepartment == 6) ? 8 : 6;
-                    $slots = ($randomDepartment == 6) ? 3 : 2;
-                    $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
-                    foreach ($teacher as $randomTeacher) {
-                        $timeslotIds = null;
-                        if (!(in_array($groupedTimeslots[$i][0], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
-                            for ($j = 0; $j < $slots; $j++) {
-                                $timeslotIds[] = $groupedTimeslots[$i][$j];
-                            }
-                            $teacherId1 = $randomTeacher;
-                            break;
-                        }
-                    }
-
-                    if ($timeslotIds) {
-                        // dd($timeslotIds, ...$timeslotIds);
-                        array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId1], ...$timeslotIds);
-                        $groupedTimeslots[$i] = array_diff($groupedTimeslots[$i], $timeslotIds);
-
-                        $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$toInsert]);
-                        foreach ($teacher as $randomTeacher) {
-                            $timeslotIds = [];
-                            if (!(in_array($groupedTimeslots[$i][4], $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher]))) {
-                                $timeslotIds = $groupedTimeslots[$i];
-                                array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
-                                unset($groupedTimeslots[$i]);
-                                break;
-                            }
-                        }
-
-
-                        $departments->reject(fn ($item) => $item === $randomDepartment || $item === $toInsert);
-                        //insert next subject
-                    }
-                }
+            if ($module1->getSlots($group->getId()) == 3) {
+                $newChromosome[$reserveSubjects[0]][] = $timetable->getRandomTimeslot()->getId();
+                $newChromosome[$reserveSubjects[2]] = [$teacher2, $timeslotId[3], $timeslotId[4]];
+            } else {
+                $newChromosome[$reserveSubjects[2]] = [$teacher2, $timeslotId[3], $timeslotId[4], $timetable->getRandomTimeslot()->getId()];
             }
-            $timetable->reset();
+            //end
         }
-        //last
-        dd($this->teacher_loading);
+        // dd($newChromosome);
+        $this->chromosome = $newChromosome;
     }
 
 
@@ -295,19 +186,14 @@ class Individual
     {
         $teacher_loading = collect($teachersPerModule);
 
-        // $minCount = $teacher_loading->min(function ($periods) {
-        //     return count($periods);
-        // });
-
-        return $teacher_loading->sortBy(function ($periods) {
+        $minCount = $teacher_loading->min(function ($periods) {
             return count($periods);
+        });
+
+        return $teacher_loading->filter(function ($periods) use ($minCount) {
+            return count($periods) === $minCount;
         })->keys();
-
-        // return $teacher_loading->filter(function ($periods) use ($minCount) {
-        //     return count($periods) === $minCount;
-        // })->keys();
     }
-
     private function assignAdminLoads($teachers, $adminLoads)
     {
         $teachers = $teachers->shuffle();
@@ -509,8 +395,8 @@ class Individual
 
     public function getChromosomeString()
     {
-        // $flatArray = array_merge(...$this->chromosome);
-        return implode(",", $this->chromosome);
+        $flatArray = array_merge(...$this->chromosome);
+        return implode(",", $flatArray);
     }
 
     public function save()

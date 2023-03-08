@@ -124,10 +124,12 @@ class GeneticAlgorithm
      */
     public function evaluatePopulation($population, $timetable, $currentGradelevel)
     {
+        print "Evaluating Population \n";
         $populationFitness = 0;
 
         $individuals = $population->getIndividuals();
 
+        print "Calculating fitness...\n";
         foreach ($individuals as $individual) {
             $populationFitness += $this->calculateFitness($individual, $timetable, $currentGradelevel);
         }
@@ -191,6 +193,7 @@ class GeneticAlgorithm
      */
     public function crossoverPopulation($population, $currentGradelevel)
     {
+        print "Crossover Population \n";
         $newPopulation = new Population($population->size(), null, $currentGradelevel);
 
         for ($i = 0; $i < $population->size(); $i++) {
@@ -206,14 +209,14 @@ class GeneticAlgorithm
                 $swapPointA = mt_rand(0, $parentB->getChromosomeLength());
                 $swapPointB = mt_rand(0, $parentB->getChromosomeLength());
 
-                if ($swapPointA > $swapPointB) {
-                    $temp = $swapPointA;
-                    $swapPointA = $swapPointB;
-                    $swapPointB = $temp;
-                }
-
+                // if ($swapPointA > $swapPointB) {
+                //     $temp = $swapPointA;
+                //     $swapPointA = $swapPointB;
+                //     $swapPointB = $temp;
+                // }
+                // || $j >= $swapPointB
                 for ($j = 0; $j < $parentA->getChromosomeLength(); $j++) {
-                    if ($j < $swapPointA || $j >= $swapPointB) {
+                    if ($j < $swapPointA) {
                         $offspring->setGene($j, $parentA->getGene($j));
                     } else {
                         $offspring->setGene($j, $parentB->getGene($j));
@@ -237,6 +240,7 @@ class GeneticAlgorithm
      */
     public function mutatePopulation($population, $timetable, $currentGradelevel)
     {
+        print "Mutate Population \n";
         $newPopulation = new Population();
         $bestFitness = $population->getFittest(0)->getFitness();
 

@@ -64,9 +64,9 @@ class DashboardController extends Controller
         // $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find($schoolProgram->id);
         // $schedule = new GeneticAlgorithm2($selectedSchoolProgram);
 
-        // $timetableGA = new TimetableGA($timetable);
-        // $schedule = $timetableGA->run();
+        $timetableGA = new TimetableGA($timetable);
+        $schedule = $timetableGA->run();
 
-        dispatch(new GenerateTimetableJob($timetable));
+        // dispatch(new GenerateTimetableJob($timetable));
     }
 }

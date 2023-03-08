@@ -77,7 +77,7 @@ class SHSClass
      */
     public function addTimeSlot($timeslotId)
     {
-        $this->timeslotId[] = $timeslotId;
+        $this->timeslotId = $timeslotId;
     }
 
     /**

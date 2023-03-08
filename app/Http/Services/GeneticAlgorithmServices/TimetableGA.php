@@ -68,20 +68,24 @@ class TimetableGA
         $days = $schoolProgram->classdays;
         $timeslots = $schoolProgram->periods;
 
-
+        $setdays = true;
 
         foreach ($timeslots as $timeslot) {
             $timeslotIds = [];
             foreach ($days as $day) {
+                // if ($setdays) {
+                //     $timetable->addClassday($day->id);
+                // }
                 if (!((($timeslot->id == 1) && ($day->rank == 1)) || (($timeslot->id == 7) && ($day->rank == 5)))) {
                     $timeslotId = 'D'.$day->rank . "T" . $timeslot->id;
                     $timetable->addTimeslot($timeslotId);
                     $timeslotIds[] = $timeslotId;
                 }
+                $setdays = false;
             }
             $timetable->addGroupedTimeslot($timeslot->id, $timeslotIds);
         }
-
+        // dd($timetable->getGroupedTimeslots());
         // Set up professors
         $teachers = $schoolProgram->teachers;
 
@@ -110,7 +114,9 @@ class TimetableGA
 
             $population = $algorithm->initPopulation($timetable, $currentGradelevel);
 
-            $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel); //each individual man already has a method to calculate conflicts
+            print "Initializing Data";
+            print "\n";
+            $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
 
             // Keep track of current generation
             $generation = 1;
@@ -120,7 +126,7 @@ class TimetableGA
                 $fittest = $population->getFittest(0);
 
                 print "Generation: " . $generation . "(" . $fittest->getFitness() . ") - ";
-                print $fittest;
+                // print $fittest;
                 print "\n";
 
                 // Apply crossover
@@ -139,7 +145,11 @@ class TimetableGA
                 $algorithm->coolTemperature();
             }
             $solution =  $population->getFittest(0);
-            dd($generation, $solution, $solution->getFitness());
+            print "Generation: " . $generation . "(" . $solution->getFitness() . ") - ";
+            print $solution;
+            print "\n";
+            dd("done");
+            // dd($generation, $solution, $solution->getFitness());
             //update timetable para malaman na tapos na yung first gradelevel
         }
 
