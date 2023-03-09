@@ -48,6 +48,7 @@ class Individual
 
         foreach ($group->getSectionIds() as $section) {
             //init
+            $classes[$section] = [];
             $timetable->copyTimeslot();
             $timetable->reserveTimeslots();
             $departments = collect($group->getModuleIds())->shuffle();
@@ -80,6 +81,9 @@ class Individual
 
                     if ($timeslotIds) {
                         array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId], ...$timeslotIds);
+                        foreach ($timeslotIds as $ts) {
+                            $classes[$section][$randomDepartment][$teacherId][] = $ts;
+                        }
                         $groupedTimeslots[1] = array_diff($groupedTimeslots[1], $timeslotIds);
 
                         $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$toInsert]);
@@ -89,6 +93,10 @@ class Individual
                                 $timeslotIds = $groupedTimeslots[1];
                                 array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
                                 unset($groupedTimeslots[1]);
+                                foreach ($timeslotIds as $ts) {
+                                    $classes[$section][$toInsert][$randomTeacher][] = $ts;
+                                }
+
                                 $teacherId2 = $randomTeacher;
                                 break;
                             }
@@ -100,6 +108,7 @@ class Individual
                                 $rand = array_rand($timeslot);
                                 $insertLast = $randomDepartment == 6 ? $teacherId : $teacherId2;
                                 array_push($this->teacher_loading[$group->getId()][6][$insertLast], $timeslot[$rand]);
+                                $classes[$section][6][$insertLast][] = $ts;
                                 $groupedTimeslots[$key] = array_diff($groupedTimeslots[$key], [$timeslot[$rand]]);
                                 // dd($randomDepartment, $key, $rand, $groupedTimeslots[$key], $timeslot);
                                 break;
@@ -124,6 +133,9 @@ class Individual
 
                     if ($timeslotIds) {
                         array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId], ...$timeslotIds);
+                        foreach ($timeslotIds as $ts) {
+                            $classes[$section][$randomDepartment][$teacherId][] = $ts;
+                        }
                         unset($groupedTimeslots[1]);
 
                         $departments = $departments->reject(fn ($item) => $item === $randomDepartment);
@@ -148,7 +160,8 @@ class Individual
                         $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
                         foreach ($teacher as $randomTeacher) {
                             $timeslotIds = null;
-                            if (!(in_array($groupedTimeslots[$i][array_rand($groupedTimeslots[$i])], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
+                            $randomPeriods = array_rand($groupedTimeslots[$i], 2);
+                            if (!(in_array([$groupedTimeslots[$i][$randomPeriods[0]],$groupedTimeslots[$i][$randomPeriods[1]]], $this->teacher_loading[$group->getId()][$randomDepartment][$randomTeacher]))) {
                                 $timeslotIds = array_values($groupedTimeslots[$i]);
                                 $teacherId = $randomTeacher;
                                 break;
@@ -159,6 +172,9 @@ class Individual
 
                         if ($timeslotIds) {
                             array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId], ...$timeslotIds);
+                            foreach ($timeslotIds as $ts) {
+                                $classes[$section][$randomDepartment][$teacherId][] = $ts;
+                            }
                             unset($groupedTimeslots[$i]);
 
                             $departments = $departments->reject(fn ($item) => $item == $randomDepartment);
@@ -188,6 +204,9 @@ class Individual
                     if ($timeslotIds) {
                         // dd($timeslotIds, ...$timeslotIds);
                         array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId1], ...$timeslotIds);
+                        foreach ($timeslotIds as $ts) {
+                            $classes[$section][$randomDepartment][$teacherId][] = $ts;
+                        }
                         $groupedTimeslots[$i] = array_diff($groupedTimeslots[$i], $timeslotIds);
 
                         $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$toInsert]);
@@ -196,6 +215,9 @@ class Individual
                             if (!(in_array($groupedTimeslots[$i][4], $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher]))) {
                                 $timeslotIds = $groupedTimeslots[$i];
                                 array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
+                                foreach ($timeslotIds as $ts) {
+                                    $classes[$section][$toInsert][$randomTeacher][] = $ts;
+                                }
                                 unset($groupedTimeslots[$i]);
                                 break;
                             }
@@ -210,7 +232,7 @@ class Individual
             $timetable->reset();
         }
         //last
-        dd($this->teacher_loading);
+        dd($this->teacher_loading, $classes);
     }
 
 
