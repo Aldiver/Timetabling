@@ -91,7 +91,7 @@ class DashboardController extends Controller
         $schedules = json_decode($timetable->schedule_data1);
         return Inertia::render('Data/Dashboard/Show', [
             'timetable' => $timetable,
-            'scheme' => $schedules[0]
+            'scheme' => $schedules
         ]);
     }
 }

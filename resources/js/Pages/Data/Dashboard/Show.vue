@@ -37,7 +37,10 @@ const props = defineProps({
             />
         </SectionTitleLineWithButton>
         <CardBox class="mb-6" v-for="gradelevels in scheme" :key="gradelevels">
-            <table v-for="(sections, index) in gradelevels" :key="index">
+            <table
+                v-for="(sections, index) in Object.values(gradelevels)[0]"
+                :key="index"
+            >
                 <thead>
                     <tr>
                         <th>Section - {{ index }}</th>
