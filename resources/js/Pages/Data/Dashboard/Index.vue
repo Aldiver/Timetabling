@@ -1,12 +1,14 @@
 <script setup>
 import { computed, ref } from "vue";
-import { Head } from "@inertiajs/inertia-vue3";
+import { Head, useForm } from "@inertiajs/inertia-vue3";
 import {
     mdiAccountMultiple,
     mdiCartOutline,
     mdiChartTimelineVariant,
     mdiReload,
     mdiChartPie,
+    mdiTrashCan,
+    mdiEye,
 } from "@mdi/js";
 import SectionMain from "@/components/SectionMain.vue";
 import CardBoxWidget from "@/components/CardBoxWidget.vue";
@@ -19,11 +21,16 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import BaseLevel from "@/components/BaseLevel.vue";
 import CardBoxModal from "@/components/CardBoxModal.vue";
 import Create from "./Create.vue";
+import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 
 const props = defineProps({
     teachers: {
         type: Number,
         default: 0,
+    },
+    can: {
+        type: Object,
+        default: () => ({}),
     },
     sections: {
         type: Number,
@@ -38,6 +45,10 @@ const props = defineProps({
         default: () => ({}),
     },
     schoolprogram: {
+        type: Object,
+        default: () => ({}),
+    },
+    timetables: {
         type: Object,
         default: () => ({}),
     },
@@ -124,6 +135,14 @@ const adjustedStartPage = startPage
 const adjustedEndPage = endPage ? computed(() => endPage.value - 1) : null;
 
 const modalCreate = ref(false);
+
+const formDelete = useForm({});
+
+function destroy(id) {
+    if (confirm("Are you sure you want to delete?")) {
+        formDelete.delete(route("dashboard.destroy", id));
+    }
+}
 </script>
 
 <template>
@@ -172,9 +191,57 @@ const modalCreate = ref(false);
             @openModal="modalCreate = true"
         />
 
-        <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
+        <SectionTitleLineWithButton :icon="mdiChartPie" title="Timetables">
             <BaseButton :icon="mdiReload" color="whiteDark" />
         </SectionTitleLineWithButton>
+        <CardBox has-table>
+            <CardBoxComponentEmpty v-if="!timetables" />
+            <table v-else>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Options</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="timetable in timetables" :key="timetable.id">
+                        <td>{{ timetable.name }}</td>
+                        <td>{{ timetable.status }}</td>
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <BaseButtons
+                                type="justify-start lg:justify-end"
+                                no-wrap
+                            >
+                                <BaseButton
+                                    v-if="can.edit"
+                                    color="info"
+                                    :icon="mdiReload"
+                                    small
+                                />
+                                <BaseButton
+                                    v-if="can.delete"
+                                    color="danger"
+                                    :icon="mdiTrashCan"
+                                    small
+                                    @click="destroy(timetable.id)"
+                                />
+                            </BaseButtons>
+                        </td>
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
+                            <BaseButton
+                                color="info"
+                                :href="route('dashboard.show', timetable.id)"
+                                target="_blank"
+                                :icon="mdiEye"
+                                small
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </CardBox>
 
         <CardBox class="mb-6" has-table v-if="schedule">
             <h1>Conflicts: {{ schedule.conflicts }}</h1>
@@ -274,5 +341,6 @@ const modalCreate = ref(false);
 <script>
 export default {
     layout: LayoutAuthenticated,
+    components: { CardBoxComponentEmpty },
 };
 </script>

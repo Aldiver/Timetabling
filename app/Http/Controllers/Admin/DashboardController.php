@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 use App\Http\Services\GeneticAlgorithmServices\TimetableGA;
-use App\Http\Services\GeneticAlgorithm2;
 
 class DashboardController extends Controller
 {
@@ -39,16 +38,23 @@ class DashboardController extends Controller
         $departments = Department::count();
         $schedule = session('schedule');
         $schoolProgram = SchoolProgram::All()->pluck('school_year', 'id');
+        $timetables = Timetable::All();
 
         return Inertia::render('Data/Dashboard/Index', [
-            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments, 'schedule' => $schedule, 'schoolprogram' => $schoolProgram
+            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments, 'schedule' => $schedule, 'schoolprogram' => $schoolProgram,
+            'timetables' => $timetables,
+            'can' => [
+                'create' => Auth::user()->can('permission create'),
+                'edit' => Auth::user()->can('permission edit'),
+                'delete' => Auth::user()->can('permission delete'),
+            ]
         ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:timetables',
             'schoolProgram' => ['required'],
         ]);
 
@@ -64,9 +70,28 @@ class DashboardController extends Controller
         // $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find($schoolProgram->id);
         // $schedule = new GeneticAlgorithm2($selectedSchoolProgram);
 
-        $timetableGA = new TimetableGA($timetable);
-        $schedule = $timetableGA->run();
+        // $timetableGA = new TimetableGA($timetable);
+        // $schedule = $timetableGA->run();
 
-        // dispatch(new GenerateTimetableJob($timetable));
+        dispatch(new GenerateTimetableJob($timetable));
+    }
+
+    public function destroy($id)
+    {
+        $timetable = Timetable::find($id);
+        $timetable->delete();
+
+        return redirect()->route('dashboard.index')
+                        ->with('message', __('Timetable deleted successfully'));
+    }
+
+    public function show($id)
+    {
+        $timetable = Timetable::find($id);
+        $schedules = json_decode($timetable->schedule_data1);
+        return Inertia::render('Data/Dashboard/Show', [
+            'timetable' => $timetable,
+            'scheme' => $schedules[0]
+        ]);
     }
 }

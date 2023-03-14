@@ -17,10 +17,14 @@ class Individual
     private $teacher_conflicts;
     private $fitnessChanged = true;
     private $teacher_loading = [];
+    private $bySection;
+    private $clashes;
+    private $gl;
 
     public function __construct($schoolprogram = null, $currentGradelevel = null)
     {
         $this->schoolprogram = $schoolprogram;
+        $this->gl = $currentGradelevel;
         if ($schoolprogram) {
             foreach ($currentGradelevel->getModuleIds() as $moduleId) {
                 $module = $schoolprogram->getModule($moduleId, $currentGradelevel->getId());
@@ -48,7 +52,9 @@ class Individual
 
         foreach ($group->getSectionIds() as $section) {
             //init
-            $classes[$section] = [];
+            foreach ($group->getModuleIds() as $moduleKey) {
+                $classes[$section][$moduleKey] = [];
+            }
             $timetable->copyTimeslot();
             $timetable->reserveTimeslots();
             $departments = collect($group->getModuleIds())->shuffle();
@@ -87,49 +93,59 @@ class Individual
                         $groupedTimeslots[1] = array_diff($groupedTimeslots[1], $timeslotIds);
 
                         $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$toInsert]);
-                        // $timeslotIds = [];
-                        // $noClonflict = true;
-                        // foreach ($teacher as $randomTeacher) {
-                        //     $timeslotIds = [];
-                        //     foreach ($groupedTimeslots[$i] as $lastTimeslots) {
-                        //         if (in_array($lastTimeslots, $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher])) {
-                        //             $noConflict = false;
-                        //             break;
-                        //         }
-                        //         $timeslotIds[] = $lastTimeslots;
-                        //     }
-
-                        //     if ($noClonflict) {
-                        //         array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
-                        //         foreach ($timeslotIds as $ts) {
-                        //             $classes[$section][$toInsert][$randomTeacher][] = $ts;
-                        //         }
-                        //         unset($groupedTimeslots[$i]);
-                        //         break;
-                        //     }
-                        // }
+                        $timeslotIds = [];
 
                         foreach ($teacher as $randomTeacher) {
-                            if (!(in_array($groupedTimeslots[1], $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher]))) {
-                                $timeslotIds = $groupedTimeslots[1];
+                            $timeslotIds = [];
+                            $noClonflict = true;
+                            foreach ($groupedTimeslots[1] as $lastTimeslots) {
+                                if (in_array($lastTimeslots, $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher])) {
+                                    $noConflict = false;
+                                }
+                                $timeslotIds[] = $lastTimeslots;
+                            }
+
+                            if ($noClonflict) {
                                 array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
-                                unset($groupedTimeslots[1]);
                                 foreach ($timeslotIds as $ts) {
                                     $classes[$section][$toInsert][$randomTeacher][] = $ts;
                                 }
-
+                                unset($groupedTimeslots[1]);
                                 $teacherId2 = $randomTeacher;
                                 break;
                             }
                         }
+
+                        // foreach ($teacher as $randomTeacher) {
+                        //     if (!(in_array($groupedTimeslots[1], $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher]))) {
+                        //         $timeslotIds = $groupedTimeslots[1];
+                        //         array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
+                        //         unset($groupedTimeslots[1]);
+                        //         foreach ($timeslotIds as $ts) {
+                        //             $classes[$section][$toInsert][$randomTeacher][] = $ts;
+                        //         }
+
+                        //         $teacherId2 = $randomTeacher;
+                        //         break;
+                        //     }
+                        // }
 
                         //insert last
                         foreach ($groupedTimeslots as $key => $timeslot) {
                             if (count($timeslot) == 5) {
                                 $rand = array_rand($timeslot);
                                 $insertLast = $randomDepartment == 6 ? $teacherId : $teacherId2;
+                                $attempts = 50;
+                                while (in_array($timeslot[$rand], $this->teacher_loading[$group->getId()][6][$insertLast])) {
+                                    $attempts--;
+                                    $rand = array_rand($timeslot);
+                                    if ($attempts == 0) {
+                                        $rand = 0;
+                                        break;
+                                    }
+                                }
                                 array_push($this->teacher_loading[$group->getId()][6][$insertLast], $timeslot[$rand]);
-                                $classes[$section][6][$insertLast][] = $ts;
+                                $classes[$section][6][$insertLast][] = $timeslot[$rand];
                                 $groupedTimeslots[$key] = array_diff($groupedTimeslots[$key], [$timeslot[$rand]]);
                                 // dd($randomDepartment, $key, $rand, $groupedTimeslots[$key], $timeslot);
                                 break;
@@ -172,10 +188,17 @@ class Individual
             }
 
             //non advisory slots
+
             for ($i = 2; $i <= 7; $i++) {
+                $randomTimeslot = $groupedTimeslots->random();
                 if (!(count($groupedTimeslots[$i]) == 5)) {
                     //get 4 meetings subjects
                     $filteredDeps = $departments->reject(fn ($item) => $item === 6 || $item ===8);
+                    $groupId = $group->getId();
+                    $filteredDepsSorted = $filteredDeps->sortBy(function ($id) use ($groupId) {
+                        return count($this->teacher_loading[$groupId][$id]);
+                    });
+                    $filteredDeps->shuffle();
                     foreach ($filteredDeps as $randomDepartment) {
                         //check then get
                         $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
@@ -204,11 +227,10 @@ class Individual
                         }
                     }
                 } else {
-                    //get AP/ESP
-                    $filteredDeps = $departments->filter(fn ($item) => $item === 6 || $item === 8);
+                    //get s/ESP
+                    $newfilteredDeps = $departments->filter(fn ($item) => $item === 6 || $item === 8);
 
-
-                    $randomDepartment = $filteredDeps->random();
+                    $randomDepartment = $newfilteredDeps->random();
                     $toInsert = ($randomDepartment == 6) ? 8 : 6;
                     $slots = ($randomDepartment == 6) ? 3 : 2;
                     $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$randomDepartment]);
@@ -229,19 +251,19 @@ class Individual
                     if ($timeslotIds) {
                         array_push($this->teacher_loading[$group->getId()][$randomDepartment][$teacherId1], ...$timeslotIds);
                         foreach ($timeslotIds as $ts) {
-                            $classes[$section][$randomDepartment][$teacherId][] = $ts;
+                            $classes[$section][$randomDepartment][$teacherId1][] = $ts;
                         }
                         $groupedTimeslots[$i] = array_diff($groupedTimeslots[$i], $timeslotIds);
                         $teacher = $this->getFilteredTeachers($this->teacher_loading[$group->getId()][$toInsert]);
-                        $noClonflict = true;
+
                         foreach ($teacher as $randomTeacher) {
                             $timeslotIds = [];
+                            $noClonflict = true;
                             foreach ($groupedTimeslots[$i] as $lastTimeslots) {
+                                $timeslotIds[] = $lastTimeslots;
                                 if (in_array($lastTimeslots, $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher])) {
                                     $noConflict = false;
-                                    break;
                                 }
-                                $timeslotIds[] = $lastTimeslots;
                             }
 
                             if ($noClonflict) {
@@ -262,26 +284,57 @@ class Individual
             $timetable->reset();
         }
         //last
-        $conflict = $this->check();
-        dd($conflict, $this->teacher_loading, $classes);
+        $this->bySection = $classes;
+        // dd($this->teacher_loading, $classes);
+        $newChromosome = array_merge(...$classes);
+        $this->chromosome = $newChromosome;
     }
 
-    private function check()
+    public function check()
     {
         $toCheck = $this->teacher_loading;
+        $sectionSchedule = $this->bySection;
         $clashes = 0;
 
-        foreach ($toCheck[1] as $departments) {
+        foreach ($toCheck[$this->gl->getId()] as $departments) {
             foreach ($departments as $teacher) {
                 $temp = array_unique($teacher);
                 if ($teacher !== $temp) {
                     $clashes++;
-                    dd($departments, $teacher);
+                    break;
                 }
             }
         }
 
-        return 1/(1 + $clashes);
+        foreach ($sectionSchedule as $section) {
+            if (count($section) < 8) {
+                $clashes++;
+            }
+            $checkConflictBySection = [];
+            foreach ($section as $class) {
+                foreach ($class as $ts) {
+                    // $checkConflictBySection[] = $ts;
+                    array_push($checkConflictBySection, ...$ts);
+                }
+            }
+            if (count($checkConflictBySection) < 29) {
+                // dd($this->teacher_loading, $this->chromosome);
+                $clashes++;
+            }
+            $temp = array_unique($checkConflictBySection);
+            if ($checkConflictBySection !== $temp) {
+                $clashes++;
+
+                break;
+            }
+        }
+
+        $this->clashes =  $clashes;
+    }
+
+    public function getClashes()
+    {
+        return $this->clashes;
     }
 
 
@@ -366,17 +419,46 @@ class Individual
     {
         $teacher_loading = collect($teachersPerModule);
 
-        // $minCount = $teacher_loading->min(function ($periods) {
-        //     return count($periods);
-        // });
+        uasort($teachersPerModule, function ($a, $b) {
+            $countA = count($a);
+            $countB = count($b);
 
-        return $teacher_loading->sortBy(function ($periods) {
+            if ($countA == $countB) {
+                return rand(-1, 1);
+            }
+
+            return $countA > $countB ? 1 : -1;
+        });
+
+        return collect($teachersPerModule)->keys();
+        $sortedTeachers = $teacher_loading->sortBy(function ($periods) {
             return count($periods);
-        })->keys();
+        });
 
-        // return $teacher_loading->filter(function ($periods) use ($minCount) {
-        //     return count($periods) === $minCount;
-        // })->keys();
+        $groupedTeachers = $sortedTeachers->groupBy(function ($periods) {
+            return count($periods);
+        }, $preserveKeys = true);
+
+        // foreach ($groupedTeachers as $group) {
+        //     if ($group->count() > 1) {
+        //         $shuffledKeys = $group->keys()->shuffle();
+        //         $shuffledGroup = $shuffledKeys->combine($group->values());
+        //         dd($shuffledGroup);
+        //     }
+        // }
+
+        $shuffledGroups = collect();
+
+        foreach ($groupedTeachers as $group) {
+            if ($group->count() > 1) {
+                $shuffledKeys = $group->keys()->shuffle();
+                $shuffledGroup = $shuffledKeys->combine($group->values());
+                $shuffledGroups = $shuffledGroups->merge($shuffledGroup);
+            } else {
+                $shuffledGroups = $shuffledGroups->merge($group);
+            }
+        }
+        return $groupedTeachers->collapse()->keys();
     }
 
     private function assignAdminLoads($teachers, $adminLoads)
@@ -530,42 +612,14 @@ class Individual
         return $this->fitness;
     }
 
-    public function calculateFitness()
+    public function getBySection()
     {
-        $this->conflicts = 0;
-        $teacher_schedules = [];
-        $conflicting_teachers = [];
-        $teacher_section_counts = [];
+        return $this->bySection;
+    }
 
-        foreach ($this->chromosome as $schedule) {
-            $section = $schedule['section']->name;
-            foreach ($schedule['period'] as $periodIndex => $period) {
-                foreach ($period as $classBlock) {
-                    $teacher_id = $classBlock['teacher'];
-                    $grade_level = $schedule['gradelevel']['level'];
-
-                    if (!isset($teacher_schedules[$grade_level][$teacher_id])) {
-                        $teacher_schedules[$grade_level][$teacher_id] = [];
-                    }
-
-                    if (!isset($teacher_schedules[$grade_level][$teacher_id][$periodIndex])) {
-                        $teacher_schedules[$grade_level][$teacher_id][$periodIndex] = [];
-                    }
-
-                    // Check for conflicts
-                    foreach ($classBlock['classday'] as $day) {
-                        if (in_array($day, $teacher_schedules[$grade_level][$teacher_id][$periodIndex])) {
-                            $conflicting_teachers[$grade_level][$day][$teacher_id][] = $section;
-                            $this->conflicts++;
-                        } else {
-                            $teacher_schedules[$grade_level][$teacher_id][$periodIndex][] = $day;
-                        }
-                    }
-                }
-            }
-        }
-        $this->teacher_conflicts = $conflicting_teachers;
-        return round((1 / ($this->conflicts + 1)), 6);
+    public function getTeacherLoading()
+    {
+        return $this->teacher_loading;
     }
 
         /**
@@ -581,7 +635,7 @@ class Individual
     public function getChromosomeString()
     {
         // $flatArray = array_merge(...$this->chromosome);
-        return implode(",", $this->chromosome);
+        return implode(",", ...$this->chromosome);
     }
 
     public function save()

@@ -193,26 +193,85 @@ class Timetable
             $groupedClasses[$group->getId()][$section] = [];
             foreach ($moduleIds as $moduleId) {
                 $module = $this->getModule($moduleId, $group->getId());
+                $teacherKey = key($chromosome[$chromosomePos]);
+                for ($i = 0; $i < $module->getSlots($group->getId()); $i++) {
+                    $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
 
-                $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
-                // Add teacher
-                $classes[$classIndex]->addTeacher($chromosome[$chromosomePos][0]);
-
-                for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
                     // Add timeslot
-                    $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos][$i]);
-                }
+                    if (isset($chromosome[$chromosomePos][$teacherKey][$i])) {
+                        $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos][$teacherKey][$i]);
+                    } else {
+                        $classes[$classIndex]->addTimeslot(null);
+                    }
 
+                    // Add professor
+                    $classes[$classIndex]->addTeacher($teacherKey);
+                    $this->groupedClasses[$section][] = $classes[$classIndex];
+                    $classIndex++;
+                }
                 $chromosomePos++;
-                $groupedClasses[$group->getId()][$section][] =  $classes[$classIndex];
-                $classIndex++;
             }
         }
         $this->groupedClasses = $groupedClasses;
         $this->classes = $classes;
-        // dd($this->groupedClasses);
+        // dd($classes);
     }
 
+    public function createScheme($schedules, $gradelevel)
+    {
+        $classes = [];
+        $group = $gradelevel;
+        // foreach ($group->getSectionIds() as $section) {
+        //     //get section name not yet added
+        //     $moduleIds = $group->getModuleIds();
+        //     $classes[$group->getLevel()][$section] = [];
+        //     foreach ($moduleIds as $moduleId) {
+        //     }
+        // }
+
+        foreach ($schedules as $sId => $section) {
+            foreach ($section as $mId => $module) {
+                $subject = $this->getModule($mId, $group->getId())->getModuleCode();
+                $teacher = $this->getTeacher(key($module))->getName();
+                $timeslot = array_merge($module);
+                $classes[$group->getLevel()][$sId][$subject][$teacher] = $timeslot[0];
+            }
+        }
+        return $classes;
+    }
+
+    // public function createClasses($individual, $currentGradelevel)
+    // {
+    //     $classes = [];
+
+    //     $chromosome = $individual->getChromosome();
+    //     $chromosomePos = 0;
+    //     $classIndex = 0;
+    //     $group = $currentGradelevel;
+    //     foreach ($group->getSectionIds() as $section) {
+    //         $moduleIds = $group->getModuleIds();
+    //         $groupedClasses[$group->getId()][$section] = [];
+    //         foreach ($moduleIds as $moduleId) {
+    //             $module = $this->getModule($moduleId, $group->getId());
+
+    //             $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
+    //             // Add teacher
+    //             $classes[$classIndex]->addTeacher($chromosome[$chromosomePos][0]);
+
+    //             for ($i = 1; $i <= $module->getSlots($group->getId()); $i++) {
+    //                 // Add timeslot
+    //                 $classes[$classIndex]->addTimeslot($chromosome[$chromosomePos][$i]);
+    //             }
+
+    //             $chromosomePos++;
+    //             $groupedClasses[$group->getId()][$section][] =  $classes[$classIndex];
+    //             $classIndex++;
+    //         }
+    //     }
+    //     $this->groupedClasses = $groupedClasses;
+    //     $this->classes = $classes;
+    //     // dd($this->groupedClasses);
+    // }
     /**
      * Get the string that shows how the timetable chromosome is to be read
      *
@@ -419,66 +478,84 @@ class Timetable
      *
      * @return $numClashes Number of clashes
      */
-    public function calcClashes()
+    public function calcClashes($individual)
     {
-        $clashes = 0;
-        $conflict = 0;
-        $conflict2 = 0;
-        $teacher_loads = [];
+        // $clashes = 0;
+        // foreach ($this->classes as $id => $classA) {
+        //     //check teacher conflicts
+        //     foreach ($this->classes as $id => $classB) {
+        //         if ($classA->getId() != $classB->getId()) {
+        //             if (($classA->getSectionId() != $classB->getSectionId()) && ($classA->getTeacherId() == $classB->getTeacherId()) && ($classA->getTimeslotId() == $classB->getTimeslotId())) {
+        //                 $clashes++;
+        //                 break;
+        //             }
+        //         }
+        //     }
 
-        foreach ($this->groupedClasses as $sections) {
-            foreach ($sections as $classes) {
-                $timeslotIds = [];
-                foreach ($classes as $class) {
-                    $timeslotIds = $class->getTimeslotId();
-                    $timeslotSet = array_flip($timeslotIds);
-
-                    // Check for timeslot clashes within the class
-                    if (count($timeslotIds) != count($timeslotSet)) {
-                        $clashes++;
-                        $conflict2++;
-                        continue;
-                    }
-
-                    // Check for day clashes within the class
-                    $days = array_unique(array_map(function ($id) {
-                        return $this->getTimeslot($id)->getDayId();
-                    }, $timeslotIds));
-                    if (count($days) != count($timeslotIds)) {
-                        $clashes++;
-                        $conflict2++;
-                        continue;
-                    }
-
-                    // Check for timeslot clashes with other classes
-                    foreach ($timeslotIds as $timeslot) {
-                        if (isset($timeslots[$timeslot])) {
-                            $clashes++;
-                            continue;
-                        }
-                        $timeslots[$timeslot] = true;
-                    }
-
-                    // Update the teacher loads
-                    $teacherId = $class->getTeacherId();
-                    $gradelevelId = $class->getGroupId();
-                    if (!isset($teacher_loads[$gradelevelId][$teacherId])) {
-                        $teacher_loads[$gradelevelId][$teacherId] = [];
-                    }
-                    foreach ($timeslotIds as $timeslot) {
-                        if (in_array($timeslot, $teacher_loads[$gradelevelId][$teacherId])) {
-                            $clashes++;
-                            continue;
-                        }
-                        $teacher_loads[$gradelevelId][$teacherId][] = $timeslot;
-                    }
-                }
-            }
-            // print "Conflicts ". $conflict. " \n". $conflict2."\n";
-            // dd($clashes, $this->getTimeslot($class->getTimeslotId()[0]));
-            return $clashes;
-        }
+        //     //check if each sections has 29 classes
+        // }
+        // return $clashes;
+        $individual->check();
+        return $individual->getClashes();
     }
+    // public function calcClashes()
+    // {
+    //     $clashes = 0;
+    //     $conflict = 0;
+    //     $conflict2 = 0;
+    //     $teacher_loads = [];
+
+    //     foreach ($this->groupedClasses as $sections) {
+    //         foreach ($sections as $classes) {
+    //             $timeslotIds = [];
+    //             foreach ($classes as $class) {
+    //                 $timeslotIds = $class->getTimeslotId();
+    //                 $timeslotSet = array_flip($timeslotIds);
+
+    //                 // Check for timeslot clashes within the class
+    //                 if (count($timeslotIds) != count($timeslotSet)) {
+    //                     $clashes++;
+    //                     $conflict2++;
+    //                     continue;
+    //                 }
+
+    //                 // Check for day clashes within the class
+    //                 $days = array_unique(array_map(function ($id) {
+    //                     return $this->getTimeslot($id)->getDayId();
+    //                 }, $timeslotIds));
+    //                 if (count($days) != count($timeslotIds)) {
+    //                     $clashes++;
+    //                     $conflict2++;
+    //                     continue;
+    //                 }
+
+    //                 // Check for timeslot clashes with other classes
+    //                 foreach ($timeslotIds as $timeslot) {
+    //                     if (isset($timeslots[$timeslot])) {
+    //                         $clashes++;
+    //                         continue;
+    //                     }
+    //                     $timeslots[$timeslot] = true;
+    //                 }
+
+    //                 // Update the teacher loads
+    //                 $teacherId = $class->getTeacherId();
+    //                 $gradelevelId = $class->getGroupId();
+    //                 if (!isset($teacher_loads[$gradelevelId][$teacherId])) {
+    //                     $teacher_loads[$gradelevelId][$teacherId] = [];
+    //                 }
+    //                 foreach ($timeslotIds as $timeslot) {
+    //                     if (in_array($timeslot, $teacher_loads[$gradelevelId][$teacherId])) {
+    //                         $clashes++;
+    //                         continue;
+    //                     }
+    //                     $teacher_loads[$gradelevelId][$teacherId][] = $timeslot;
+    //                 }
+    //             }
+    //         }
+    //         return $clashes;
+    //     }
+    // }
 
     /**
          * Determine whether a given set of numbers are

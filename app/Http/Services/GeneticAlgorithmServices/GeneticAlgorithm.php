@@ -55,6 +55,7 @@ class GeneticAlgorithm
      */
     private $coolingRate;
 
+    private $bestSolutions;
     /**
      * Create a new instance of this class
      */
@@ -67,6 +68,7 @@ class GeneticAlgorithm
         $this->tournamentSize = $tournamentSize;
         $this->temperature = 1.0;
         $this->coolingRate = 0.001;
+        $this->bestSolutions = 0;
     }
 
     /**
@@ -109,9 +111,9 @@ class GeneticAlgorithm
         $timetable = clone $timetable;
 
         $timetable->createClasses($individual, $currentGradelevel);
-        $clashes = $timetable->calcClashes($currentGradelevel);
+        $clashes = $timetable->calcClashes($individual, $currentGradelevel);
         $fitness = 1.0 / ($clashes + 1);
-
+        print "fitness: " .$fitness ."\n";
         $individual->setFitness($fitness);
         return $fitness;
     }
@@ -129,8 +131,9 @@ class GeneticAlgorithm
 
         $individuals = $population->getIndividuals();
 
-        print "Calculating fitness...\n";
+        $count = 0;
         foreach ($individuals as $individual) {
+            print "Gradelevel " .$currentGradelevel->getId() ." Calculating fitness... ". $count++ ."\n";
             $populationFitness += $this->calculateFitness($individual, $timetable, $currentGradelevel);
         }
 

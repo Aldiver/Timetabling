@@ -3,6 +3,7 @@
 namespace App\Http\Services\GeneticAlgorithmServices;
 
 use App\Models\SchoolProgram;
+use App\Models\ClassSchedule;
 use App\Models\Timetable as TimetableModel;
 use App\Http\Services\GeneticAlgorithmServices\GeneticAlgorithm;
 
@@ -104,6 +105,8 @@ class TimetableGA
      */
     public function run()
     {
+        $data = [];
+        $store = [];
         $startTime = microtime(true);
         $timetable = $this->initializeTimetable(); //not needed
 
@@ -111,11 +114,9 @@ class TimetableGA
 
         foreach ($timetable->getGroups() as $currentGradelevel) {
             $maxGenerations = 1500;
-
-            $population = $algorithm->initPopulation($timetable, $currentGradelevel);
-
             print "Initializing Data";
             print "\n";
+            $population = $algorithm->initPopulation($timetable, $currentGradelevel);
             $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
 
             // Keep track of current generation
@@ -129,11 +130,12 @@ class TimetableGA
                 // print $fittest;
                 print "\n";
 
+                $population = $algorithm->initPopulation($timetable, $currentGradelevel);
                 // Apply crossover
-                $population = $algorithm->crossoverPopulation($population, $currentGradelevel);
+                // $population = $algorithm->crossoverPopulation($population, $currentGradelevel);
 
-                // Apply mutation
-                $population = $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
+                // // Apply mutation
+                // $population = $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
 
                 // Evaluate Population
                 $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
@@ -142,25 +144,23 @@ class TimetableGA
                 $generation++;
 
                 // Cool temperature of GA for simulated annealing
-                $algorithm->coolTemperature();
+                // $algorithm->coolTemperature();
             }
             $solution =  $population->getFittest(0);
-            print "Generation: " . $generation . "(" . $solution->getFitness() . ") - ";
-            print $solution;
-            print "\n";
-            dd("done");
-            // dd($generation, $solution, $solution->getFitness());
-            //update timetable para malaman na tapos na yung first gradelevel
+            $solution2 = $population->getFittest(1);
+
+            $data[$currentGradelevel->getLevel()] = $solution->getBySection();
+            $store[] = $timetable->createScheme($data[$currentGradelevel->getLevel()], $currentGradelevel);
         }
 
         // Update the timetable data in the DB
-        // $this->timetable->update([
-        //     'chromosome' => $solution->getChromosomeString(),
-        //     'fitness' => $solution->getFitness(),
-        //     'generations' => $generation,
-        //     'scheme' => $scheme,
-        //     'status' => 'COMPLETED'
-        // ]);
+
+        $this->timetable->schedule_data1 = json_encode($store);
+        $this->timetable->save();
+
+        $this->timetable->update([
+            'status' => 'COMPLETED',
+        ]);
 
         return $solution;
     }

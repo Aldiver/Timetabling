@@ -13,7 +13,15 @@ class Timetable extends Model
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'status'];
+
+    protected $casts = [
+        'schedule_data1' => 'json',
+        'schedule_data2' => 'json',
+    ];
+
+    // Define the properties of your custom class object
+    public $bySection;
 
     /**
      * The schoolprograms that belong to the Timetable

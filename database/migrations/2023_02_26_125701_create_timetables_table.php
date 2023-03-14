@@ -14,7 +14,9 @@ return new class () extends Migration {
     {
         Schema::create('timetables', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->json('schedule_data1')->nullable();
+            $table->json('schedule_data2')->nullable();
             $table->enum('status', ['IN PROGRESS', 'COMPLETED']);
             $table->timestamps();
         });

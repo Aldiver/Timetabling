@@ -70,7 +70,7 @@ class Module
      */
     public function getModuleCode()
     {
-        return $this->moduleModel->course_code;
+        return $this->moduleModel->subjects()->first()->name;
     }
 
     /**

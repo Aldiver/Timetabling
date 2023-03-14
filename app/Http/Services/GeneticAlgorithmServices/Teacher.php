@@ -49,7 +49,7 @@ class Teacher
      */
     public function getName()
     {
-        return $this->TeacherModel->name;
+        return $this->TeacherModel->full_name;
     }
 
     public function getOccupiedSlots()

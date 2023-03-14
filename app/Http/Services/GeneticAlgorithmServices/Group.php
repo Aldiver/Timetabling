@@ -78,6 +78,10 @@ class Group
         return $this->moduleIds;
     }
 
+    public function getLevel()
+    {
+        return $this->model->level;
+    }
     /**
      * Get the IDs of sections this group is taking
      *
