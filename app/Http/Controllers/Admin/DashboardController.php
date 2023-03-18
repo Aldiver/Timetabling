@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Teacher;
 use App\Models\Section;
+use App\Models\Period;
 use App\Models\Department;
 use App\Models\Gradelevel;
 use App\Models\SchoolProgram;
@@ -85,13 +86,17 @@ class DashboardController extends Controller
                         ->with('message', __('Timetable deleted successfully'));
     }
 
-    public function show($id)
+    public function show($id, $table)
     {
         $timetable = Timetable::find($id);
-        $schedules = json_decode($timetable->schedule_data1);
+        $sections = Section::All();
+        $periods = Period::with('timeslot')->get();
+        $schedules = ($table == 1) ? json_decode($timetable->schedule_data1) : json_decode($timetable->schedule_data2);
         return Inertia::render('Data/Dashboard/Show', [
             'timetable' => $timetable,
-            'scheme' => $schedules
+            'scheme' => $schedules,
+            'sectionModel' => $sections,
+            'periodModel' => $periods
         ]);
     }
 }

@@ -7,9 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use romanzipp\QueueMonitor\Traits\IsMonitored;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use App\Events\TimetableGenerated;
 
 use App\Http\Services\GeneticAlgorithmServices\TimetableGA;
 
@@ -19,7 +19,6 @@ class GenerateTimetableJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    use IsMonitored;
 
     protected $schoolProgram;
     public $timeout = 36000;
@@ -33,7 +32,8 @@ class GenerateTimetableJob implements ShouldQueue
     {
         $timetableGA = new TimetableGA($this->schoolProgram);
         $schedule = $timetableGA->run();
-        dd($schedule->getFitness());
-        // return redirect()->route('dashboard.index')->with('schedule', $schedule);
+        //event trigger
+        // Dispatch the TimetableGenerated event
+        // event(new TimetableGenerated());
     }
 }

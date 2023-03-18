@@ -74,9 +74,6 @@ class TimetableGA
         foreach ($timeslots as $timeslot) {
             $timeslotIds = [];
             foreach ($days as $day) {
-                // if ($setdays) {
-                //     $timetable->addClassday($day->id);
-                // }
                 if (!((($timeslot->id == 1) && ($day->rank == 1)) || (($timeslot->id == 7) && ($day->rank == 5)))) {
                     $timeslotId = 'D'.$day->rank . "T" . $timeslot->id;
                     $timetable->addTimeslot($timeslotId);
@@ -86,16 +83,12 @@ class TimetableGA
             }
             $timetable->addGroupedTimeslot($timeslot->id, $timeslotIds);
         }
-        // dd($timetable->getGroupedTimeslots());
         // Set up professors
         $teachers = $schoolProgram->teachers;
 
         foreach ($teachers as $teacher) {
             $timetable->addTeacher($teacher->id);
         }
-
-        // $timetable->cloneTimeslot();
-
         return $timetable;
     }
 
@@ -107,55 +100,63 @@ class TimetableGA
     {
         $data = [];
         $store = [];
+        $store2 = [];
         $startTime = microtime(true);
         $timetable = $this->initializeTimetable(); //not needed
 
         $algorithm = new GeneticAlgorithm(100, 0.01, 0.9, 2, 10);
 
         foreach ($timetable->getGroups() as $currentGradelevel) {
-            $maxGenerations = 1500;
-            print "Initializing Data";
-            print "\n";
-            $population = $algorithm->initPopulation($timetable, $currentGradelevel);
-            $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
-
-            // Keep track of current generation
-            $generation = 1;
-
-            while (!$algorithm->isTerminationConditionMet($population)
-                && !$algorithm->isGenerationsMaxedOut($generation, $maxGenerations)) {
-                $fittest = $population->getFittest(0);
-
-                print "Generation: " . $generation . "(" . $fittest->getFitness() . ") - ";
-                // print $fittest;
+            for ($i = 1; $i <= 2; $i++) {
+                $maxGenerations = 1500;
+                print "Initializing Data";
                 print "\n";
-
                 $population = $algorithm->initPopulation($timetable, $currentGradelevel);
-                // Apply crossover
-                // $population = $algorithm->crossoverPopulation($population, $currentGradelevel);
-
-                // // Apply mutation
-                // $population = $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
-
-                // Evaluate Population
                 $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
 
-                // Increment current
-                $generation++;
+                // Keep track of current generation
+                $generation = 1;
 
-                // Cool temperature of GA for simulated annealing
-                // $algorithm->coolTemperature();
+                while (!$algorithm->isTerminationConditionMet($population)
+                    && !$algorithm->isGenerationsMaxedOut($generation, $maxGenerations)) {
+                    $fittest = $population->getFittest(0);
+
+                    print "Generation: " . $generation . "(" . $fittest->getFitness() . ") - ";
+                    // print $fittest;
+                    print "\n";
+
+                    $population = $algorithm->initPopulation($timetable, $currentGradelevel);
+                    // Apply crossover
+                    // $population = $algorithm->crossoverPopulation($population, $currentGradelevel);
+
+                    // // Apply mutation
+                    // $population = $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
+
+                    // Evaluate Population
+                    $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
+
+                    // Increment current
+                    $generation++;
+
+                    // Cool temperature of GA for simulated annealing
+                    // $algorithm->coolTemperature();
+                }
+
+                $solution =  $population->getFittest(0);
+
+                // $data[$currentGradelevel->getLevel()] = $solution->getBySection();
+                if ($i == 1) {
+                    $store[] = $timetable->createScheme($currentGradelevel, $solution);
+                } else {
+                    $store2[] = $timetable->createScheme($currentGradelevel, $solution);
+                }
             }
-            $solution =  $population->getFittest(0);
-            $solution2 = $population->getFittest(1);
-
-            $data[$currentGradelevel->getLevel()] = $solution->getBySection();
-            $store[] = $timetable->createScheme($data[$currentGradelevel->getLevel()], $currentGradelevel);
         }
 
         // Update the timetable data in the DB
 
         $this->timetable->schedule_data1 = json_encode($store);
+        $this->timetable->schedule_data2 = json_encode($store2);
         $this->timetable->save();
 
         $this->timetable->update([

@@ -194,6 +194,7 @@ class Timetable
             foreach ($moduleIds as $moduleId) {
                 $module = $this->getModule($moduleId, $group->getId());
                 $teacherKey = key($chromosome[$chromosomePos]);
+                // dd($chromosome[$chromosomePos]);
                 for ($i = 0; $i < $module->getSlots($group->getId()); $i++) {
                     $classes[$classIndex] = new SHSClass($classIndex, $group->getId(), $section, $moduleId);
 
@@ -217,27 +218,56 @@ class Timetable
         // dd($classes);
     }
 
-    public function createScheme($schedules, $gradelevel)
+    public function createScheme($gradelevel, $solution)
     {
         $classes = [];
+        //trial
+        $chromosome = $solution->getChromosome();
+        $chromosomePos = 0;
+        $classIndex = 0;
         $group = $gradelevel;
-        // foreach ($group->getSectionIds() as $section) {
-        //     //get section name not yet added
-        //     $moduleIds = $group->getModuleIds();
-        //     $classes[$group->getLevel()][$section] = [];
-        //     foreach ($moduleIds as $moduleId) {
+
+        foreach ($group->getSectionIds() as $section) {
+            $moduleIds = $group->getModuleIds();
+            foreach ($moduleIds as $moduleId) {
+                $module = $this->getModule($moduleId, $group->getId());
+                $teacherKey = key($chromosome[$chromosomePos]);
+                $timeslotIds = array_merge(...$chromosome[$chromosomePos]);
+                foreach ($timeslotIds as $timeslotId) {
+                    $classes[$group->getLevel()][$section][] = [$this->getTeacher($teacherKey)->getName(), $this->getModule($moduleId, $group->getId())->getModuleCode(), $timeslotId];
+                    // $classes[$group->getLevel()][$section][] = ;
+                    // $classes[$group->getLevel()][$section][] = $timeslotId;
+                }
+                $chromosomePos++;
+            }
+            usort($classes[$group->getLevel()][$section], function ($a, $b) {
+                // extract T and D values from sub-item
+                preg_match('/D(\d+)T(\d+)/', $a[2], $a_matches);
+                preg_match('/D(\d+)T(\d+)/', $b[2], $b_matches);
+
+                // compare D values
+                $d_cmp = strcmp($a_matches[2], $b_matches[2]);
+                if ($d_cmp !== 0) {
+                    return $d_cmp;
+                }
+
+                // compare T values
+                return strcmp($a_matches[1], $b_matches[1]);
+            });
+        }
+
+        return $classes;
+        dd($classes);
+
+        // foreach ($schedules as $sId => $section) {
+        //     foreach ($section as $mId => $module) {
+        //         $subject = $this->getModule($mId, $group->getId())->getModuleCode();
+        //         $teacher = $this->getTeacher(key($module))->getName();
+        //         $timeslot = array_merge($module);
+        //         $classes[$group->getLevel()][$sId][$subject][$teacher] = $timeslot[0];
         //     }
         // }
-
-        foreach ($schedules as $sId => $section) {
-            foreach ($section as $mId => $module) {
-                $subject = $this->getModule($mId, $group->getId())->getModuleCode();
-                $teacher = $this->getTeacher(key($module))->getName();
-                $timeslot = array_merge($module);
-                $classes[$group->getLevel()][$sId][$subject][$teacher] = $timeslot[0];
-            }
-        }
-        return $classes;
+        // return $classes;
     }
 
     // public function createClasses($individual, $currentGradelevel)

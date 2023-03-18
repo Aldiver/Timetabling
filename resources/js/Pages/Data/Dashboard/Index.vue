@@ -54,86 +54,6 @@ const props = defineProps({
     },
 });
 
-const days = ["Mon", "Tue", "Wed", "Thur", "Fri"];
-function hasSubject(period, day) {
-    if (period) {
-        for (let i = 0; i < period.length; i++) {
-            if (period[i].classday.includes(day)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-function getSubjectIndex(period, day) {
-    for (let i = 0; i < period.length; i++) {
-        if (period[i].classday.includes(day)) {
-            return i;
-        }
-    }
-}
-
-const perPage = ref(2); //change this value to display tables per page.
-const currentPage = ref(0);
-
-const itemsPaginated = props.schedule
-    ? computed(() =>
-          props.schedule.schedules.slice(
-              perPage.value * currentPage.value,
-              perPage.value * (currentPage.value + 1)
-          )
-      )
-    : null;
-
-const numPages = props.schedule
-    ? computed(() => Math.ceil(props.schedule.schedules.length / perPage.value))
-    : null;
-
-const currentPageHuman = computed(() => currentPage.value + 1);
-
-const pagesList = numPages
-    ? computed(() => {
-          const pagesList = [];
-
-          for (let i = 0; i < numPages.value; i++) {
-              pagesList.push(i);
-          }
-          return pagesList;
-      })
-    : null;
-
-if (numPages) {
-    console.log(numPages.value);
-}
-const maxPageButtons = 10;
-const startPage = numPages
-    ? computed(() => {
-          if (numPages.value <= maxPageButtons) {
-              return 0;
-          }
-          if (currentPage.value < Math.floor(maxPageButtons / 2)) {
-              return 0;
-          }
-          if (
-              currentPage.value >=
-              numPages.value - Math.floor(maxPageButtons / 2)
-          ) {
-              return numPages.value - maxPageButtons;
-          }
-          return currentPage.value - Math.floor(maxPageButtons / 2);
-      })
-    : null;
-
-const endPage = numPages
-    ? computed(() => Math.min(startPage.value + maxPageButtons, numPages.value))
-    : null;
-
-const adjustedStartPage = startPage
-    ? computed(() => startPage.value - 1)
-    : null;
-const adjustedEndPage = endPage ? computed(() => endPage.value - 1) : null;
-
 const modalCreate = ref(false);
 
 const formDelete = useForm({});
@@ -215,7 +135,10 @@ function destroy(id) {
                                 no-wrap
                             >
                                 <BaseButton
-                                    v-if="can.edit"
+                                    v-if="
+                                        can.edit &
+                                        (timetable.status == `COMPLETED`)
+                                    "
                                     color="info"
                                     :icon="mdiReload"
                                     small
@@ -230,111 +153,42 @@ function destroy(id) {
                             </BaseButtons>
                         </td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButton
-                                color="info"
-                                :href="route('dashboard.show', timetable.id)"
-                                target="_blank"
-                                :icon="mdiEye"
-                                small
-                            />
+                            <BaseButtons
+                                type="justify-start lg:justify-end"
+                                no-wrap
+                                v-if="timetable.status == `COMPLETED`"
+                            >
+                                <BaseButton
+                                    color=""
+                                    :href="
+                                        route('dashboard.show', {
+                                            id: timetable.id,
+                                            table: 1,
+                                        })
+                                    "
+                                    target="_blank"
+                                    label="Timetable 1"
+                                    small
+                                />
+
+                                <BaseButton
+                                    color=""
+                                    :href="
+                                        route('dashboard.show', {
+                                            id: timetable.id,
+                                            table: 2,
+                                        })
+                                    "
+                                    target="_blank"
+                                    label="Timetable 2"
+                                    small
+                                />
+                            </BaseButtons>
+                            <span v-else> Not available</span>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        </CardBox>
-
-        <CardBox class="mb-6" has-table v-if="schedule">
-            <h1>Conflicts: {{ schedule.conflicts }}</h1>
-
-            <table v-for="items in itemsPaginated" :key="items.id" class="mb-6">
-                <thead>
-                    <tr>
-                        <th class="text-center py-1" colspan="7">
-                            Grade Level:
-                            {{ itemsPaginated[0].gradelevel.level }}
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="text-center py-1" colspan="7">
-                            Section: {{ items.section.name }}
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="text-center py-1" colspan="7">
-                            {{ items.section.bldg_letter }}
-                            {{ items.section.room_number }}
-                        </th>
-                    </tr>
-                    <tr>
-                        <th colspan="1">Period</th>
-                        <th v-for="day in days">{{ day }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(period, index) in items.period" :key="index">
-                        <td>{{ index + 1 }}</td>
-                        <td v-for="(day, dayIndex) in days" :key="dayIndex">
-                            <template v-if="hasSubject(period, day)">
-                                <div>
-                                    {{
-                                        period[getSubjectIndex(period, day)]
-                                            .subject
-                                    }}
-                                </div>
-                                <div>
-                                    {{
-                                        period[getSubjectIndex(period, day)]
-                                            .teacher
-                                    }}
-                                </div>
-                            </template>
-                            <template v-else><b>RESERVED</b></template>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div
-                class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800"
-            >
-                <BaseLevel>
-                    <BaseButtons>
-                        <!-- Render Previous button if current page set is not the first page set -->
-                        <BaseButton
-                            v-if="adjustedStartPage >= 0"
-                            :key="`prev-${adjustedStartPage}-${adjustedEndPage}`"
-                            :label="'Prev'"
-                            :color="'lightDark'"
-                            small
-                            @click="currentPage = currentPage - 1"
-                        />
-                        <!-- Render page buttons -->
-                        <BaseButton
-                            v-for="page in adjustedEndPage - adjustedStartPage"
-                            :key="`page-${adjustedStartPage + page}`"
-                            :active="adjustedStartPage + page === currentPage"
-                            :label="adjustedStartPage + page + 1"
-                            :color="
-                                adjustedStartPage + page === currentPage
-                                    ? 'lightDark'
-                                    : 'whiteDark'
-                            "
-                            small
-                            @click="currentPage = adjustedStartPage + page"
-                        />
-                        <!-- Render Next button if current page set is not the last page set -->
-                        <BaseButton
-                            v-if="adjustedEndPage < numPages - 1"
-                            :key="`next-${adjustedStartPage}-${adjustedEndPage}`"
-                            :label="'Next'"
-                            :color="'lightDark'"
-                            small
-                            @click="currentPage = currentPage + 1"
-                        />
-                    </BaseButtons>
-                    <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
-                </BaseLevel>
-            </div>
         </CardBox>
     </SectionMain>
 </template>
