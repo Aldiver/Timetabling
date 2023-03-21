@@ -35,8 +35,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $test = new AssignLoads(Timetable::find(121));
-        $test->run();
+        // $test = new AssignLoads(Timetable::find(121));
+        // $test->run();
         $teachers = Teacher::count();
         $sections = Section::count();
         $departments = Department::count();
