@@ -3,8 +3,6 @@
 namespace App\Http\Services\TeacherLoading;
 
 use App\Models\Timetable as TimetableModel;
-use App\Models\Teacher;
-use App\Models\TeacherLoading;
 
 class AssignLoads
 {
@@ -30,21 +28,5 @@ class AssignLoads
     {
         $data1 = json_decode($this->timetable->schedule_data1, true);
         $data2 = json_decode($this->timetable->schedule_data2, true);
-
-        // $teachingLoad1 = new TeachingLoad
-        foreach ($data1 as $timetable) {
-            foreach ($timetable as $gradelevel) {
-                // dd($gradelevel);
-                foreach ($gradelevel as $section) {
-                    // dd(key($gradelevel), $section);
-                }
-            }
-        }
-        // dd($data1);
-        // $teachingLoad1 = TeacherLoading::create([
-        //     'version' => 1,
-        // ]);
-        // $teachingLoad->timetable()->associate($this->timetable);
-        // $teachingLoad->save();
     }
 }
