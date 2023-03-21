@@ -116,21 +116,6 @@ class Individual
                                 break;
                             }
                         }
-
-                        // foreach ($teacher as $randomTeacher) {
-                        //     if (!(in_array($groupedTimeslots[1], $this->teacher_loading[$group->getId()][$toInsert][$randomTeacher]))) {
-                        //         $timeslotIds = $groupedTimeslots[1];
-                        //         array_push($this->teacher_loading[$group->getId()][$toInsert][$randomTeacher], ...$timeslotIds);
-                        //         unset($groupedTimeslots[1]);
-                        //         foreach ($timeslotIds as $ts) {
-                        //             $classes[$section][$toInsert][$randomTeacher][] = $ts;
-                        //         }
-
-                        //         $teacherId2 = $randomTeacher;
-                        //         break;
-                        //     }
-                        // }
-
                         //insert last
                         foreach ($groupedTimeslots as $key => $timeslot) {
                             if (count($timeslot) == 5) {
@@ -298,7 +283,6 @@ class Individual
         }
         //last
         $this->bySection = $classes;
-
         // dd($this->teacher_loading, $classes, $this->clashes);
         $newChromosome = array_merge(...$classes);
         $this->chromosome = $newChromosome;
@@ -328,12 +312,10 @@ class Individual
             $checkConflictBySection = [];
             foreach ($section as $class) {
                 foreach ($class as $ts) {
-                    // $checkConflictBySection[] = $ts;
                     array_push($checkConflictBySection, ...$ts);
                 }
             }
             if (count($checkConflictBySection) < 29) {
-                // dd($this->teacher_loading, $this->bySection);
                 $clashes++;
             }
             $temp = array_unique($checkConflictBySection);
@@ -417,19 +399,6 @@ class Individual
      * @param double $fitness The fitness of this individual
      */
 
-    public function toArray()
-    {
-        return [
-            'schoolprogram' => $this->schoolprogram,
-            'fitness' => $this->fitness,
-            'chromosome' => $this->chromosome,
-            'id' => $this->id,
-            'teacher_loading' => $this->teacher_loading,
-            'conflicts' => $this->conflicts,
-            'teacher_conflicts' => $this->teacher_conflicts,
-        ];
-    }
-
     private function getFilteredTeachers($teachersPerModule)
     {
         $teacher_loading = collect($teachersPerModule);
@@ -449,86 +418,6 @@ class Individual
         $sortedTeachers = $teacher_loading->sortBy(function ($periods) {
             return count($periods);
         });
-
-        $groupedTeachers = $sortedTeachers->groupBy(function ($periods) {
-            return count($periods);
-        }, $preserveKeys = true);
-
-        // foreach ($groupedTeachers as $group) {
-        //     if ($group->count() > 1) {
-        //         $shuffledKeys = $group->keys()->shuffle();
-        //         $shuffledGroup = $shuffledKeys->combine($group->values());
-        //         dd($shuffledGroup);
-        //     }
-        // }
-
-        $shuffledGroups = collect();
-
-        foreach ($groupedTeachers as $group) {
-            if ($group->count() > 1) {
-                $shuffledKeys = $group->keys()->shuffle();
-                $shuffledGroup = $shuffledKeys->combine($group->values());
-                $shuffledGroups = $shuffledGroups->merge($shuffledGroup);
-            } else {
-                $shuffledGroups = $shuffledGroups->merge($group);
-            }
-        }
-        return $groupedTeachers->collapse()->keys();
-    }
-
-    private function assignAdminLoads($teachers, $adminLoads)
-    {
-        $teachers = $teachers->shuffle();
-        // dd($teachers);
-        while ($adminLoads->isNotEmpty()) {
-            $randomTeacher = $teachers->random();
-            if (array_key_exists($randomTeacher->id, $this->teacher_loading)) {
-                if (!in_array('Advisory', $this->teacher_loading[$randomTeacher->id])) {
-                    array_push($this->teacher_loading[$randomTeacher->id], $adminLoads->shift());
-                    foreach ($teachers as $key => $value) {
-                        if ($randomTeacher == $value) {
-                            $teachers->forget($key);
-                        }
-                    }
-                }
-            } else {
-                $this->teacher_loading[$randomTeacher->id] = [$adminLoads->shift()];
-                foreach ($teachers as $key => $value) {
-                    if ($randomTeacher == $value) {
-                        $teachers->forget($key);
-                    }
-                }
-            }
-        }
-        // dd($this->teacher_loading);
-    }
-
-    private function assignRegularLoads($teacher, $load)
-    {
-        if (array_key_exists($teacher, $this->teacher_loading)) {
-            array_push($this->teacher_loading[$teacher], $load);
-        } else {
-            $this->teacher_loading[$teacher] = [$load];
-        }
-    }
-
-    private function checkIfAdvisor($teacher)
-    {
-        if (array_key_exists($teacher, $this->teacher_loading)) {
-            if (in_array('Advisory', $this->teacher_loading[$teacher])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function loadCount($teacher)
-    {
-        if (array_key_exists($teacher, $this->teacher_loading)) {
-            return count($this->teacher_loading[$teacher]);
-        }
-        return 0;
     }
 
     private function assignOHSPLoads()
@@ -556,65 +445,6 @@ class Individual
             }
             $gradelevel = ($gradelevel === 0) ? 1 : 0;
         }
-        // dd($this->teacher_loading);
-    }
-
-    private function createScheduleBlocks($periodCount, $classdayCount)
-    {
-        $reservedClassdays = [];
-
-        $reservedClassdays[0][0] = true;  // Reserve first classday of first period
-        $reservedClassdays[$periodCount-1][$classdayCount-1] = true;  // Reserve last classday of last period
-
-        // Reserve random classdays between first and last periods
-        $reservedDays = [];
-        $reservedperiods = [];
-        for ($i = 0; $i < 4; $i++) {
-            $randomPeriodIndex = mt_rand(1, $periodCount - 2);
-            $randomClassdayIndex = mt_rand(0, $classdayCount - 1);
-
-            if (!isset($reservedClassdays[$randomPeriodIndex][$randomClassdayIndex])
-            && !in_array($randomClassdayIndex, $reservedDays)
-            && !in_array($randomPeriodIndex, $reservedperiods)) {
-                $reservedDays [] = $randomClassdayIndex;
-                $reservedperiods [] = $randomPeriodIndex;
-                $reservedClassdays[$randomPeriodIndex][$randomClassdayIndex] = true;
-            } else {
-                // If the block is already reserved, decrement $i and try again
-                $i--;
-            }
-        }
-
-        return $reservedClassdays;
-    }
-
-    private function checkAvailability($scheduleBlock, $period, $classdayCount)
-    {
-        $count = 0;
-        for ($i = 0; $i < $classdayCount; $i++) {
-            if (!isset($scheduleBlock[($period)][$i])) {
-                $count++;
-            }
-        }
-        if ($count==5) {
-            return true;
-        }
-        return false;
-    }
-
-    private function checkPeriodFull($scheduleBlock, $period, $classdayCount)
-    {
-        for ($i = 0; $i < $classdayCount; $i++) {
-            if (!isset($scheduleBlock[($period)][$i])) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private function getNumbOfConflicts()
-    {
-        return $this->conflicts;
     }
 
     public function setFitness($fitness)
@@ -651,10 +481,5 @@ class Individual
     {
         // $flatArray = array_merge(...$this->chromosome);
         return implode(",", ...$this->chromosome);
-    }
-
-    public function save()
-    {
-        //save schedule to database
     }
 }

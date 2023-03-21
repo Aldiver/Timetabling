@@ -82,9 +82,9 @@ const logout = () => {
                 >
                     <BaseIcon :path="mdiMenu" size="24" />
                 </NavBarItem>
-                <NavBarItem>
+                <!-- <NavBarItem>
                     <NavBarSearch />
-                </NavBarItem>
+                </NavBarItem> -->
             </div>
             <div class="flex-none items-stretch flex h-14 lg:hidden">
                 <NavBarItem @click.prevent="menuNavBarToggle">
@@ -101,7 +101,7 @@ const logout = () => {
                 <div
                     class="max-h-screen-menu overflow-y-auto lg:overflow-visible lg:flex lg:items-stretch lg:justify-end lg:ml-auto"
                 >
-                    <NavBarMenu>
+                    <!-- <NavBarMenu>
                         <NavBarItemLabel :icon="mdiMenu" label="Sample menu" />
 
                         <template #dropdown>
@@ -125,7 +125,7 @@ const logout = () => {
                                 />
                             </NavBarItem>
                         </template>
-                    </NavBarMenu>
+                    </NavBarMenu> -->
                     <NavBarMenu>
                         <NavBarItemLabel :label="userName">
                             <UserAvatarCurrentUser
@@ -153,7 +153,7 @@ const logout = () => {
                                 />
                             </NavBarItem>
                             <BaseDivider nav-bar />
-                            <NavBarItem>
+                            <NavBarItem @click="logout">
                                 <NavBarItemLabel
                                     :icon="mdiLogout"
                                     label="Log Out"
@@ -171,10 +171,8 @@ const logout = () => {
                             is-desktop-icon-only
                         />
                     </NavBarItem>
-                    <NavBarItem
-                        href="https://github.com/Aldiver/Timetabling"
-                        is-desktop-icon-only
-                    >
+                    <!-- https://github.com/Aldiver/Timetabling -->
+                    <NavBarItem href="" is-desktop-icon-only>
                         <NavBarItemLabel
                             :icon="mdiGithub"
                             label="GitHub"

@@ -3,8 +3,8 @@ import { computed, ref } from "vue";
 import { Head, useForm } from "@inertiajs/inertia-vue3";
 import {
     mdiAccountMultiple,
-    mdiCartOutline,
-    mdiChartTimelineVariant,
+    mdiGoogleClassroom,
+    mdiGroup,
     mdiReload,
     mdiChartPie,
     mdiTrashCan,
@@ -22,6 +22,7 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import CardBoxModal from "@/components/CardBoxModal.vue";
 import Create from "./Create.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
+import axios from "axios";
 
 const props = defineProps({
     teachers: {
@@ -58,11 +59,29 @@ const modalCreate = ref(false);
 
 const formDelete = useForm({});
 
+const list = ref(props.timetables);
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
         formDelete.delete(route("dashboard.destroy", id));
     }
 }
+
+function updateTimetables() {
+    // Perform AJAX request to fetch updated timetables data
+    axios
+        .get("/timetables")
+        .then((response) => {
+            // Update the view with the updated timetables data
+            list.value = response.data;
+            console.log("this updated");
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
+
+// Call the updateTimetables function every 5 seconds
+setInterval(updateTimetables, 5000);
 </script>
 
 <template>
@@ -71,11 +90,7 @@ function destroy(id) {
         <CardBoxModal v-model="modalCreate" class="mb-6" title="">
             <Create v-model="modalCreate" :schoolProgram="schoolprogram" />
         </CardBoxModal>
-        <SectionTitleLineWithButton
-            :icon="mdiChartTimelineVariant"
-            title="Overview"
-            main
-        >
+        <SectionTitleLineWithButton :icon="mdiGroup" title="Overview" main>
             <slot />
         </SectionTitleLineWithButton>
 
@@ -91,7 +106,7 @@ function destroy(id) {
             <CardBoxWidget
                 trend="Setion Data"
                 color="text-blue-500"
-                :icon="mdiCartOutline"
+                :icon="mdiGoogleClassroom"
                 :number="sections"
                 label="Sections"
                 to="section.index"
@@ -99,7 +114,7 @@ function destroy(id) {
             <CardBoxWidget
                 trend="Department Data"
                 color="text-red-500"
-                :icon="mdiChartTimelineVariant"
+                :icon="mdiGroup"
                 :number="departments"
                 label="Department"
                 to="department.index"
@@ -126,7 +141,7 @@ function destroy(id) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="timetable in timetables" :key="timetable.id">
+                    <tr v-for="timetable in list" :key="timetable.id">
                         <td>{{ timetable.name }}</td>
                         <td>{{ timetable.status }}</td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">

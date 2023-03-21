@@ -117,8 +117,8 @@ function destroy(id) {
                         <th class="before:hidden lg:w-1 whitespace-nowrap">
                             Period
                         </th>
-                        <th class="relative lg:w-1/3">Timeslots</th>
-                        <th v-for="index in classdayCount" :key="index">
+                        <th class="text-center py-1">Timeslots</th>
+                        <!-- <th v-for="index in classdayCount" :key="index">
                             {{ classdays[index] }}
                         </th>
                         <th
@@ -153,7 +153,8 @@ function destroy(id) {
                                     @click="addCol"
                                 />
                             </BaseButtons>
-                        </th>
+                        </th> -->
+                        <th>Action</th>
                     </tr>
                 </thead>
 
@@ -164,32 +165,27 @@ function destroy(id) {
                                 {{ period.rank }}
                             </span>
                         </td>
-                        <td data-label="Timeslots">
+                        <td data-label="Timeslots" class="text-center py-1">
                             {{ timeslots[period.timeslot_id] }}
                         </td>
-                        <td v-for="index in classdayCount" />
+                        <!-- <td v-for="index in classdayCount" /> -->
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButtons
-                                type="justify-start lg:justify-end"
-                                no-wrap
-                            >
-                                <BaseButton
+                            <!-- <BaseButton
                                     v-if="can.edit"
                                     :route-name="
-                                        route('teacher.edit', period.id)
+                                        route('period.edit', period.id)
                                     "
                                     color="info"
                                     :icon="mdiSquareEditOutline"
                                     small
-                                />
-                                <BaseButton
-                                    v-if="can.delete"
-                                    color="danger"
-                                    :icon="mdiTrashCan"
-                                    small
-                                    @click="destroy(period.id)"
-                                />
-                            </BaseButtons>
+                                /> -->
+                            <BaseButton
+                                v-if="can.delete"
+                                color="danger"
+                                :icon="mdiTrashCan"
+                                small
+                                @click="destroy(period.id)"
+                            />
                         </td>
                     </tr>
                     <Create

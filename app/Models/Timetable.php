@@ -32,4 +32,9 @@ class Timetable extends Model
     {
         return $this->belongsToMany(SchoolProgram::class);
     }
+
+    public function teacherLoadings()
+    {
+        return $this->hasMany(TeacherLoading::class);
+    }
 }

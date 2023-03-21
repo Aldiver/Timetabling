@@ -14,20 +14,19 @@ return new class () extends Migration {
     {
         Schema::create('loads', function (Blueprint $table) {
             $table->id();
-            $table->string('load_type');
-            $table->string('load_equivalent');
+            $table->integer('loadable_id');
+            $table->string('loadable_type');
+            $table->integer('load_equivalent')->nullable();
             $table->timestamps();
-
-            //
-            $table->bigInteger('teacher_loading');
+            $table->foreignId('teacher_loading_id')->constrained()->onDelete('cascade');
         });
     }
 
     /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+         * Reverse the migrations.
+         *
+         * @return void
+         */
     public function down()
     {
         Schema::dropIfExists('loads');

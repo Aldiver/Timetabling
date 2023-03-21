@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 use App\Http\Services\GeneticAlgorithmServices\TimetableGA;
+use App\Http\Services\TeacherLoading\AssignLoads;
 
 class DashboardController extends Controller
 {
@@ -34,6 +35,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        // $test = new AssignLoads(Timetable::find(121));
+        // $test->run();
         $teachers = Teacher::count();
         $sections = Section::count();
         $departments = Department::count();
@@ -67,9 +70,6 @@ class DashboardController extends Controller
         ]);
 
         $timetable->schoolprograms()->sync($schoolProgram);
-
-        // $selectedSchoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find($schoolProgram->id);
-        // $schedule = new GeneticAlgorithm2($selectedSchoolProgram);
 
         // $timetableGA = new TimetableGA($timetable);
         // $schedule = $timetableGA->run();

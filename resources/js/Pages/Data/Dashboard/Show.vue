@@ -2,13 +2,14 @@
 import { useLayoutStore } from "@/stores/layout.js";
 import { useStyleStore } from "@/stores/style.js";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
-import { mdiAccountKey, mdiArrowLeftBoldOutline } from "@mdi/js";
+import { mdiAccountKey, mdiFileDocument } from "@mdi/js";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
 import moment from "moment";
 import BaseButton from "@/components/BaseButton.vue";
+import html2pdf from "html2pdf.js";
 
 const props = defineProps({
     timetable: {
@@ -33,7 +34,29 @@ const props = defineProps({
 
 const styleStore = useStyleStore();
 
-const layoutStore = useLayoutStore();
+function generatePdf() {
+    const options = {
+        filename: `${props.timetable.name}_timetable.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: {
+            unit: "mm",
+            orientation: "landscape",
+            // marginLeft: 10,
+            // marginRight: 10,
+            pdfWidth: document.getElementById("table-id").offsetWidth,
+            pdfHeight: "auto",
+            margin: [5, 10, 10, 10],
+        },
+    };
+
+    const tables = document.querySelectorAll("table");
+    for (let i = 1; i < tables.length; i++) {
+        tables[i].style.pageBreakBefore = "always";
+    }
+    const elementToPrint = document.querySelector("#section-main");
+    html2pdf().set(options).from(elementToPrint).save();
+}
 </script>
 
 <template>
@@ -54,25 +77,26 @@ const layoutStore = useLayoutStore();
                     ).format('MMM D YYYY')}`"
                     main
                 >
-                    <!-- <BaseButton
-                        :route-name="route('dashboard.index')"
-                        :icon="mdiArrowLeftBoldOutline"
-                        label="Back"
-                        color="white"
+                    <BaseButton
+                        @click="generatePdf"
+                        :icon="mdiFileDocument"
+                        label="Print"
+                        color=""
                         rounded-full
-                        small
-                    /> -->
+                    />
                 </SectionTitleLineWithButton>
                 <CardBox
                     class="mb-6"
                     v-for="gradelevels in scheme"
                     :key="gradelevels"
+                    id="section-main"
                 >
                     <table
                         v-for="(sections, index) in Object.values(
                             gradelevels
                         )[0]"
                         :key="index"
+                        id="table-id"
                     >
                         <thead>
                             <tr>
@@ -84,6 +108,11 @@ const layoutStore = useLayoutStore();
                                 <th class="text-center py-1" colspan="7">
                                     {{ sectionModel[index - 1].bldg_letter }} -
                                     {{ sectionModel[index - 1].room_number }}
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="text-center py-1" colspan="7">
+                                    TEST ADVISER NAME
                                 </th>
                             </tr>
                             <tr>

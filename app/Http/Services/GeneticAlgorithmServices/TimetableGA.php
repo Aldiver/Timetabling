@@ -5,7 +5,8 @@ namespace App\Http\Services\GeneticAlgorithmServices;
 use App\Models\SchoolProgram;
 use App\Models\ClassSchedule;
 use App\Models\Timetable as TimetableModel;
-use App\Http\Services\GeneticAlgorithmServices\GeneticAlgorithm;
+
+// use App\Http\Services\GeneticAlgorithmServices\GeneticAlgorithm;
 
 class TimetableGA
 {
@@ -22,7 +23,7 @@ class TimetableGA
      * @param App\Models\Timetable $timetable Timetable we want to run the algorithm
      *                                        to generate
      */
-    public function __construct($timetable) //TimetableModel $timetable
+    public function __construct(TimetableModel $timetable) //TimetableModel $timetable
     {
         $this->timetable = $timetable;
     }
@@ -34,8 +35,6 @@ class TimetableGA
     public function initializeTimetable()
     {
         $selectedSchoolProgram = $this->timetable->schoolprograms()->first()->id; //change it later to get the schoolprogramID
-        //$this->timetimeble->schoolprogramId
-        // $timetable = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find($selectedSchoolProgram);
 
         $timetable = new Timetable();
         $schoolProgram = SchoolProgram::with(['gradelevels', 'sections', 'classdays', 'departments', 'teachers', 'periods'])->find($selectedSchoolProgram);
@@ -144,7 +143,6 @@ class TimetableGA
 
                 $solution =  $population->getFittest(0);
 
-                // $data[$currentGradelevel->getLevel()] = $solution->getBySection();
                 if ($i == 1) {
                     $store[] = $timetable->createScheme($currentGradelevel, $solution);
                 } else {
@@ -163,6 +161,7 @@ class TimetableGA
             'status' => 'COMPLETED',
         ]);
 
-        return $solution;
+        print "Timetable Genrated \n";
+        return $this->timetable;
     }
 }

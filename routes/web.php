@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Timetable;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,5 +39,10 @@ Route::prefix('jobs')->group(function () {
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
+
+Route::get('/timetables', function () {
+    $timetables = Timetable::All();
+    return $timetables;
+});
 
 require __DIR__.'/auth.php';

@@ -6,12 +6,15 @@ import {
     mdiShieldLock,
     mdiAccountTie,
     mdiCalendarClock,
-    mdiSchool,
     mdiBookOpenPageVariant,
-    mdiNumeric7Box,
-    mdiNumeric8Box,
-    mdiNumeric9Box,
-    mdiNumeric10Box,
+    mdiSchool,
+    mdiGroup,
+    mdiTimetable,
+    mdiBallot,
+    mdiAccountSupervisorCircle,
+    mdiNotebookEditOutline,
+    mdiViewWeek,
+    mdiClockTimeFourOutline,
 } from "@mdi/js";
 
 export default [
@@ -26,22 +29,22 @@ export default [
         menu: [
             {
                 route: "schoolprogram.index",
-                icon: mdiNumeric7Box,
+                icon: mdiTimetable,
                 label: "School Program",
             },
             {
                 route: "classday.index",
-                icon: mdiNumeric10Box,
+                icon: mdiViewWeek,
                 label: "Class Days",
             },
             {
                 route: "timeslot.index",
-                icon: mdiNumeric10Box,
+                icon: mdiClockTimeFourOutline,
                 label: "Timeslots",
             },
             {
                 route: "period.index",
-                icon: mdiNumeric10Box,
+                icon: mdiCalendarClock,
                 label: "Periods",
             },
         ],
@@ -49,11 +52,11 @@ export default [
     {
         route: "teacher.index",
         icon: mdiAccountTie,
-        label: "Teacher Profiles",
+        label: "Teachers' Profile",
     },
     {
         route: "section.index",
-        icon: mdiNumeric8Box,
+        icon: mdiAccountSupervisorCircle,
         label: "Student Sections",
     },
     {
@@ -66,17 +69,17 @@ export default [
         menu: [
             {
                 route: "department.index",
-                icon: mdiBookOpenPageVariant,
+                icon: mdiGroup,
                 label: "Department",
             },
             {
                 route: "subject.index",
-                icon: mdiNumeric9Box,
+                icon: mdiNotebookEditOutline,
                 label: "Subjects",
             },
             {
                 route: "gradelevel.index",
-                icon: mdiNumeric7Box,
+                icon: mdiBallot,
                 label: "Grade Levels",
             },
             {

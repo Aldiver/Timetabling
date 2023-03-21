@@ -14,15 +14,13 @@ return new class () extends Migration {
     {
         Schema::create('teacher_loadings', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('teacher_id');
-            $table->string('school_year');
+            $table->integer('version')->nullable();
             $table->integer('total_loading')->default(0);
             $table->integer('total_working_hours')->default(0);
             $table->integer('total_teaching_load')->default(0);
             $table->integer('total_admin_load')->default(0);
-            // $table->integer('')
-
-            //belongs to teacher
+            $table->foreignId('timetable_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('teacher_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

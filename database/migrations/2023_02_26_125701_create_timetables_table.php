@@ -17,7 +17,7 @@ return new class () extends Migration {
             $table->string('name')->unique();
             $table->json('schedule_data1')->nullable();
             $table->json('schedule_data2')->nullable();
-            $table->enum('status', ['IN PROGRESS', 'COMPLETED']);
+            $table->enum('status', ['IN PROGRESS', 'COMPLETED','FAILED']);
             $table->timestamps();
         });
     }

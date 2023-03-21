@@ -14,11 +14,7 @@ return new class () extends Migration {
     {
         Schema::create('ohsps', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('load_id');
-            $table->string('load_type');
-            $table->string('load_equivalent');
-            $table->string('spfl_type');
-            $table->string('hours_per_week');
+            $table->foreignId('load_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
