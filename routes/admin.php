@@ -19,6 +19,7 @@ Route::group([
     Route::resource('classday', 'ClassdayController');
     Route::resource('period', 'PeriodController');
     Route::resource('timeslot', 'TimeslotController');
+    Route::resource('workload', 'WorkloadController');
     Route::get('edit-account-info', 'UserController@accountInfo')->name('admin.account.info');
     Route::post('edit-account-info', 'UserController@accountInfoStore')->name('admin.account.info.store');
     Route::post('change-password', 'UserController@changePasswordStore')->name('admin.account.password.store');

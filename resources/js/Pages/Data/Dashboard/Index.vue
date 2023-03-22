@@ -81,7 +81,7 @@ function updateTimetables() {
 }
 
 // Call the updateTimetables function every 5 seconds
-setInterval(updateTimetables, 5000);
+// setInterval(updateTimetables, 5000);
 </script>
 
 <template>

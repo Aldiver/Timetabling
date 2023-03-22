@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             BasicAdminPermissionSeeder::class,
             GradeLevelSeeder::class,
             DepartmentSeeder::class,
-            //AdminLoadSeeder::class,
+            AdminLoadSeeder::class,
             SectionSeeder::class,
             TeacherSeeder::class,
         ]);

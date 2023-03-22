@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Timetable;
 
 use App\Http\Services\GeneticAlgorithmServices\TimetableGA;
 
@@ -20,7 +21,7 @@ class GenerateTimetableJob implements ShouldQueue
     protected $timetable;
     public $timeout = 36000;
 
-    public function __construct($timetable)
+    public function __construct(Timetable $timetable)
     {
         $this->timetable = $timetable;
     }
@@ -29,13 +30,11 @@ class GenerateTimetableJob implements ShouldQueue
     {
         try {
             $timetableGA = new TimetableGA($this->timetable);
+            // $this->fail(new \Exception('The timetable generation failed.'));
             $timetable = $timetableGA->run();
-
-            // Dispatch the TimetableGenerated event
-            // event(new TimetableGenerated());
         } catch (\Exception $e) {
             // If an error occurred, execute this code
-            $this->failed();
+            $this->failedJob($e);
         }
 
         // If the method succeeded, execute this code
@@ -50,8 +49,9 @@ class GenerateTimetableJob implements ShouldQueue
         dispatch(new AssignTeacherLoadingJob($timetable));
     }
 
-    protected function failed()
+    protected function failedJob(\Exception $exception)
     {
+        print "failed here";
         // Run something else because the original job failed
         $this->timetable->update([
             'status' => 'FAILED',

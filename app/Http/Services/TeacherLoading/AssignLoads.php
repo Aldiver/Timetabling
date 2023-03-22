@@ -4,6 +4,8 @@ namespace App\Http\Services\TeacherLoading;
 
 use App\Models\Timetable as TimetableModel;
 use App\Models\Teacher;
+use App\Models\TeacherLoading;
+use App\Models\Admin;
 
 class AssignLoads
 {
@@ -29,27 +31,50 @@ class AssignLoads
     {
         $data1 = json_decode($this->timetable->schedule_data1, true);
         $data2 = json_decode($this->timetable->schedule_data2, true);
-
+        $secIds = [];
         $teacher_loading = [];
-        foreach ($data1 as $timetable) {
-            foreach ($timetable as $gradelevel) {
-                foreach ($gradelevel as $section) {
-                    foreach ($section as $class) {
+        foreach ($data1 as $gradelevel) {
+            foreach ($gradelevel as $section) {
+                foreach ($section as $key => $classes) {
+                    foreach ($classes as $class) {
                         $teacher = Teacher::where('full_name', $class[0])->first();
                         if (!isset($teacher_loading[$teacher->id])) {
-                            $teacher_loading[$teacher->id] = [];
+                            // $teacher_loading[$teacher->id] = [];
+                            $teacher_loading[$teacher->id]['Advisory'] = null;
+                            $teacher_loading[$teacher->id]['Sections'] = [];
+                        }
+
+                        if ($class[2] == "D2T1") {
+                            $teacher_loading[$teacher->id]['Advisory'] = $key;
+                            array_push($teacher_loading[$teacher->id]['Sections'], $key);
                         } else {
-                            if ($class[2] == "D2T1") {
-                                $teacher_loading[$teacher->id]['Advisory'] = key($gradelevel);
-                            } else {
-                                $teacher_loading[$teacher->id]['Sections'][] = key($gradelevel);
+                            // dd($teacher_loading[$teacher->id], $individual, key($sections));
+                            if (!in_array($key, $teacher_loading[$teacher->id]['Sections'])) {
+                                array_push($teacher_loading[$teacher->id]['Sections'], $key);
                             }
                         }
                     }
-
-                    dd($teacher_loading);
                 }
             }
         }
+        // dd($teacher_loading);
+        $adminLoads = Admin::all();
+
+        // dd($adminLoads);
+        foreach ($teacher_loading as $key => $teacher) {
+            //
+        }
+
+        $teacherLoading = TeacherLoading::create([
+            'teacher_id' => $teacherId,
+            'timetable_id' => $this->timetable->id,
+            'version' => $version,
+            'load' => [
+                'Admin' => 'Value',
+                'Sections' => [$value],
+                'Advisory' => 'Value',
+                'SpecialLoad' => 123
+            ]
+        ]);
     }
 }

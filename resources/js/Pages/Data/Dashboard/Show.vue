@@ -42,20 +42,33 @@ function generatePdf() {
         jsPDF: {
             unit: "mm",
             orientation: "landscape",
-            // marginLeft: 10,
-            // marginRight: 10,
             pdfWidth: document.getElementById("table-id").offsetWidth,
             pdfHeight: "auto",
             margin: [5, 10, 10, 10],
         },
     };
 
-    const tables = document.querySelectorAll("table");
-    for (let i = 1; i < tables.length; i++) {
-        tables[i].style.pageBreakBefore = "always";
+    const tables = Array.from(document.querySelectorAll("table"));
+    // document.querySelectorAll("table");
+
+    let worker = html2pdf().set(options).from(tables[0]);
+
+    if (tables.length > 1) {
+        worker = worker.toPdf(); // worker is now a jsPDF instance
+        // add each element/page individually to the PDF render process
+        tables.slice(1).forEach((element, index) => {
+            worker = worker
+                .get("pdf")
+                .then((pdf) => {
+                    pdf.addPage();
+                })
+                .from(element)
+                .toContainer()
+                .toCanvas()
+                .toPdf();
+        });
     }
-    const elementToPrint = document.querySelector("#section-main");
-    html2pdf().set(options).from(elementToPrint).save();
+    worker = worker.save();
 }
 </script>
 

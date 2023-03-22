@@ -54,14 +54,16 @@ export default [
         icon: mdiAccountTie,
         label: "Teachers' Profile",
     },
+
+    {
+        route: "workload.index",
+        icon: mdiMonitor,
+        label: "Teachers' Workloads",
+    },
     {
         route: "section.index",
         icon: mdiAccountSupervisorCircle,
         label: "Student Sections",
-    },
-    {
-        icon: mdiMonitor,
-        label: "Timetable Generator",
     },
     {
         label: "Options",
