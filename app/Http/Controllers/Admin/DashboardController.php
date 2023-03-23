@@ -38,7 +38,7 @@ class DashboardController extends Controller
         // $demo = Timetable::all();
         // foreach($demo as $t){
         //     $test = new AssignLoads($t);
-        //     $test->run()
+        //     $test->run();
         // }
 
         $teachers = Teacher::count();
