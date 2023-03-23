@@ -17,6 +17,7 @@ return new class () extends Migration {
             $table->foreignId('teacher_id')->constrained();
             $table->foreignId('timetable_id')->constrained();
             $table->integer('version');
+            $table->string('teacher_name');
             $table->json('load')->nullable();
             $table->timestamps();
 

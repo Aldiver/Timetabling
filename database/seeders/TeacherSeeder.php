@@ -21,7 +21,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARY GRACE',
                 'middle_name' => 'R.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 7]
             ],
             [
@@ -30,7 +30,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JANET',
                 'middle_name' => 'V.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 7]
             ],
             [
@@ -39,7 +39,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ANGIELYN',
                 'middle_name' => 'T.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 7]
             ],
             [
@@ -48,7 +48,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CHRISTY',
                 'middle_name' => 'L.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 7]
             ],
             [
@@ -57,7 +57,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CRISTIA MAE',
                 'middle_name' => 'E.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 7]
             ],
             [
@@ -75,7 +75,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. MAGDALENA',
                 'middle_name' => 'M.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 7]
             ],
             [
@@ -84,7 +84,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARISSA',
                 'middle_name' => 'B.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 7]
             ],
             [
@@ -93,7 +93,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MELYN',
                 'middle_name' => 'S.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 7]
             ],
             [
@@ -102,7 +102,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EMY LOU',
                 'middle_name' => 'J.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 7]
             ],
             [
@@ -120,7 +120,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'NANCY',
                 'middle_name' => 'T.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 7]
             ],
             [
@@ -147,7 +147,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'NEILITA',
                 'middle_name' => 'C.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 7]
             ],
             [
@@ -156,7 +156,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'KELLY',
                 'middle_name' => 'A.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 7]
             ],
             [
@@ -165,7 +165,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CIRIACA',
                 'middle_name' => 'F.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 7]
             ],
             [
@@ -174,7 +174,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ERLYN',
                 'middle_name' => 'A.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 7]
             ],
             [
@@ -183,7 +183,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARITA',
                 'middle_name' => 'T.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 7]
             ],
             [
@@ -255,7 +255,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ROWENA',
                 'middle_name' => 'R.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 7]
             ],
             [
@@ -264,7 +264,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'LINALYN',
                 'middle_name' => 'DR.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 7]
             ],
             [
@@ -282,7 +282,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'SANDRA',
                 'middle_name' => 'J.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 7]
             ],
             [
@@ -291,7 +291,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'BERNADETH',
                 'middle_name' => 'H.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 7]
             ],
             [
@@ -300,7 +300,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EVELYN',
                 'middle_name' => 'P.',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 7]
             ],
             [
@@ -327,7 +327,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'SANDY',
                 'middle_name' => '',
                 'specialization' => 'TLE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 7]
             ],
             [
@@ -372,7 +372,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'STEPHANIE',
                 'middle_name' => 'V.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 8]
             ],
             [
@@ -381,7 +381,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ANGELI RYLL',
                 'middle_name' => 'C.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 8]
             ],
             [
@@ -408,7 +408,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. ELOISA',
                 'middle_name' => 'P.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 8]
             ],
             [
@@ -417,7 +417,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'RUTHZEL',
                 'middle_name' => 'F.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 8]
             ],
             [
@@ -426,7 +426,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'SHERWINA',
                 'middle_name' => 'E.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 8]
             ],
             [
@@ -435,7 +435,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARINA',
                 'middle_name' => 'B.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 8]
             ],
             [
@@ -444,7 +444,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'VIVIAN',
                 'middle_name' => 'F.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 8]
             ],
             [
@@ -453,7 +453,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JOSEPHINE',
                 'middle_name' => 'C.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 8]
             ],
             [
@@ -462,7 +462,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'VALORREE',
                 'middle_name' => 'M.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 8]
             ],
             [
@@ -471,7 +471,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'BERNADETTE',
                 'middle_name' => 'R.',
                 'specialization' => 'ESP',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 8]
             ],
             [
@@ -507,7 +507,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AZUSENA',
                 'middle_name' => 'D.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 6]
             ],
             [
@@ -516,7 +516,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'TERESITA',
                 'middle_name' => 'S.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 6]
             ],
             [
@@ -525,7 +525,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'SHIELA',
                 'middle_name' => 'D.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 6]
             ],
             [
@@ -534,7 +534,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARY JANE',
                 'middle_name' => 'F.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 6]
             ],
             [
@@ -543,7 +543,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MERRIAM',
                 'middle_name' => 'A.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 6]
             ],
             [
@@ -561,7 +561,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'VIVIAN',
                 'middle_name' => 'I.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 6]
             ],
             [
@@ -570,7 +570,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'LORENA',
                 'middle_name' => 'L.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 6]
             ],
             [
@@ -579,7 +579,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ANNAMAE',
                 'middle_name' => 'D.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 6]
             ],
             [
@@ -588,7 +588,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AMY',
                 'middle_name' => 'M.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 6]
             ],
             [
@@ -615,7 +615,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'DAISY',
                 'middle_name' => 'M.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 6]
             ],
             [
@@ -624,7 +624,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'GUIADEE',
                 'middle_name' => 'A.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 6]
             ],
             [
@@ -633,7 +633,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'LUCIE',
                 'middle_name' => 'M.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 6]
             ],
             [
@@ -660,7 +660,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CATHERINE',
                 'middle_name' => 'U.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 6]
             ],
             [
@@ -669,7 +669,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'BERNADETTE',
                 'middle_name' => 'A.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 6]
             ],
             [
@@ -678,13 +678,13 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'IRENE',
                 'middle_name' => '',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 6]
             ],
             [
-                'full_name' => 'SINORO idENFORT',
+                'full_name' => 'SINORO GLENFORT',
                 'last_name' => 'SINORO',
-                'first_name' => 'idENFORT',
+                'first_name' => 'GLENFORT',
                 'middle_name' => 'C.',
                 'specialization' => 'ARPAN',
                 'gender' => 'Male',
@@ -696,7 +696,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIA CORAZON',
                 'middle_name' => 'S.',
                 'specialization' => 'ARPAN',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 6]
             ],
             [
@@ -705,7 +705,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JOYCE',
                 'middle_name' => 'D.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 5]
             ],
             [
@@ -714,7 +714,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ELAINE',
                 'middle_name' => 'C.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 5]
             ],
             [
@@ -723,7 +723,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'KEARZTIE THERESE',
                 'middle_name' => 'C.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 5]
             ],
             [
@@ -732,7 +732,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JENNY LYN',
                 'middle_name' => 'G.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 5]
             ],
             [
@@ -741,7 +741,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AMALIA',
                 'middle_name' => 'T.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 5]
             ],
             [
@@ -750,7 +750,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'KATHERINE',
                 'middle_name' => 'S.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 5]
             ],
             [
@@ -759,7 +759,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JANICE',
                 'middle_name' => 'B.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 5]
             ],
             [
@@ -768,7 +768,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIA SUSANA',
                 'middle_name' => 'S.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 5]
             ],
             [
@@ -777,7 +777,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EVELYN',
                 'middle_name' => 'D.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 5]
             ],
             [
@@ -795,7 +795,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'FRANICEL',
                 'middle_name' => 'T.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 5]
             ],
             [
@@ -813,7 +813,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JOEVELYN',
                 'middle_name' => 'T.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 5]
             ],
             [
@@ -822,7 +822,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIA JEANETTE',
                 'middle_name' => 'B.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 5]
             ],
             [
@@ -831,7 +831,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JACQUELINE',
                 'middle_name' => 'D.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 5]
             ],
             [
@@ -876,7 +876,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'RACHEL',
                 'middle_name' => 'A.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 5]
             ],
             [
@@ -885,7 +885,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'PILAR',
                 'middle_name' => 'L.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 5]
             ],
             [
@@ -903,7 +903,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'WHEANN',
                 'middle_name' => 'L.',
                 'specialization' => 'MAPEH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 5]
             ],
             [
@@ -912,7 +912,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'LAILA',
                 'middle_name' => 'G.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 4]
             ],
             [
@@ -921,7 +921,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ROSA PILAR',
                 'middle_name' => 'S.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 4]
             ],
             [
@@ -930,7 +930,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARLENE',
                 'middle_name' => 'J.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 4]
             ],
             [
@@ -939,7 +939,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'RONALYN',
                 'middle_name' => 'G.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 4]
             ],
             [
@@ -957,7 +957,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EDIANE',
                 'middle_name' => 'A.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 4]
             ],
             [
@@ -966,7 +966,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JOY',
                 'middle_name' => 'F.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 4]
             ],
             [
@@ -975,7 +975,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ROZELLA JALLET',
                 'middle_name' => 'O.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 4]
             ],
             [
@@ -984,7 +984,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CLARIBEL',
                 'middle_name' => 'C.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 4]
             ],
             [
@@ -993,7 +993,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. LEAH',
                 'middle_name' => 'R.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 4]
             ],
             [
@@ -1002,7 +1002,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JILDA',
                 'middle_name' => 'M.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 4]
             ],
             [
@@ -1011,7 +1011,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CONSTANCIA',
                 'middle_name' => 'G.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 4]
             ],
             [
@@ -1020,7 +1020,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MICHELLE',
                 'middle_name' => 'I.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 4]
             ],
             [
@@ -1029,7 +1029,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'VIOLETA',
                 'middle_name' => 'G.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 4]
             ],
             [
@@ -1038,7 +1038,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARICHU',
                 'middle_name' => 'A.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 4]
             ],
             [
@@ -1056,7 +1056,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JUDELYN',
                 'middle_name' => 'C.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 4]
             ],
             [
@@ -1065,7 +1065,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EMILY',
                 'middle_name' => 'E.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 4]
             ],
             [
@@ -1074,7 +1074,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ELSIE',
                 'middle_name' => 'A.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 4]
             ],
             [
@@ -1083,7 +1083,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'HAZEL',
                 'middle_name' => 'V.',
                 'specialization' => 'FIL',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 4]
             ],
             [
@@ -1110,7 +1110,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JULIET',
                 'middle_name' => 'L.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 3]
             ],
             [
@@ -1119,7 +1119,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ASUNCION',
                 'middle_name' => 'B.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 3]
             ],
             [
@@ -1128,7 +1128,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. EDNA',
                 'middle_name' => 'G.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 3]
             ],
             [
@@ -1137,7 +1137,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CORAZON',
                 'middle_name' => 'M.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 3]
             ],
             [
@@ -1146,7 +1146,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'GIZELLE NARCITTA',
                 'middle_name' => 'S.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 3]
             ],
             [
@@ -1155,7 +1155,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MERRY JOY',
                 'middle_name' => 'L.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 3]
             ],
             [
@@ -1173,7 +1173,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JING-JING',
                 'middle_name' => 'M.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 3]
             ],
             [
@@ -1191,7 +1191,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EVELYN',
                 'middle_name' => 'E.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 3]
             ],
             [
@@ -1200,7 +1200,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AIDA',
                 'middle_name' => 'F.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 3]
             ],
             [
@@ -1209,7 +1209,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JOSIELYN',
                 'middle_name' => 'M.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 3]
             ],
             [
@@ -1218,7 +1218,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ZORINA',
                 'middle_name' => 'F.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 3]
             ],
             [
@@ -1245,7 +1245,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'OSITA',
                 'middle_name' => 'A.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 3]
             ],
             [
@@ -1258,12 +1258,12 @@ class TeacherSeeder extends Seeder
                 'gradelevels' =>  ['id' => 4,'department_id' => 3]
             ],
             [
-                'full_name' => 'TAidE LADY MAY',
-                'last_name' => 'TAidE',
+                'full_name' => 'Taide LADY MAY',
+                'last_name' => 'Taide',
                 'first_name' => 'LADY MAY',
                 'middle_name' => 'C.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 3]
             ],
             [
@@ -1272,7 +1272,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'GERWIN',
                 'middle_name' => 'O.',
                 'specialization' => 'MATH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 3]
             ],
             [
@@ -1299,7 +1299,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JANE AUBREY',
                 'middle_name' => 'D.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 2]
             ],
             [
@@ -1308,7 +1308,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MILDRED',
                 'middle_name' => 'T.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 2]
             ],
             [
@@ -1317,7 +1317,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AISA',
                 'middle_name' => 'A.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 2]
             ],
             [
@@ -1326,7 +1326,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'NERISSA',
                 'middle_name' => 'B.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 2]
             ],
             [
@@ -1335,7 +1335,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'IRENE GRACE',
                 'middle_name' => 'E.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 2]
             ],
             [
@@ -1344,7 +1344,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. LEONORA',
                 'middle_name' => 'S.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 2]
             ],
             [
@@ -1353,7 +1353,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'LAMBERTO',
                 'middle_name' => 'C.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 2]
             ],
             [
@@ -1362,7 +1362,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EDWIN',
                 'middle_name' => 'A.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 2]
             ],
             [
@@ -1371,7 +1371,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARILYN',
                 'middle_name' => 'D.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 2]
             ],
             [
@@ -1380,7 +1380,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ALANA',
                 'middle_name' => 'P.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 2]
             ],
             [
@@ -1389,7 +1389,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'DOROTHY',
                 'middle_name' => 'M.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 2]
             ],
             [
@@ -1398,7 +1398,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIFE',
                 'middle_name' => 'C.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 2]
             ],
             [
@@ -1407,7 +1407,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARILYN',
                 'middle_name' => 'M.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 2]
             ],
             [
@@ -1416,7 +1416,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JULIET',
                 'middle_name' => 'S.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 2]
             ],
             [
@@ -1425,7 +1425,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AIRA',
                 'middle_name' => 'P.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 2]
             ],
             [
@@ -1434,7 +1434,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'AILEEN',
                 'middle_name' => 'D.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 2]
             ],
             [
@@ -1443,7 +1443,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARYAM',
                 'middle_name' => 'T.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 2]
             ],
             [
@@ -1452,7 +1452,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'VIVIAN',
                 'middle_name' => 'B.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1461,7 +1461,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CLARINDA',
                 'middle_name' => 'E.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1470,7 +1470,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'LILIAN',
                 'middle_name' => 'S.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1479,7 +1479,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ALDRIAN DHEEN',
                 'middle_name' => 'M.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1488,7 +1488,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ARIESA',
                 'middle_name' => 'N.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1497,7 +1497,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ALDIBEL',
                 'middle_name' => 'B.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1506,7 +1506,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ROXANNE',
                 'middle_name' => 'C.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1515,7 +1515,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JESUS',
                 'middle_name' => 'S.',
                 'specialization' => 'SCIENCE',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 2]
             ],
             [
@@ -1524,7 +1524,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. SHERILL',
                 'middle_name' => 'M.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 1]
             ],
             [
@@ -1533,7 +1533,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'FE',
                 'middle_name' => 'Q.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 1]
             ],
             [
@@ -1542,7 +1542,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. LEILANIE',
                 'middle_name' => 'S.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 1]
             ],
             [
@@ -1551,7 +1551,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIA RAMONA ROSENAH',
                 'middle_name' => 'H.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 1]
             ],
             [
@@ -1560,7 +1560,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'PRINCIPON',
                 'middle_name' => 'P.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 1]
             ],
             [
@@ -1569,7 +1569,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIVIC',
                 'middle_name' => 'D.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 1,'department_id' => 1]
             ],
             [
@@ -1578,7 +1578,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ABIGAIL',
                 'middle_name' => 'M.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1587,7 +1587,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'NOEMI EOUS',
                 'middle_name' => 'B.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1596,7 +1596,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'HERMOSA',
                 'middle_name' => 'O.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1605,7 +1605,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'PUTRIE MAZ-WARA',
                 'middle_name' => 'A.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1614,7 +1614,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MICHELLE',
                 'middle_name' => 'JF.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1623,7 +1623,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JOSEPHINE',
                 'middle_name' => 'T.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1632,7 +1632,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'BONNA JANE',
                 'middle_name' => 'J.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1641,7 +1641,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. ELEANOR',
                 'middle_name' => 'B.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 2,'department_id' => 1]
             ],
             [
@@ -1650,7 +1650,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'ETHEL',
                 'middle_name' => 'A.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 1]
             ],
             [
@@ -1659,7 +1659,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARY JANE',
                 'middle_name' => 'P.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 1]
             ],
             [
@@ -1668,7 +1668,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JUDITH',
                 'middle_name' => 'B.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 1]
             ],
             [
@@ -1677,7 +1677,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EDNA',
                 'middle_name' => 'G.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 1]
             ],
             [
@@ -1695,7 +1695,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MYRNA',
                 'middle_name' => 'P.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 1]
             ],
             [
@@ -1704,7 +1704,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'CAROLINA',
                 'middle_name' => 'D.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 3,'department_id' => 1]
             ],
             [
@@ -1713,7 +1713,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'SHERYLL',
                 'middle_name' => 'J.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ],
             [
@@ -1722,7 +1722,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'JONATHAN',
                 'middle_name' => 'J.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ],
             [
@@ -1731,7 +1731,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MARIA VICTORIA',
                 'middle_name' => 'V.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ],
             [
@@ -1740,7 +1740,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'EVELYN',
                 'middle_name' => 'S.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ],
             [
@@ -1749,7 +1749,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'MA. ROBINA',
                 'middle_name' => 'M.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ],
             [
@@ -1758,7 +1758,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'NORALYN',
                 'middle_name' => 'M.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ],
             [
@@ -1767,7 +1767,7 @@ class TeacherSeeder extends Seeder
                 'first_name' => 'GLENDA',
                 'middle_name' => 'N.',
                 'specialization' => 'ENGLISH',
-                'gender' => 'Male',
+                'gender' => 'Female',
                 'gradelevels' =>  ['id' => 4,'department_id' => 1]
             ]
         ];

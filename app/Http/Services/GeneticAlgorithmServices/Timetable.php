@@ -12,6 +12,13 @@ class Timetable
     private $teachers;
 
     /**
+     * Collection of teachers indexed by their IDs
+     *
+     * @var array
+     */
+    private $teachersWithOhsp;
+
+    /**
      * Collection of modules indexed by their IDs
      *
      * @var array
@@ -127,6 +134,20 @@ class Timetable
     public function addTeacher($teacherId)
     {
         $this->teachers[$teacherId] = new Teacher($teacherId);
+    }
+
+    public function addTeacherWithOhsp($teacherIds)
+    {
+        $this->teachersWithOhsp = $teacherIds;
+    }
+
+    public function getTeacherWithOhsp()
+    {
+        return $this->teachersWithOhsp;
+    }
+    public function withOhsp($teacherId)
+    {
+        return in_array($teacherId, $this->teachersWithOhsp);
     }
 
     /**

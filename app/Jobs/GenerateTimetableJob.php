@@ -36,9 +36,10 @@ class GenerateTimetableJob implements ShouldQueue
             // If an error occurred, execute this code
             $this->failedJob($e);
         }
-
         // If the method succeeded, execute this code
-        $this->completed($timetable);
+        if ($timetable) {
+            $this->completed($timetable);
+        }
     }
 
     protected function completed($timetable)
@@ -51,8 +52,8 @@ class GenerateTimetableJob implements ShouldQueue
 
     protected function failedJob(\Exception $exception)
     {
-        print "failed here";
         // Run something else because the original job failed
+        print $exception;
         $this->timetable->update([
             'status' => 'FAILED',
         ]);

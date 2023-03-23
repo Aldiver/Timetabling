@@ -31,9 +31,8 @@ class AssignLoads
     {
         $data1 = json_decode($this->timetable->schedule_data1, true);
         $data2 = json_decode($this->timetable->schedule_data2, true);
-        $secIds = [];
         $teacher_loading = [];
-        foreach ($data1 as $gradelevel) {
+        foreach ($data2 as $gradelevel) {
             foreach ($gradelevel as $section) {
                 foreach ($section as $key => $classes) {
                     foreach ($classes as $class) {
@@ -42,11 +41,14 @@ class AssignLoads
                             // $teacher_loading[$teacher->id] = [];
                             $teacher_loading[$teacher->id]['Advisory'] = null;
                             $teacher_loading[$teacher->id]['Sections'] = [];
+                            $teacher_loading[$teacher->id]['Admin'] = null;
                         }
 
                         if ($class[2] == "D2T1") {
                             $teacher_loading[$teacher->id]['Advisory'] = $key;
                             array_push($teacher_loading[$teacher->id]['Sections'], $key);
+                        } elseif (strpos($class[2], "D5") !== false) {
+                            // $teacher_loading[$teacher->id]['Ohsp'] = "BLOCKED";
                         } else {
                             // dd($teacher_loading[$teacher->id], $individual, key($sections));
                             if (!in_array($key, $teacher_loading[$teacher->id]['Sections'])) {
@@ -57,24 +59,29 @@ class AssignLoads
                 }
             }
         }
-        // dd($teacher_loading);
-        $adminLoads = Admin::all();
+        $adminLoads = Admin::all()->shuffle();
 
         // dd($adminLoads);
-        foreach ($teacher_loading as $key => $teacher) {
-            //
+        foreach ($adminLoads as $admin) {
+            $random = array_rand($teacher_loading);
+            if (!isset($teacher_loading[$random]['Admin'])) {
+                $teacher_loading[$random]['Admin'] = $admin->name;
+            }
         }
+        // dd("okay", $teacher_loading);
 
-        $teacherLoading = TeacherLoading::create([
-            'teacher_id' => $teacherId,
-            'timetable_id' => $this->timetable->id,
-            'version' => $version,
-            'load' => [
-                'Admin' => 'Value',
-                'Sections' => [$value],
-                'Advisory' => 'Value',
-                'SpecialLoad' => 123
-            ]
-        ]);
+        // $this->timetable->oshp->first();
+
+        foreach ($teacher_loading as $key => $teacher) {
+            // dd($teacher, $teacher['Advisory']);
+            $teacherLoading = TeacherLoading::create([
+                'teacher_id' => $key,
+                'timetable_id' => $this->timetable->id,
+                'version' => 1,
+                'load' => json_encode($teacher),
+                'teacher_name' => Teacher::find($key)->full_name
+            ]);
+        }
+        // dd("okay", $teacher_loading);
     }
 }

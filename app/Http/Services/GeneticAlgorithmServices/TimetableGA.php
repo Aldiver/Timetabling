@@ -88,6 +88,19 @@ class TimetableGA
         foreach ($teachers as $teacher) {
             $timetable->addTeacher($teacher->id);
         }
+        // dd($timetable->getModules());
+        //set ohsp teachers
+        $depsOhsp = $timetable->getModules();
+        $teacherWithOHSP = [];
+        shuffle($depsOhsp);
+
+        for ($i = 0; $i<8; $i++) {
+            $teacherWithOHSP[8 - ($i%2)][$i+1] = $depsOhsp[$i][2 - ($i%2)]->getRandomTeacherId();
+            $teacherWithOHSP[10 - ($i%2)][$i+1] = $depsOhsp[$i][4 - ($i%2)]->getRandomTeacherId();
+        }
+
+        $timetable->addTeacherWithOhsp($teacherWithOHSP);
+        dd($teacherWithOHSP);
         return $timetable;
     }
 
@@ -159,6 +172,7 @@ class TimetableGA
 
         $this->timetable->update([
             'status' => 'COMPLETED',
+            // 'ohsp' => $timetable->getTeacherWithOhsp(),
         ]);
 
         print "Timetable Genrated \n";

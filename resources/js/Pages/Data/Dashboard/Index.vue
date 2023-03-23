@@ -59,7 +59,7 @@ const modalCreate = ref(false);
 
 const formDelete = useForm({});
 
-const list = ref(props.timetables);
+// const list = ref(props.timetables);
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
         formDelete.delete(route("dashboard.destroy", id));
@@ -141,7 +141,7 @@ function updateTimetables() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="timetable in list" :key="timetable.id">
+                    <tr v-for="timetable in timetables" :key="timetable.id">
                         <td>{{ timetable.name }}</td>
                         <td>{{ timetable.status }}</td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">

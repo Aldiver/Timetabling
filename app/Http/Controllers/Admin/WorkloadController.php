@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\Teacher;
+use App\Models\Timetable;
+use App\Models\TeacherLoading;
 
 class WorkloadController extends Controller
 {
@@ -23,12 +26,24 @@ class WorkloadController extends Controller
      */
     public function index()
     {
-        // $teacher = Teacher::whereHas('teacherLoadings', function ($query) use ($timetableId, $version) {
-        //     $query->where('timetable_id', $timetableId)
-        //           ->where('version', $version);
-        // })->first();
+        $teacherLoads = (new TeacherLoading())->newQuery();
+
+        $timetables = Timetable::where('status', 'COMPLETED')->get();
+
+        if (request()->has('search')) {
+            $timetableName = request()->input('search');
+            $timetable = Timetable::where('name', $timetableName)->first();
+            // dd("hello");
+            $teacherLoads = TeacherLoading::where('timetable_id', $timetable->id)
+                                 ->where('version', 1)
+                                 ->get();
+            // dd($teachers, $timetable->id, 1);
+        }
 
         return Inertia::render('Data/Workload/Index', [
+            'timetables' => $timetables,
+            'teachers' => $teacherLoads,
+            'filters' => request()->all('filter'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),
                 'edit' => Auth::user()->can('permission edit'),
