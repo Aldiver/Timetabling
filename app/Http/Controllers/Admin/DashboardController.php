@@ -36,7 +36,7 @@ class DashboardController extends Controller
     public function index()
     {
         // $demo = Timetable::all();
-        // foreach($demo as $t){
+        // foreach ($demo as $t) {
         //     $test = new AssignLoads($t);
         //     $test->run();
         // }

@@ -682,9 +682,9 @@ class TeacherSeeder extends Seeder
                 'gradelevels' =>  ['id' => 4,'department_id' => 6]
             ],
             [
-                'full_name' => 'SINORO GLENFORT',
+                'full_name' => 'SINORO idENFORT',
                 'last_name' => 'SINORO',
-                'first_name' => 'GLENFORT',
+                'first_name' => 'idENFORT',
                 'middle_name' => 'C.',
                 'specialization' => 'ARPAN',
                 'gender' => 'Male',

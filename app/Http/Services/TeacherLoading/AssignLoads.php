@@ -37,9 +37,11 @@ class AssignLoads
             foreach ($gradelevel as $section) {
                 foreach ($section as $key => $classes) {
                     $section_model = Section::find($key);
-
                     foreach ($classes as $class) {
                         $teacher = Teacher::where('full_name', $class[0])->first();
+                        // if (!$teacher) {
+                        //     dd($class[0]);
+                        // }
                         if (!isset($teacher_loading[$teacher->id])) {
                             // $teacher_loading[$teacher->id] = [];
                             $teacher_loading[$teacher->id]['Advisory'] = null;
