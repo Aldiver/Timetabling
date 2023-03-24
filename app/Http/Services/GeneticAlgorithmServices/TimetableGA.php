@@ -100,7 +100,7 @@ class TimetableGA
         }
 
         $timetable->addTeacherWithOhsp($teacherWithOHSP);
-        dd($teacherWithOHSP);
+        // dd($teacherWithOHSP);
         return $timetable;
     }
 
