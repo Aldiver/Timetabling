@@ -36,7 +36,8 @@ class AssignLoads
         foreach ($data2 as $gradelevel) {
             foreach ($gradelevel as $section) {
                 foreach ($section as $key => $classes) {
-                    $section = Section::find($key);
+                    $section_model = Section::find($key);
+
                     foreach ($classes as $class) {
                         $teacher = Teacher::where('full_name', $class[0])->first();
                         if (!isset($teacher_loading[$teacher->id])) {
@@ -47,14 +48,14 @@ class AssignLoads
                         }
 
                         if ($class[2] == "D2T1") {
-                            $teacher_loading[$teacher->id]['Advisory'] = $section->name;
-                            array_push($teacher_loading[$teacher->id]['Sections'], $section->name);
+                            $teacher_loading[$teacher->id]['Advisory'] = $section_model->name;
+                            array_push($teacher_loading[$teacher->id]['Sections'], $section_model->name);
                         } elseif (strpos($class[2], "D5") !== false) {
                             // $teacher_loading[$teacher->id]['Ohsp'] = "BLOCKED";
                         } else {
                             // dd($teacher_loading[$teacher->id], $individual, key($sections));
-                            if (!in_array($section->name, $teacher_loading[$teacher->id]['Sections'])) {
-                                array_push($teacher_loading[$teacher->id]['Sections'], $section->name);
+                            if (!in_array($section_model->name, $teacher_loading[$teacher->id]['Sections'])) {
+                                array_push($teacher_loading[$teacher->id]['Sections'], $section_model->name);
                             }
                         }
                     }
