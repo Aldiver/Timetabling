@@ -114,18 +114,25 @@ function generatePdf() {
                         <thead>
                             <tr>
                                 <th class="text-center py-1" colspan="7">
-                                    {{ sectionModel[index - 1].name }}
+                                    {{ Object(sectionModel[index - 1]).name }}
                                 </th>
                             </tr>
                             <tr>
                                 <th class="text-center py-1" colspan="7">
-                                    {{ sectionModel[index - 1].bldg_letter }} -
-                                    {{ sectionModel[index - 1].room_number }}
+                                    {{
+                                        Object(sectionModel[index - 1])
+                                            .bldg_letter
+                                    }}
+                                    -
+                                    {{
+                                        Object(sectionModel[index - 1])
+                                            .room_number
+                                    }}
                                 </th>
                             </tr>
                             <tr>
                                 <th class="text-center py-1" colspan="7">
-                                    TEST ADVISER NAME
+                                    ADIVSER - {{ sections[0][0] }}
                                 </th>
                             </tr>
                             <tr>
