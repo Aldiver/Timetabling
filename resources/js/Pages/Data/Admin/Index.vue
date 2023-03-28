@@ -23,7 +23,7 @@ import Create from "./Create.vue";
 import Edit from "./Edit.vue";
 import { ref } from "vue";
 const props = defineProps({
-    departments: {
+    admins: {
         type: Object,
         default: () => ({}),
     },
@@ -55,26 +55,22 @@ const formDelete = useForm({});
 
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
-        formDelete.delete(route("department.destroy", id));
+        formDelete.delete(route("admin.destroy", id));
     }
 }
 </script>
 
 <template>
     <CardBoxModal v-model="modalEdit" class="mb-6" title="">
-        <Edit :department="data" v-model="modalEdit" />
+        <Edit :admin="data" v-model="modalEdit" />
     </CardBoxModal>
 
     <CardBoxModal v-model="modalCreate" class="mb-6" title="">
         <Create v-model="modalCreate" />
     </CardBoxModal>
-    <Head title="Department" />
+    <Head title="Admin" />
     <SectionMain>
-        <SectionTitleLineWithButton
-            :icon="mdiAccountKey"
-            title="Department"
-            main
-        >
+        <SectionTitleLineWithButton :icon="mdiAccountKey" title="Admin" main>
             <BaseButton
                 v-if="can.delete"
                 @click="modalCreate = true"
@@ -96,7 +92,7 @@ function destroy(id) {
             class="mb-6"
             has-table
             is-form
-            @submit.prevent="form.get(route('department.index'))"
+            @submit.prevent="form.get(route('admin.index'))"
         >
             <FormField>
                 <div class="py-2 flex">
@@ -122,23 +118,20 @@ function destroy(id) {
                 <thead>
                     <tr>
                         <th>
-                            <Sort label="Department" attribute="name" />
+                            <Sort label="Admin" attribute="name" />
                         </th>
                         <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr
-                        v-for="department in departments.data"
-                        :key="department.id"
-                    >
-                        <td data-label="Department">
+                    <tr v-for="admin in admins.data" :key="admin.id">
+                        <td data-label="Admin">
                             <Link
-                                :href="route('department.show', department.id)"
+                                :href="route('admin.show', admin.id)"
                                 class="no-underline hover:underline text-cyan-600 dark:text-cyan-400"
                             >
-                                {{ department.name }}
+                                {{ admin.name }}
                             </Link>
                         </td>
                         <td
@@ -151,7 +144,7 @@ function destroy(id) {
                             >
                                 <BaseButton
                                     v-if="can.edit"
-                                    @click="editClick(department)"
+                                    @click="editClick(admin)"
                                     color="info"
                                     :icon="mdiSquareEditOutline"
                                     small
@@ -161,7 +154,7 @@ function destroy(id) {
                                     color="danger"
                                     :icon="mdiTrashCan"
                                     small
-                                    @click="destroy(department.id)"
+                                    @click="destroy(admin.id)"
                                 />
                             </BaseButtons>
                         </td>
@@ -169,7 +162,7 @@ function destroy(id) {
                 </tbody>
             </table>
             <div class="py-4">
-                <Pagination :data="departments" />
+                <Pagination :data="admins" />
             </div>
         </CardBox>
     </SectionMain>

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Department;
+use App\Models\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class DepartmentController extends Controller
+class AdminController extends Controller
 {
     public function __construct()
     {
@@ -25,7 +25,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = (new department())->newQuery();
+        $admin = (new Admin())->newQuery();
         // $department = Department::find(1);
         // $gradelevelId = 1;
 
@@ -33,7 +33,7 @@ class DepartmentController extends Controller
         // dd($teachers); eto lang ang code.
 
         if (request()->has('search')) {
-            $departments->where('name', 'Like', '%'.request()->input('search').'%');
+            $admin->where('name', 'Like', '%'.request()->input('search').'%');
         }
 
         if (request()->query('sort')) {
@@ -43,15 +43,15 @@ class DepartmentController extends Controller
                 $sort_order = 'DESC';
                 $attribute = substr($attribute, 1);
             }
-            $departments->orderBy($attribute, $sort_order);
+            $admin->orderBy($attribute, $sort_order);
         } else {
-            $departments->latest();
+            $admin->latest();
         }
 
-        $departments = $departments->paginate(5)->onEachSide(2)->appends(request()->query());
+        $admin = $admin->paginate(5)->onEachSide(2)->appends(request()->query());
 
-        return Inertia::render('Data/Department/Index', [
-            'departments' => $departments,
+        return Inertia::render('Data/Admin/Index', [
+            'admins' => $admin,
             'filters' => request()->all('search'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),
@@ -68,7 +68,7 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Data/Department/Create');
+        return Inertia::render('Data/Admin/Create');
     }
 
     /**
@@ -83,12 +83,12 @@ class DepartmentController extends Controller
             'name' => 'required',
         ]);
 
-        Department::create([
+        Admin::create([
             'name' => $request->name,
         ]);
 
-        return redirect()->route('department.index')
-                        ->with('message', __('Department added.'));
+        return redirect()->route('admin.index')
+                        ->with('message', __('Admin task added.'));
     }
 
     /**
@@ -97,10 +97,10 @@ class DepartmentController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function show(department $department)
+    public function show(Admin $admin)
     {
-        return Inertia::render('Data/Department/Show', [
-            'department' => $department,
+        return Inertia::render('Data/Admin/Show', [
+            'admin' => $admin,
         ]);
     }
 
@@ -110,10 +110,10 @@ class DepartmentController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function edit(department $department)
+    public function edit(Admin $admin)
     {
-        return Inertia::render('Data/Department/Edit', [
-            'department' => $department,
+        return Inertia::render('Data/Admin/Edit', [
+            'admin' => $admin,
         ]);
     }
 
@@ -124,20 +124,20 @@ class DepartmentController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, department $department)
+    public function update(Request $request, Admin $admin)
     {
         $request->validate([
             'name' => 'required',
         ]);
 
-        $department->update(
+        $admin->update(
             [
             'name' => $request->name,
         ]
         );
 
-        return redirect()->route('department.index')
-                        ->with('message', __('Department updated successfully.'));
+        return redirect()->route('admin.index')
+                        ->with('message', __('admin updated successfully.'));
     }
 
     /**
@@ -146,11 +146,11 @@ class DepartmentController extends Controller
      * @param  \App\Models\Permission  $permission
      * @return \Illuminate\Http\Response
      */
-    public function destroy(department $department)
+    public function destroy(Admin $admin)
     {
-        $department->delete();
+        $admin->delete();
 
-        return redirect()->route('department.index')
-                        ->with('message', __('Department deleted successfully'));
+        return redirect()->route('admin.index')
+                        ->with('message', __('Admin deleted successfully'));
     }
 }

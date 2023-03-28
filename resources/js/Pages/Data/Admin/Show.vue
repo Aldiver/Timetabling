@@ -8,23 +8,31 @@ import CardBox from "@/components/CardBox.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 const props = defineProps({
-    classday: {
+    admin: {
         type: Object,
         default: () => ({}),
     },
+    // teaches: {
+    //     type: Object,
+    //     default: () => ({}),
+    // },
+    // userHasRoles: {
+    //     type: Object,
+    //     default: () => ({}),
+    // },
 });
 </script>
 
 <template>
-    <Head title="View Class Day" />
+    <Head title="View Department" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View Class day"
+            title="View Department"
             main
         >
             <BaseButton
-                :route-name="route('classday.index')"
+                :route-name="route('admin.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -39,30 +47,10 @@ const props = defineProps({
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Rank
+                            Department
                         </td>
-                        <td data-label="Rank">
-                            {{ classday.rank }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
-                        >
-                            Class Day
-                        </td>
-                        <td data-label="Class day">
-                            {{ classday.name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
-                        >
-                            Short name
-                        </td>
-                        <td data-label="Short name">
-                            {{ classday.short_name }}
+                        <td data-label="Department Name">
+                            {{ admin.name }}
                         </td>
                     </tr>
                     <tr>
@@ -72,7 +60,7 @@ const props = defineProps({
                             Created
                         </td>
                         <td data-label="Created">
-                            {{ new Date(classday.created_at).toLocaleString() }}
+                            {{ new Date(admin.created_at).toLocaleString() }}
                         </td>
                     </tr>
                 </tbody>

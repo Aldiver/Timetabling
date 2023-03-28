@@ -76,6 +76,8 @@ class ClassdayController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'short_name' => 'required',
+            'rank' => 'required',
         ]);
 
         Classday::create($request->all());
@@ -121,6 +123,8 @@ class ClassdayController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'short_name' => 'required',
+            'rank' => 'required',
         ]);
 
         $classday->update($request->all());

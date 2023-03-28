@@ -16,9 +16,7 @@ class AdminLoadSeeder extends Seeder
     public function run()
     {
         $adminloads = [
-                [
-                  "name" => "Department head"
-                ],
+
                 [
                   "name" => "Reading Coordinator"
                 ],

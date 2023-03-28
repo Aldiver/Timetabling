@@ -7,28 +7,59 @@ import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.
 import CardBox from "@/components/CardBox.vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
-import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
 import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
+import { computed, watch } from "vue";
+
+const props = defineProps({
+    admin: {
+        type: Object,
+        default: () => ({}),
+    },
+    modelValue: {
+        type: [String, Number, Boolean],
+        default: null,
+    },
+});
+
+const emit = defineEmits(["update:modelValue", "update"]);
+
+const value = computed({
+    get: () => props.modelValue,
+    set: (value) => emit("update:modelValue", value),
+});
+
+const confirmCancel = (mode) => {
+    value.value = false;
+    emit(mode);
+};
+
+const update = () => confirmCancel("update");
 
 const form = useForm({
+    _method: "put",
     name: "",
-    short_name: "",
-    rank: "",
 });
+
+watch(
+    () => props.admin, // use a getter like this
+    () => {
+        form.name = props.admin.name;
+    }
+);
 </script>
 
 <template>
-    <Head title="Add Class day" />
+    <Head title="Update Department" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="Add class day"
+            title="Update Department"
             main
         >
             <BaseButton
-                :routeName="route('classday.index')"
+                :route-name="route('admin.index')"
                 :icon="mdiArrowLeftBoldOutline"
                 label="Back"
                 color="white"
@@ -36,54 +67,22 @@ const form = useForm({
                 small
             />
         </SectionTitleLineWithButton>
-        <CardBox is-form @submit.prevent="form.post(route('classday.store'))">
+        <CardBox
+            is-form
+            @submit.prevent="form.post(route('admin.update', props.admin.id))"
+        >
             <FormField
-                label="Class day"
+                label="Department"
                 :class="{ 'text-red-400': form.errors.name }"
             >
                 <FormControl
                     v-model="form.name"
                     type="text"
-                    placeholder="Enter class day"
+                    placeholder="Enter Department number"
                     :error="form.errors.name"
                 >
                     <div class="text-red-400 text-sm" v-if="form.errors.name">
                         {{ form.errors.name }}
-                    </div>
-                </FormControl>
-            </FormField>
-
-            <FormField
-                label="Short name"
-                :class="{ 'text-red-400': form.errors.short_name }"
-            >
-                <FormControl
-                    v-model="form.short_name"
-                    type="text"
-                    placeholder="Enter short name"
-                    :error="form.errors.short_name"
-                >
-                    <div
-                        class="text-red-400 text-sm"
-                        v-if="form.errors.short_name"
-                    >
-                        {{ form.errors.short_name }}
-                    </div>
-                </FormControl>
-            </FormField>
-
-            <FormField
-                label="Rank"
-                :class="{ 'text-red-400': form.errors.rank }"
-            >
-                <FormControl
-                    v-model="form.rank"
-                    type="text"
-                    placeholder="Enter rank"
-                    :error="form.errors.rank"
-                >
-                    <div class="text-red-400 text-sm" v-if="form.errors.rank">
-                        {{ form.errors.rank }}
                     </div>
                 </FormControl>
             </FormField>
@@ -98,6 +97,7 @@ const form = useForm({
                         label="Submit"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
+                        @click="update"
                     />
                 </BaseButtons>
             </template>

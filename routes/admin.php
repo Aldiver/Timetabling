@@ -8,6 +8,7 @@ Route::group([
     Route::resource('timetableGenerator', 'TimeTableGeneratorController');
     Route::resource('dashboard', 'DashboardController');
     Route::resource('department', 'DepartmentController');
+    Route::resource('admin', 'AdminController');
     Route::resource('user', 'UserController');
     Route::resource('role', 'RoleController');
     Route::resource('permission', 'PermissionController');

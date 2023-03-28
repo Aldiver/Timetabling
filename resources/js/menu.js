@@ -85,6 +85,7 @@ export default [
                 label: "Grade Levels",
             },
             {
+                route: "admin.index",
                 icon: mdiBookOpenPageVariant,
                 label: "Admin Task",
             },
