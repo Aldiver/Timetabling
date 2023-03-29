@@ -1,30 +1,33 @@
 <script setup>
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
-import { mdiAccountKey, mdiArrowLeftBoldOutline } from "@mdi/js";
+import {
+    mdiAccountKey,
+    mdiPlus,
+    mdiSquareEditOutline,
+    mdiTrashCan,
+    mdiAlertBoxOutline,
+} from "@mdi/js";
+import FormField from "@/components/FormField.vue";
+import FormControl from "@/components/FormControl.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
-import CardBox from "@/components/CardBox.vue";
-import FormField from "@/components/FormField.vue";
-import FormControl from "@/components/FormControl.vue";
-import FormCheckRadioGroup from "@/components/FormCheckRadioGroup.vue";
-import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
+import CardBox from "@/components/CardBox.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
+import NotificationBar from "@/components/NotificationBar.vue";
+import Pagination from "@/components/Admin/Pagination.vue";
+import Sort from "@/components/Admin/Sort.vue";
 
 const props = defineProps({
-    gradelevel: {
+    schoolprogram: {
         type: Object,
         default: () => ({}),
     },
-    // roles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
-    // userHasRoles: {
-    //     type: Object,
-    //     default: () => ({}),
-    // },
+    gradelevels: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const form = useForm({

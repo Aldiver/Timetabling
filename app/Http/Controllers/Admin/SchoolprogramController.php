@@ -184,6 +184,9 @@ class SchoolprogramController extends Controller
      */
     public function destroy(SchoolProgram $schoolprogram)
     {
-        //
+        $schoolprogram->delete();
+
+        return redirect()->route('schoolprogram.index')
+                        ->with('message', __('School Program deleted successfully'));
     }
 }

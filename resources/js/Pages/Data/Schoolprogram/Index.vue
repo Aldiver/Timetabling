@@ -46,7 +46,7 @@ const formDelete = useForm({});
 
 function destroy(id) {
     if (confirm("Are you sure you want to delete?")) {
-        formDelete.delete(route("gradelevel.destroy", id));
+        formDelete.delete(route("schoolprogram.destroy", id));
     }
 }
 </script>
@@ -56,7 +56,7 @@ function destroy(id) {
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="School Program (Not Final)"
+            title="School Program"
             main
         >
             <BaseButton
@@ -82,8 +82,10 @@ function destroy(id) {
                     <tr>
                         <th>ID</th>
                         <th>School Program Name</th>
-                        <th class="flex">Gradelevel</th>
+                        <th>Gradelevel</th>
                         <th>Section</th>
+                        <th>Teachers</th>
+                        <th v-if="can.edit || can.delete">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,18 +95,24 @@ function destroy(id) {
                     >
                         <td>{{ schoolprogramdata.id }}</td>
                         <td>{{ schoolprogramdata.school_year }}</td>
+                        <td>{{ schoolprogramdata.gradelevels.length }}</td>
                         <td>
-                            <span
-                                v-for="gradelevel in schoolprogramdata.gradelevels"
-                                >{{ gradelevel.level }} -
-                            </span>
+                            {{ schoolprogramdata.sections.length }}
                         </td>
                         <td>
-                            <!-- <span
-                                v-for="section in schoolprogramdata.gradelevels
-                                    .sections"
-                                >{{ section.name }}-
-                            </span> -->
+                            {{ schoolprogramdata.teachers.length }}
+                        </td>
+                        <td
+                            v-if="can.edit || can.delete"
+                            class="before:hidden lg:w-1 whitespace-nowrap"
+                        >
+                            <BaseButton
+                                v-if="can.delete"
+                                color="danger"
+                                :icon="mdiTrashCan"
+                                small
+                                @click="destroy(schoolprogramdata.id)"
+                            />
                         </td>
                     </tr>
                 </tbody>
