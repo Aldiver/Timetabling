@@ -34,15 +34,18 @@ class WorkloadController extends Controller
             $timetableName = request()->input('search');
             $timetable = Timetable::where('name', $timetableName)->first();
             // dd("hello");
-            $teacherLoads = TeacherLoading::where('timetable_id', $timetable->id)
+            $teacherLoads1 = TeacherLoading::where('timetable_id', $timetable->id)
                                  ->where('version', 1)
                                  ->get();
-            // dd($teachers, $timetable->id, 1);
+            $teacherLoads2 = TeacherLoading::where('timetable_id', $timetable->id)
+            ->where('version', 2)
+            ->get();
         }
 
         return Inertia::render('Data/Workload/Index', [
             'timetables' => $timetables,
-            'teachers' => $teacherLoads,
+            'teachersData1' => $teacherLoads1 ?? [],
+            'teachersData2' => $teacherLoads2 ?? [],
             'filters' => request()->all('filter'),
             'can' => [
                 'create' => Auth::user()->can('permission create'),

@@ -130,7 +130,7 @@ function updateTimetables() {
             <BaseButton :icon="mdiReload" color="whiteDark" />
         </SectionTitleLineWithButton>
         <CardBox has-table>
-            <CardBoxComponentEmpty v-if="!timetables" />
+            <CardBoxComponentEmpty v-if="!timetables.length" />
             <table v-else>
                 <thead>
                     <tr>

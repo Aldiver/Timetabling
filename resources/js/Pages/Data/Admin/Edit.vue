@@ -51,11 +51,11 @@ watch(
 </script>
 
 <template>
-    <Head title="Update Department" />
+    <Head title="Update Admin" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="Update Department"
+            title="Update Admin"
             main
         >
             <BaseButton
@@ -72,13 +72,13 @@ watch(
             @submit.prevent="form.post(route('admin.update', props.admin.id))"
         >
             <FormField
-                label="Department"
+                label="Admin"
                 :class="{ 'text-red-400': form.errors.name }"
             >
                 <FormControl
                     v-model="form.name"
                     type="text"
-                    placeholder="Enter Department number"
+                    placeholder="Enter Admin name"
                     :error="form.errors.name"
                 >
                     <div class="text-red-400 text-sm" v-if="form.errors.name">

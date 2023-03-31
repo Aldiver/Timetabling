@@ -1,31 +1,27 @@
 <script setup>
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
-import {
-    mdiAccountKey,
-    mdiPlus,
-    mdiSquareEditOutline,
-    mdiTrashCan,
-    mdiAlertBoxOutline,
-} from "@mdi/js";
+import { mdiAccountKey } from "@mdi/js";
+import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
 import FormField from "@/components/FormField.vue";
 import FormControl from "@/components/FormControl.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
-import BaseButton from "@/components/BaseButton.vue";
 import CardBox from "@/components/CardBox.vue";
+import BaseDivider from "@/components/BaseDivider.vue";
+import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
-import NotificationBar from "@/components/NotificationBar.vue";
-import Pagination from "@/components/Admin/Pagination.vue";
-import Sort from "@/components/Admin/Sort.vue";
-import { ref, onMounted } from "vue";
-
+import { ref } from "vue";
 const props = defineProps({
     timetables: {
         type: Object,
         default: () => ({}),
     },
-    teachers: {
+    teachersData1: {
+        type: Object,
+        default: () => ({}),
+    },
+    teachersData2: {
         type: Object,
         default: () => ({}),
     },
@@ -39,6 +35,7 @@ const props = defineProps({
     },
 });
 
+const teachers = ref(props.teachersData1);
 const form = useForm({
     search: props.filters,
 });
@@ -49,7 +46,6 @@ const timetablesDropdown = Object.keys(props.timetables).map((key) => ({
 }));
 
 function filterWorkload() {
-    console.log("okay", form.search);
     form.get(route("workload.index"));
 }
 
@@ -88,37 +84,61 @@ function parseLoad(jsonData) {
         </CardBox>
 
         <CardBox has-table>
-            <CardBoxComponentEmpty v-if="!timetables" />
-            <table v-else>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Admin</th>
-                        <th>Advisory</th>
-                        <th>Teaching Load</th>
-                        <th>Total Load</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="teacher in teachers" :key="teacher.id">
-                        <td>{{ teacher.teacher_name }}</td>
-                        <td>{{ parseLoad(teacher.load).Admin ?? "N/A" }}</td>
-                        <td>
-                            {{ parseLoad(teacher.load).Advisory ?? "N/A" }}
-                        </td>
-                        <td>
-                            {{ parseLoad(teacher.load).Sections.length }}
-                        </td>
-                        <td>
-                            {{
-                                parseLoad(teacher.load).Sections.length +
-                                (parseLoad(teacher.load).Advisory ? 1 : 0) +
-                                (parseLoad(teacher.load).Admin ? 1 : 0)
-                            }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <CardBoxComponentEmpty v-if="!teachers.length" />
+            <div v-else>
+                <BaseButtons type="justify-start" class="m-6" no-wrap>
+                    <BaseButton
+                        label="Version 2"
+                        color=""
+                        rounded-full
+                        @click="teachers = teachersData1"
+                    />
+                    <BaseButton
+                        rounded-full
+                        label="Version 2"
+                        color=""
+                        @click="teachers = teachersData2"
+                    />
+                </BaseButtons>
+                <BaseDivider />
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Admin</th>
+                            <th>Advisory</th>
+                            <th>Teaching Load</th>
+                            <th>Total Load</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(teacher, index) in teachers"
+                            :key="teacher.id"
+                        >
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ teacher.teacher_name }}</td>
+                            <td>
+                                {{ parseLoad(teacher.load).Admin ?? "N/A" }}
+                            </td>
+                            <td>
+                                {{ parseLoad(teacher.load).Advisory ?? "N/A" }}
+                            </td>
+                            <td>
+                                {{ parseLoad(teacher.load).Sections.length }}
+                            </td>
+                            <td>
+                                {{
+                                    parseLoad(teacher.load).Sections.length +
+                                    (parseLoad(teacher.load).Advisory ? 1 : 0) +
+                                    (parseLoad(teacher.load).Admin ? 1 : 0)
+                                }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </CardBox>
     </SectionMain>
 </template>

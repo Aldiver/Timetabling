@@ -70,7 +70,11 @@ function destroy(id) {
     </CardBoxModal>
     <Head title="Admin" />
     <SectionMain>
-        <SectionTitleLineWithButton :icon="mdiAccountKey" title="Admin" main>
+        <SectionTitleLineWithButton
+            :icon="mdiAccountKey"
+            title="Admin Loads"
+            main
+        >
             <BaseButton
                 v-if="can.delete"
                 @click="modalCreate = true"

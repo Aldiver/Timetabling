@@ -24,11 +24,11 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="View Department" />
+    <Head title="View Admin" />
     <SectionMain>
         <SectionTitleLineWithButton
             :icon="mdiAccountKey"
-            title="View Department"
+            title="View Admin"
             main
         >
             <BaseButton
@@ -47,9 +47,9 @@ const props = defineProps({
                         <td
                             class="p-4 pl-8 text-slate-500 dark:text-slate-400 hidden lg:block"
                         >
-                            Department
+                            Admin
                         </td>
-                        <td data-label="Department Name">
+                        <td data-label="Admin Name">
                             {{ admin.name }}
                         </td>
                     </tr>
