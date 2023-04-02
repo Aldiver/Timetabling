@@ -88,14 +88,14 @@ function parseLoad(jsonData) {
             <div v-else>
                 <BaseButtons type="justify-start" class="m-6" no-wrap>
                     <BaseButton
-                        label="Version 2"
+                        label="Timetable 1"
                         color=""
                         rounded-full
                         @click="teachers = teachersData1"
                     />
                     <BaseButton
                         rounded-full
-                        label="Version 2"
+                        label="Timetable 2"
                         color=""
                         @click="teachers = teachersData2"
                     />

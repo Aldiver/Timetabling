@@ -94,12 +94,12 @@ class TimetableGA
         $teacherWithOHSP = [];
         shuffle($depsOhsp);
 
-        for ($i = 0; $i<8; $i++) {
-            $teacherWithOHSP[8 - ($i%2)][$i+1] = $depsOhsp[$i][2 - ($i%2)]->getRandomTeacherId();
-            $teacherWithOHSP[10 - ($i%2)][$i+1] = $depsOhsp[$i][4 - ($i%2)]->getRandomTeacherId();
-        }
+        // for ($i = 0; $i<8; $i++) {
+        //     $teacherWithOHSP[8 - ($i%2)][$i+1] = $depsOhsp[$i][2 - ($i%2)]->getRandomTeacherId();
+        //     $teacherWithOHSP[10 - ($i%2)][$i+1] = $depsOhsp[$i][4 - ($i%2)]->getRandomTeacherId();
+        // }
 
-        $timetable->addTeacherWithOhsp($teacherWithOHSP);
+        // $timetable->addTeacherWithOhsp($teacherWithOHSP);
         // dd($teacherWithOHSP);
         return $timetable;
     }

@@ -77,9 +77,9 @@ onMounted(() => {
     Object.keys(props.gradelevels).forEach((key) => {
         form.levels.push(Number(key));
     });
-    Object(props.sections).forEach((section) => {
-        form.sections.push(section);
-    });
+    // Object(props.sections).forEach((section) => {
+    //     form.sections.push(section);
+    // });
     Object(props.classdays).forEach((classday) => {
         if (classday.rank >= 1 && classday.rank <= 5) {
             form.classdays.push(classday);
@@ -104,14 +104,6 @@ let stepvalue = ref([
     "SCHEDULE",
     "TEACHER",
 ]);
-
-const years = ref([]);
-
-onMounted(() => {
-    for (let i = 2000; i <= new Date().getFullYear() + 10; i++) {
-        years.value.push(`${i} - ${i + 1}`);
-    }
-});
 
 //functions
 const remove = (arr, cb) => {
@@ -201,6 +193,10 @@ function prevStep() {
 watch(
     () => form.levels.length, // use a getter like this
     (newLength, oldLength) => {
+        form.sections.splice(0, form.sections.length);
+        filteredSections.value.forEach((section) => {
+            form.sections.push(section);
+        });
         if (newLength > oldLength) {
             stepvalue.value.splice(2, 0, "SECTION");
         } else if (newLength < oldLength) {
@@ -208,6 +204,16 @@ watch(
         }
     }
 );
+
+const filteredSections = computed(() => {
+    if (form.levels.length === 0 || form.levels.length === 4) {
+        return props.sections;
+    } else {
+        return props.sections.filter((section) =>
+            form.levels.includes(section.gradelevel_id)
+        );
+    }
+});
 </script>
 
 <template>
@@ -294,7 +300,10 @@ watch(
                         </thead>
 
                         <tbody>
-                            <tr v-for="section in sections" :key="section.id">
+                            <tr
+                                v-for="section in filteredSections"
+                                :key="section.id"
+                            >
                                 <TableCheckboxCell
                                     v-if="section.gradelevel_id == gradelevel"
                                     @checked="
@@ -303,7 +312,7 @@ watch(
                                     :check="sectionChecked(section)"
                                 />
                                 <td v-if="section.gradelevel_id == gradelevel">
-                                    {{ section.name }} {{ index }}
+                                    {{ section.name }}
                                 </td>
                             </tr>
                         </tbody>
