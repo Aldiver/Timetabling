@@ -68,9 +68,10 @@ class AssignLoads
 
             foreach ($adminLoads as $admin) {
                 $random = array_rand($teacher_loading);
-                if (!isset($teacher_loading[$random]['Admin'])) {
-                    $teacher_loading[$random]['Admin'] = $admin->name;
+                while (isset($teacher_loading[$random]['Admin'])) {
+                    $random = array_rand($teacher_loading);
                 }
+                $teacher_loading[$random]['Admin'] = $admin->name;
             }
 
             foreach ($teacher_loading as $key => $teacher) {
