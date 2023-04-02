@@ -85,9 +85,9 @@ onMounted(() => {
             form.classdays.push(classday);
         }
     });
-    Object(props.teachers).forEach((teacher) => {
-        form.teachers.push(teacher);
-    });
+    // Object(props.teachers).forEach((teacher) => {
+    //     form.teachers.push(teacher);
+    // });
     Object(props.periods).forEach((period) => {
         form.periods.push(period);
     });
@@ -193,9 +193,22 @@ function prevStep() {
 watch(
     () => form.levels.length, // use a getter like this
     (newLength, oldLength) => {
+        //section
         form.sections.splice(0, form.sections.length);
         filteredSections.value.forEach((section) => {
             form.sections.push(section);
+        });
+        //teachers
+        form.teachers.splice(0, form.teachers.length);
+        Object.keys(props.teachers).forEach((key) => {
+            // check if the key is in form.levels
+            // console.log(typeof form.levels[0], typeof key);
+            if (form.levels.includes(Number(key))) {
+                // push all teachers in the group to form.teachers
+                props.teachers[key].forEach((teacher) => {
+                    form.teachers.push(teacher);
+                });
+            }
         });
         if (newLength > oldLength) {
             stepvalue.value.splice(2, 0, "SECTION");
@@ -427,7 +440,7 @@ const filteredSections = computed(() => {
                     </thead>
 
                     <tbody>
-                        <tr v-for="teacher in teachers" :key="teacher.id">
+                        <tr v-for="teacher in form.teachers" :key="teacher.id">
                             <TableCheckboxCell
                                 @checked="checked($event, teacher, 'teachers')"
                                 :check="teacherChecked(teacher)"

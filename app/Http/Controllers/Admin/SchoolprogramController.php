@@ -51,13 +51,21 @@ class SchoolprogramController extends Controller
      */
     public function create()
     {
+        $teachers = Teacher::with('gradelevel')->get()->groupBy(function ($teacher) {
+            return $teacher->gradelevel()->first()->id;
+        });
+
         return Inertia::render('Data/Schoolprogram/Create', [
             'gradelevels' => Gradelevel::all()->pluck("level", "id"),
             'sections' => Section::all()->map->only('name', 'id', 'gradelevel_id'),
             'periods' => Period::orderBy('rank', 'asc')->get(),
             'timeslots' => Timeslot::all()->pluck("time", "id"),
             'classdays' => Classday::orderBy('rank', 'asc')->get(),
-            'teachers' => Teacher::all()->map->only('first_name', 'last_name', 'middle_name', 'id'),
+            // 'teachers' => Teacher::all()->map->only('first_name', 'last_name', 'middle_name', 'id'),
+            // // 'teachers' => Teacher::with('gradelevel')->get(),
+            // 'teachers' => Teacher::with('gradelevel')->get()->groupBy('gradelevel.id'),
+            'teachers' => $teachers,
+
         ]);
     }
 
