@@ -118,42 +118,6 @@ function destroy(id) {
                             Period
                         </th>
                         <th class="text-center py-1">Timeslots</th>
-                        <!-- <th v-for="index in classdayCount" :key="index">
-                            {{ classdays[index] }}
-                        </th>
-                        <th
-                            v-if="addRow"
-                            class="before:hidden lg:w-1 whitespace-nowrap"
-                        >
-                            <IconRounded
-                                v-if="!showEditButton"
-                                :icon="mdiPlusMinusVariant"
-                                color="light"
-                                class="mr-3"
-                                bg
-                                @click="showEdit"
-                            />
-                            <BaseButtons
-                                v-if="showEditButton"
-                                type="justify-start lg:justify-end"
-                                no-wrap
-                            >
-                                <BaseButton
-                                    v-if="can.edit"
-                                    color="danger"
-                                    @click="removeCol"
-                                    :icon="mdiMinusCircleOutline"
-                                    small
-                                />
-                                <BaseButton
-                                    v-if="can.delete"
-                                    color="success"
-                                    :icon="mdiPlusCircleOutline"
-                                    small
-                                    @click="addCol"
-                                />
-                            </BaseButtons>
-                        </th> -->
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -168,17 +132,7 @@ function destroy(id) {
                         <td data-label="Timeslots" class="text-center py-1">
                             {{ timeslots[period.timeslot_id] }}
                         </td>
-                        <!-- <td v-for="index in classdayCount" /> -->
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <!-- <BaseButton
-                                    v-if="can.edit"
-                                    :route-name="
-                                        route('period.edit', period.id)
-                                    "
-                                    color="info"
-                                    :icon="mdiSquareEditOutline"
-                                    small
-                                /> -->
                             <BaseButton
                                 v-if="can.delete"
                                 color="danger"

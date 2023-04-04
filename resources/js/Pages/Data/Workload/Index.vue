@@ -12,6 +12,9 @@ import BaseDivider from "@/components/BaseDivider.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import { ref } from "vue";
+import CardBoxModalSmall from "@/components/CardBoxModalSmall.vue";
+import { Inertia } from "@inertiajs/inertia";
+
 const props = defineProps({
     timetables: {
         type: Object,
@@ -35,6 +38,7 @@ const props = defineProps({
     },
 });
 
+const warning = ref(false);
 const teachers = ref(props.teachersData1);
 const form = useForm({
     search: props.filters,
@@ -52,9 +56,25 @@ function filterWorkload() {
 function parseLoad(jsonData) {
     return JSON.parse(jsonData);
 }
+
+const confirm = () => {
+    Inertia.get(route("workload.assign", { id: props.filters.id }));
+};
 </script>
 
 <template>
+    <CardBoxModalSmall
+        v-model="warning"
+        title="Notice!"
+        button="info"
+        button-label="Proceed"
+        has-button
+        has-cancel
+        @confirm="confirm"
+    >
+        <p>Editing the Teacher Loading will clear all initial Data</p>
+        <p>Do you want to Proceed?</p>
+    </CardBoxModalSmall>
     <Head title="Teachers' Workloads" />
     <SectionMain>
         <SectionTitleLineWithButton
@@ -98,6 +118,13 @@ function parseLoad(jsonData) {
                         label="Timetable 2"
                         color=""
                         @click="teachers = teachersData2"
+                    />
+                    <BaseButton
+                        @click="warning = true"
+                        rounded-full
+                        label="Edit"
+                        color="info"
+                        class="ml-auto"
                     />
                 </BaseButtons>
                 <BaseDivider />

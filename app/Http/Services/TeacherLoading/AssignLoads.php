@@ -87,4 +87,16 @@ class AssignLoads
             $version++;
         }
     }
+
+    public function clearLoads()
+    {
+        $teacherLoads = TeacherLoading::where('timetable_id', $this->timetable->id)->get();
+        foreach ($teacherLoads as $teacher) {
+            $load = json_decode($teacher->load, true);
+            $load['Admin'] = null;
+            $teacher->update([ 'load' => json_encode($load)]);
+        }
+
+        return $teacherLoads;
+    }
 }

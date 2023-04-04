@@ -61,11 +61,7 @@ class SchoolprogramController extends Controller
             'periods' => Period::orderBy('rank', 'asc')->get(),
             'timeslots' => Timeslot::all()->pluck("time", "id"),
             'classdays' => Classday::orderBy('rank', 'asc')->get(),
-            // 'teachers' => Teacher::all()->map->only('first_name', 'last_name', 'middle_name', 'id'),
-            // // 'teachers' => Teacher::with('gradelevel')->get(),
-            // 'teachers' => Teacher::with('gradelevel')->get()->groupBy('gradelevel.id'),
             'teachers' => $teachers,
-
         ]);
     }
 

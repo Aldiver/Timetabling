@@ -26,5 +26,6 @@ Route::group([
     Route::post('change-password', 'UserController@changePasswordStore')->name('admin.account.password.store');
     Route::post('check-form', 'SchoolprogramController@checkForm')->name('schoolprogram.check.form');
     Route::get('generate-timtable', 'TimeTableGeneratorController@generateTimetable')->name('timetable.generate');
-    Route::get('/dashboard/{id}/{table}', 'DashboardController@show')->name('dashboard.show');
+    Route::get('/timetable/{id}/{table}', 'DashboardController@show')->name('dashboard.show');
+    Route::get('workload/assignloads/{id}', 'WorkloadController@assignLoads')->name('workload.assign');
 });
