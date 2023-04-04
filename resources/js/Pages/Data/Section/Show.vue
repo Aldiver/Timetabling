@@ -60,7 +60,7 @@ const props = defineProps({
                             Building letter
                         </td>
                         <td data-label="Building letter">
-                            {{ section.building_letter }}
+                            {{ section.bldg_letter }}
                         </td>
                     </tr>
                     <tr>
