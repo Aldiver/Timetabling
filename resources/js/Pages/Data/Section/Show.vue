@@ -80,9 +80,7 @@ const props = defineProps({
                             Created
                         </td>
                         <td data-label="Created">
-                            {{
-                                new Date(gradelevel.created_at).toLocaleString()
-                            }}
+                            {{ new Date(section.created_at).toLocaleString() }}
                         </td>
                     </tr>
                 </tbody>
