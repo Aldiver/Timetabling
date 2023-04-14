@@ -50,15 +50,21 @@ export default [
         ],
     },
     {
-        route: "teacher.index",
-        icon: mdiAccountTie,
-        label: "Teachers' Profile",
-    },
+        label: "Teachers",
+        icon: mdiSchool,
+        menu: [
+            {
+                route: "teacher.index",
+                icon: mdiAccountTie,
+                label: "Profile",
+            },
 
-    {
-        route: "workload.index",
-        icon: mdiMonitor,
-        label: "Teachers' Workloads",
+            {
+                route: "workload.index",
+                icon: mdiMonitor,
+                label: "Workloads",
+            },
+        ],
     },
     {
         route: "section.index",
