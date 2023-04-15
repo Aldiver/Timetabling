@@ -139,10 +139,10 @@ class TimetableGA
 
                     $population = $algorithm->initPopulation($timetable, $currentGradelevel);
                     // Apply crossover
-                    // $population = $algorithm->crossoverPopulation($population, $currentGradelevel);
+                    $algorithm->crossoverPopulation($population, $currentGradelevel);
 
                     // // Apply mutation
-                    // $population = $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
+                    $algorithm->mutatePopulation($population, $timetable, $currentGradelevel);
 
                     // Evaluate Population
                     $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
