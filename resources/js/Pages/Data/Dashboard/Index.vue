@@ -118,6 +118,7 @@ function destroy(id) {
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>School Program</th>
                         <th>Status</th>
                         <th>Options</th>
                         <th>View</th>
@@ -126,6 +127,7 @@ function destroy(id) {
                 <tbody>
                     <tr v-for="timetable in timetables" :key="timetable.id">
                         <td>{{ timetable.name }}</td>
+                        <td>{{ timetable.schoolprograms[0].school_year }}</td>
                         <td>{{ timetable.status }}</td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons
@@ -183,6 +185,7 @@ function destroy(id) {
                                 />
                             </BaseButtons>
                             <span v-else-if="timetable.status == `IN PROGRESS`">
+                                Current Progress: Grade
                                 {{ timetable.current_level }}</span
                             >
                             <span v-else> </span>

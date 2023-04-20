@@ -32,7 +32,7 @@ class Population
 
         if ($timetable) {
             for ($i = 0; $i < 100; $i++) {
-                print "individual ... ".$i+1 ."\n";
+                //print "individual ... ".$i+1 ."\n";
                 $individual = new Individual($timetable, $currentGradelevel);
                 $this->population[$i] = $individual;
             }

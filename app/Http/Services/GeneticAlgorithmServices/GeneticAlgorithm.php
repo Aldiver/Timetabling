@@ -113,7 +113,7 @@ class GeneticAlgorithm
         $timetable->createClasses($individual, $currentGradelevel);
         $clashes = $timetable->calcClashes($individual, $currentGradelevel);
         $fitness = 1.0 / ($clashes + 1);
-        print "fitness: " .$fitness ."\n";
+        //print "fitness: " .$fitness ."\n";
         $individual->setFitness($fitness);
         return $fitness;
     }
@@ -126,14 +126,14 @@ class GeneticAlgorithm
      */
     public function evaluatePopulation($population, $timetable, $currentGradelevel)
     {
-        print "Evaluating Population \n";
+        //print "Evaluating Population \n";
         $populationFitness = 0;
 
         $individuals = $population->getIndividuals();
 
         $count = 0;
         foreach ($individuals as $individual) {
-            print "Gradelevel " .$currentGradelevel->getId() ." Calculating fitness... ". $count++ ."\n";
+            //print "Gradelevel " .$currentGradelevel->getId() ." Calculating fitness... ". $count++ ."\n";
             $populationFitness += $this->calculateFitness($individual, $timetable, $currentGradelevel);
         }
 
@@ -196,7 +196,7 @@ class GeneticAlgorithm
      */
     public function crossoverPopulation($population, $currentGradelevel)
     {
-        print "Crossover Population \n";
+        //print "Crossover Population \n";
         $newPopulation = new Population($population->size(), null, $currentGradelevel);
 
         for ($i = 0; $i < $population->size(); $i++) {
@@ -243,7 +243,7 @@ class GeneticAlgorithm
      */
     public function mutatePopulation($population, $timetable, $currentGradelevel)
     {
-        print "Mutate Population \n";
+        //print "Mutate Population \n";
         $newPopulation = new Population();
         $bestFitness = $population->getFittest(0)->getFitness();
 

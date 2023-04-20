@@ -46,7 +46,6 @@ class GenerateTimetableJob implements ShouldQueue
     {
         // Run a different job
         // dispatch(new SomeOtherJob($schedule));
-        print "Run teacher loading";
         dispatch(new AssignTeacherLoadingJob($timetable));
     }
 
