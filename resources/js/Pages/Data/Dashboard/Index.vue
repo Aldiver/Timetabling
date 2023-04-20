@@ -137,11 +137,15 @@ function destroy(id) {
                                 <BaseButton
                                     v-if="
                                         can.edit &
-                                        (timetable.status == `COMPLETED`)
+                                        (timetable.status == `COMPLETED` ||
+                                            timetable.status == 'FAILED')
                                     "
                                     color="info"
                                     :icon="mdiReload"
                                     small
+                                    :route-name="
+                                        route('dashboard.edit', timetable.id)
+                                    "
                                 />
                                 <BaseButton
                                     v-if="can.delete"

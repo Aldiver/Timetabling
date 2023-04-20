@@ -70,7 +70,7 @@ class DashboardController extends Controller
             // 'user_id' => Auth::user()->id,
             'status' => 'IN PROGRESS',
             'name' => $request->name,
-            'current_level' => '',
+            'current_level' => '-',
         ]);
 
         $timetable->schoolprograms()->sync($schoolProgram);
@@ -78,6 +78,15 @@ class DashboardController extends Controller
         // $timetableGA = new TimetableGA($timetable);
         // $schedule = $timetableGA->run();
 
+        dispatch(new GenerateTimetableJob($timetable));
+    }
+
+    public function edit($id)
+    {
+        $timetable = Timetable::find($id);
+        $timetable->status = 'IN PROGRESS';
+        $timetable->current_level = '-';
+        $timetable->save();
         dispatch(new GenerateTimetableJob($timetable));
     }
 
@@ -96,14 +105,9 @@ class DashboardController extends Controller
             exec($killCommand);
         }
 
-
-
         return redirect()->route('dashboard.index')
                         ->with('message', __('Timetable deleted successfully'));
     }
-
-
-
 
     public function show($id, $table)
     {
