@@ -2,14 +2,21 @@
 import { useLayoutStore } from "@/stores/layout.js";
 import { useStyleStore } from "@/stores/style.js";
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
-import { mdiAccountKey, mdiFileDocument } from "@mdi/js";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+import {
+    mdiAccountKey,
+    mdiFileDocument,
+    mdiFilterMenu,
+    mdiFilterMinus,
+} from "@mdi/js";
 import SectionMain from "@/components/SectionMain.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import CardBox from "@/components/CardBox.vue";
 import moment from "moment";
+import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import html2pdf from "html2pdf.js";
+import { reactive, computed, ref } from "vue";
+import FormControl from "@/components/FormControl.vue";
 
 const props = defineProps({
     timetable: {
@@ -33,6 +40,8 @@ const props = defineProps({
 });
 
 const styleStore = useStyleStore();
+
+const showFilter = ref(false);
 
 function generatePdf() {
     const options = {
@@ -70,6 +79,54 @@ function generatePdf() {
     }
     worker = worker.save();
 }
+
+const data = reactive({
+    searchQuery: "",
+    checkedGradeLevels: Object.keys(props.scheme),
+});
+
+const filteredScheme = computed(() => {
+    const searchQuery = data.searchQuery;
+    const filtered = {};
+    for (const gradeLevel in props.scheme) {
+        if (!data.checkedGradeLevels.includes(gradeLevel)) continue;
+        filtered[gradeLevel] = props.scheme[gradeLevel];
+        const filteredValues = Object.entries(filtered[gradeLevel]);
+        const gIndex = filteredValues[0][0];
+        // console.log(typeof Object.entries(filteredValues));
+        const f = Object.entries(filteredValues[0][1]).filter(
+            (sectionId, key) => {
+                // console.log(sectionId[0]);
+                if (!searchQuery) {
+                    return true;
+                }
+
+                const regex = new RegExp(searchQuery, "i");
+                let sId = null;
+                // Check if searchTerm is found in any object's name property in props.sectionModel
+                props.sectionModel.some((section) => {
+                    if (regex.test(section.name)) sId = section.id;
+                });
+
+                if (sectionId[0] == sId) {
+                    return true;
+                }
+            }
+        );
+
+        if (Object.keys(f).length > 0) {
+            const updatedObj = Object.fromEntries(f);
+            filtered[gradeLevel] = {
+                ...filtered[gradeLevel],
+                [gIndex]: updatedObj,
+            };
+        } else {
+            delete filtered[gradeLevel];
+        }
+    }
+
+    return filtered;
+});
 </script>
 
 <template>
@@ -90,17 +147,51 @@ function generatePdf() {
                     ).format('MMM D YYYY')}`"
                     main
                 >
-                    <BaseButton
-                        @click="generatePdf"
-                        :icon="mdiFileDocument"
-                        label="Print"
-                        color=""
-                        rounded-full
-                    />
+                    <BaseButtons>
+                        <BaseButton
+                            @click="generatePdf"
+                            :icon="mdiFileDocument"
+                            label="Print"
+                            color=""
+                            rounded-full
+                        />
+                        <BaseButton
+                            @click="showFilter = !showFilter"
+                            :icon="showFilter ? mdiFilterMinus : mdiFilterMenu"
+                            color=""
+                        />
+                    </BaseButtons>
                 </SectionTitleLineWithButton>
+                <CardBox v-if="showFilter" class="mb-6">
+                    <div class="flex items-center space-x-4 py-5">
+                        <span> Filter by Grade level </span>
+                        <div v-for="(value, key) in scheme" :key="key">
+                            <input
+                                type="checkbox"
+                                :id="`checkbox_${key}`"
+                                :value="`${key}`"
+                                v-model="data.checkedGradeLevels"
+                                checked
+                                class="form-checkbox h-5 w-5 text-blue-600 mr-3"
+                            />
+                            <label :for="`checkbox_${key}`">{{
+                                Object.keys(value)[0]
+                            }}</label>
+                        </div>
+                    </div>
+                    <FormControl
+                        v-model="data.searchQuery"
+                        type="text"
+                        placeholder="Search section"
+                    />
+                    <div v-if="Object.keys(filteredScheme).length === 0">
+                        No results found.
+                    </div>
+                </CardBox>
+
                 <CardBox
                     class="mb-6"
-                    v-for="gradelevels in scheme"
+                    v-for="gradelevels in filteredScheme"
                     :key="gradelevels"
                     id="section-main"
                 >

@@ -13,7 +13,7 @@ class Timetable extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'status'];
+    protected $fillable = ['name', 'status', 'current_level'];
 
     protected $casts = [
         'schedule_data1' => 'json',

@@ -58,4 +58,11 @@ class GenerateTimetableJob implements ShouldQueue
             'status' => 'FAILED',
         ]);
     }
+
+    public function failed(\Exception $exception)
+    {
+        $this->timetable->update([
+            'status' => 'FAILED',
+        ]);
+    }
 }

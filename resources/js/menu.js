@@ -28,11 +28,6 @@ export default [
         label: "Schedule",
         menu: [
             {
-                route: "schoolprogram.index",
-                icon: mdiTimetable,
-                label: "School Program",
-            },
-            {
                 route: "classday.index",
                 icon: mdiViewWeek,
                 label: "Class Days",
@@ -46,6 +41,11 @@ export default [
                 route: "period.index",
                 icon: mdiCalendarClock,
                 label: "Periods",
+            },
+            {
+                route: "schoolprogram.index",
+                icon: mdiTimetable,
+                label: "School Program",
             },
         ],
     },

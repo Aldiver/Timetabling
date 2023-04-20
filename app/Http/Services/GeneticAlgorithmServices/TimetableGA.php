@@ -119,10 +119,17 @@ class TimetableGA
         $algorithm = new GeneticAlgorithm(100, 0.01, 0.9, 2, 10);
 
         foreach ($timetable->getGroups() as $currentGradelevel) {
+
+            // $this->timetable->update([
+            //     'current_level' => $currentGradelevel->level,
+            //     // 'ohsp' => $timetable->getTeacherWithOhsp(),
+            // ]);
+
+            $this->timetable->current_level = $currentGradelevel->getLevel();
+            $this->timetable->save();
+            //this update part
             for ($i = 1; $i <= 2; $i++) {
                 $maxGenerations = 1500;
-                print "Initializing Data";
-                print "\n";
                 $population = $algorithm->initPopulation($timetable, $currentGradelevel);
                 $algorithm->evaluatePopulation($population, $timetable, $currentGradelevel);
 
@@ -132,10 +139,6 @@ class TimetableGA
                 while (!$algorithm->isTerminationConditionMet($population)
                     && !$algorithm->isGenerationsMaxedOut($generation, $maxGenerations)) {
                     $fittest = $population->getFittest(0);
-
-                    print "Generation: " . $generation . "(" . $fittest->getFitness() . ") - ";
-                    // print $fittest;
-                    print "\n";
 
                     $population = $algorithm->initPopulation($timetable, $currentGradelevel);
                     // Apply crossover
@@ -149,9 +152,6 @@ class TimetableGA
 
                     // Increment current
                     $generation++;
-
-                    // Cool temperature of GA for simulated annealing
-                    // $algorithm->coolTemperature();
                 }
 
                 $solution =  $population->getFittest(0);
@@ -175,7 +175,6 @@ class TimetableGA
             // 'ohsp' => $timetable->getTeacherWithOhsp(),
         ]);
 
-        print "Timetable Genrated \n";
         return $this->timetable;
     }
 }

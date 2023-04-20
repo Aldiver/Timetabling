@@ -19,6 +19,8 @@ return new class () extends Migration {
             $table->json('schedule_data2')->nullable();
             // $table->json('ohsp')->nullable();
             $table->enum('status', ['IN PROGRESS', 'COMPLETED','FAILED']);
+            $table->string('current_level');
+            $table->string('job_id')->nullable();
             $table->timestamps();
         });
     }

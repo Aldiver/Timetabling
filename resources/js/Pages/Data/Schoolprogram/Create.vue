@@ -227,6 +227,38 @@ const filteredSections = computed(() => {
         );
     }
 });
+
+const sectionToggled = ref(false);
+function toggleSections(gradelevel) {
+    sectionToggled.value = !sectionToggled.value;
+
+    if (sectionToggled.value) {
+        // Unselect all sections
+        form.sections = form.sections.filter((section) => {
+            return section.gradelevel_id !== gradelevel;
+        });
+    } else {
+        // Select all sections
+        const newSections = props.sections.filter((section) => {
+            return section.gradelevel_id === gradelevel;
+        });
+        form.sections = [...form.sections, ...newSections];
+    }
+}
+
+const teacherToggled = ref(false);
+function toggleTeachers() {
+    teacherToggled.value = !teacherToggled.value;
+    const selectedTeachers = Object.keys(props.teachers)
+        .filter((key) => form.levels.includes(Number(key)))
+        .reduce((acc, key) => [...acc, ...props.teachers[key]], []);
+
+    if (teacherToggled.value) {
+        form.teachers = [];
+    } else {
+        form.teachers = [...selectedTeachers];
+    }
+}
 </script>
 
 <template>
@@ -307,7 +339,16 @@ const filteredSections = computed(() => {
                     >
                         <thead>
                             <tr>
-                                <th></th>
+                                <th>
+                                    <label class="checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked
+                                            @change="toggleSections(gradelevel)"
+                                        />
+                                        <span class="check"></span>
+                                    </label>
+                                </th>
                                 <th>Section</th>
                             </tr>
                         </thead>
@@ -434,13 +475,31 @@ const filteredSections = computed(() => {
                 <table>
                     <thead>
                         <tr>
-                            <th></th>
+                            <th>
+                                <label class="checkbox">
+                                    <input
+                                        type="checkbox"
+                                        checked
+                                        @change="toggleTeachers()" />
+                                    <span class="check"></span
+                                ></label>
+                            </th>
                             <th>Teacher Name</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr v-for="teacher in form.teachers" :key="teacher.id">
+                        <tr
+                            v-for="teacher in Object.keys(teachers)
+                                .filter((key) =>
+                                    form.levels.includes(Number(key))
+                                )
+                                .reduce(
+                                    (acc, key) => [...acc, ...teachers[key]],
+                                    []
+                                )"
+                            :key="teacher.id"
+                        >
                             <TableCheckboxCell
                                 @checked="checked($event, teacher, 'teachers')"
                                 :check="teacherChecked(teacher)"

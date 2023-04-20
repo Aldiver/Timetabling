@@ -44,12 +44,11 @@ class DashboardController extends Controller
         $teachers = Teacher::count();
         $sections = Section::count();
         $departments = Department::count();
-        $schedule = session('schedule');
         $schoolProgram = SchoolProgram::All()->pluck('school_year', 'id');
-        $timetables = Timetable::All();
+        $timetables = Timetable::with('schoolprograms')->get();
 
         return Inertia::render('Data/Dashboard/Index', [
-            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments, 'schedule' => $schedule, 'schoolprogram' => $schoolProgram,
+            'teachers' => $teachers, 'sections' => $sections, 'departments' => $departments,'schoolprogram' => $schoolProgram,
             'timetables' => $timetables,
             'can' => [
                 'create' => Auth::user()->can('permission create'),
@@ -70,7 +69,8 @@ class DashboardController extends Controller
         $timetable = Timetable::create([
             // 'user_id' => Auth::user()->id,
             'status' => 'IN PROGRESS',
-            'name' => $request->name
+            'name' => $request->name,
+            'current_level' => '',
         ]);
 
         $timetable->schoolprograms()->sync($schoolProgram);
@@ -84,11 +84,23 @@ class DashboardController extends Controller
     public function destroy($id)
     {
         $timetable = Timetable::find($id);
-        $timetable->delete();
+        $jobId = $timetable->jobId;
+        // $timetable->delete();
+
+        // Find the PID of the queue worker process that is running the job
+        $pid = `ps aux | grep 'php /var/www/html/Timetabling/artisan queue:work' | grep -v grep | awk '{print $2}'`;
+        // $pidCommand = "ps aux | grep '{$processName}' | awk '{print $2}'";
+
+        // Kill the queue worker process
+        $killCommand = "kill -9 {$pid}";
+        exec($killCommand);
 
         return redirect()->route('dashboard.index')
                         ->with('message', __('Timetable deleted successfully'));
     }
+
+
+
 
     public function show($id, $table)
     {

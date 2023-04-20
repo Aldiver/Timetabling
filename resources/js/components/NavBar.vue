@@ -171,7 +171,7 @@ const logout = () => {
                             is-desktop-icon-only
                         />
                     </NavBarItem>
-                    <!-- https://github.com/Aldiver/Timetabling -->
+
                     <NavBarItem href="" is-desktop-icon-only>
                         <NavBarItemLabel
                             :icon="mdiGithub"

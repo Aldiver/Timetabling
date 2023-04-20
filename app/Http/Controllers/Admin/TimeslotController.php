@@ -28,7 +28,7 @@ class TimeslotController extends Controller
     {
         $timeslots = (new Timeslot())->newQuery();
 
-        $timeslots = $timeslots->paginate(5)->onEachSide(2)->appends(request()->query());
+        $timeslots = $timeslots->paginate(10)->onEachSide(2)->appends(request()->query());
         return Inertia::render('Data/Timeslot/Index', [
             'timeslots' => $timeslots,
             'filters' => request()->all('search'),

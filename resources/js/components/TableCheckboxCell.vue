@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 
 const props = defineProps({
     type: {
@@ -25,6 +25,12 @@ onMounted(() => {
 
 watch(checked, (newVal) => {
     emit("checked", newVal);
+});
+
+const isChecked = computed(() => props.check);
+
+watch(isChecked, (newVal) => {
+    checked.value = newVal;
 });
 </script>
 

@@ -15,7 +15,7 @@ return new class () extends Migration {
         Schema::create('teacher_loadings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('teacher_id')->constrained();
-            $table->foreignId('timetable_id')->constrained();
+            $table->foreignId('timetable_id')->constrained()->onDelete('cascade');
             $table->integer('version');
             $table->string('teacher_name');
             $table->json('load')->nullable();

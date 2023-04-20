@@ -22,7 +22,7 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import CardBoxModal from "@/components/CardBoxModal.vue";
 import Create from "./Create.vue";
 import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
-import axios from "axios";
+import Show from "./Show.vue";
 
 const props = defineProps({
     teachers: {
@@ -65,23 +65,6 @@ function destroy(id) {
         formDelete.delete(route("dashboard.destroy", id));
     }
 }
-
-function updateTimetables() {
-    // Perform AJAX request to fetch updated timetables data
-    axios
-        .get("/timetables")
-        .then((response) => {
-            // Update the view with the updated timetables data
-            list.value = response.data;
-            console.log("this updated");
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-}
-
-// Call the updateTimetables function every 5 seconds
-// setInterval(updateTimetables, 5000);
 </script>
 
 <template>
@@ -127,7 +110,7 @@ function updateTimetables() {
         />
 
         <SectionTitleLineWithButton :icon="mdiChartPie" title="Timetables">
-            <BaseButton :icon="mdiReload" color="whiteDark" />
+            <!-- <BaseButton :icon="mdiReload" color="whiteDark" /> -->
         </SectionTitleLineWithButton>
         <CardBox has-table>
             <CardBoxComponentEmpty v-if="!timetables.length" />
@@ -199,7 +182,10 @@ function updateTimetables() {
                                     small
                                 />
                             </BaseButtons>
-                            <span v-else> Not available</span>
+                            <span v-else-if="timetable.status == `IN PROGRESS`">
+                                {{ timetable.current_level }}</span
+                            >
+                            <span v-else> </span>
                         </td>
                     </tr>
                 </tbody>

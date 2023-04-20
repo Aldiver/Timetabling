@@ -65,10 +65,14 @@ class AssignLoads
                 }
             }
             $adminLoads = Admin::all()->shuffle();
-
+            uksort($teacher_loading, function () {
+                return rand() > rand();
+            });
+            // dd($teacher_loading);
             foreach ($adminLoads as $admin) {
                 $random = array_rand($teacher_loading);
                 while (isset($teacher_loading[$random]['Admin'])) {
+                    // dd($teacher_loading[$random]['Admin']);
                     $random = array_rand($teacher_loading);
                 }
                 $teacher_loading[$random]['Admin'] = $admin->name;
