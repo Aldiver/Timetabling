@@ -85,15 +85,18 @@ class DashboardController extends Controller
     {
         $timetable = Timetable::find($id);
         $jobId = $timetable->jobId;
-        // $timetable->delete();
+        $timetable->delete();
+        if($jobId) {
+            // Find the PID of the queue worker process that is running the job
+            $pid = `ps aux | grep 'php /var/www/html/Timetabling/artisan queue:work' | grep -v grep | awk '{print $2}'`;
+            // $pidCommand = "ps aux | grep '{$processName}' | awk '{print $2}'";
 
-        // Find the PID of the queue worker process that is running the job
-        $pid = `ps aux | grep 'php /var/www/html/Timetabling/artisan queue:work' | grep -v grep | awk '{print $2}'`;
-        // $pidCommand = "ps aux | grep '{$processName}' | awk '{print $2}'";
+            // Kill the queue worker process
+            $killCommand = "kill -9 {$pid}";
+            exec($killCommand);
+        }
 
-        // Kill the queue worker process
-        $killCommand = "kill -9 {$pid}";
-        exec($killCommand);
+
 
         return redirect()->route('dashboard.index')
                         ->with('message', __('Timetable deleted successfully'));
